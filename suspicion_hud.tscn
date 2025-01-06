@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://cv8hqe5t8wwo0"]
+
+[ext_resource type="Shader" path="res://suspicion_hud.gdshader" id="1_fpull"]
+[ext_resource type="Script" path="res://suspicion_hud.gd" id="1_ota5a"]
+[ext_resource type="Texture2D" uid="uid://ce3p1lm0i2ps0" path="res://suspicion_level.png" id="2_153xl"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oi24o"]
+shader = ExtResource("1_fpull")
+shader_parameter/suspicion_level = 0.0
+shader_parameter/alpha_image = ExtResource("2_153xl")
+
+[node name="SuspicionView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ota5a")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_oi24o")
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+color = Color(0.933268, 0.00075315, 0.940631, 1)

@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://bwdwd8kfjqocc"]
+
+[ext_resource type="Script" path="res://view_zone.gd" id="1_jc0ip"]
+[ext_resource type="Shader" path="res://view_zone.gdshader" id="2_kd0m1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_br0jy"]
+render_priority = 0
+shader = ExtResource("2_kd0m1")
+
+[sub_resource type="QuadMesh" id="QuadMesh_i5wa5"]
+material = SubResource("ShaderMaterial_br0jy")
+size = Vector2(20, 20)
+orientation = 1
+
+[node name="ViewZone" type="Node3D"]
+script = ExtResource("1_jc0ip")
+VIEW_RADIUS = 0.4
+
+[node name="VisualMesh3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+mesh = SubResource("QuadMesh_i5wa5")
