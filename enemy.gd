@@ -17,6 +17,12 @@ extends CharacterBody3D;
 @export var DETECTION_SPEED : float = 1.0;
 ## Decay in suspicion per second (roughly)
 @export var SUSPICION_DECAY_RATE : float = 0.2;
+## Range in which we will care about distractions
+@export var DISTRACTION_DETECTION_RANGE : float = 15.0;
+## What distance can you turn in a second
+@export var ROTATION_SPEED : float = PI;
+## How stealthy sneaking is compared to normal walking for this enemy
+@export_range(1.0, 10.0) var SNEAKING_MODIFIER : float = 2.0;
 
 @export_group("General behaviour")
 @export_range(0.0, 1.0) var SUSPICION_LEVEL : float = 0.0;
@@ -26,8 +32,7 @@ extends CharacterBody3D;
 ## Place to investigate
 @export var INVESTIGATION_POINT : Vector3 = Vector3.INF;
 ## At what suspicion level do we stop patrolling to investigate the player position
-@export_range(0.0, 1.0) var INVESTIGATE_THRESHOLD : float = 0.2;
-# TODO: currently includes moving time, shouldn't!
+@export_range(0.0, 1.0) var INVESTIGATE_THRESHOLD : float = 0.4;
 ## How long to stay in the investigation location
 @export var INVESTIGATION_TIME : float = 2.0;
 ## What FOV to scan during investigation
@@ -48,29 +53,53 @@ enum Behaviour { PATROL, INVESTIGATE, HUNTING };
 
 var current_behaviour = Behaviour.PATROL;
 var pathing_to_destination : bool = false;
+var target_angle : float = 0.0;
 
 # Patrol variables
 var current_patrol_index : int = 0;
 
 # Investigate variables
-var investigate_position : Vector3 = Vector3.INF;
 var investigate_time_left : float = INF;
 
 # Hunting variables
+# (None)
 
 @onready var navigation_agent_3d : NavigationAgent3D = $NavigationAgent3D;
 
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity");
+var gravity : float = ProjectSettings.get_setting("physics/3d/default_gravity");
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$ViewZone.VIEW_FOV = VIEW_FOV;
-	$ViewZone.VIEW_RADIUS = VIEW_RADIUS;
-	$ViewZone.CLOSE_RADIUS = CLOSE_RADIUS;
+	target_angle = global_rotation.y;
+
+# TODO: i use different math in other places for angle wrap
+#	should be more consistent
+# TODO: should also be "while", i just want to avoid loops
+func wrap_angle(angle : float) -> float:
+	if angle == INF: return INF;
+	
+	if angle > 1.0 * PI:
+		angle -= 2.0 * PI;
+	if angle < -1.0 * PI:
+		angle += 2.0 * PI;
+		
+	return angle;
+
+func set_heading(angle : float) -> void:
+	target_angle = wrap_angle(angle);
+	
+func update_heading(delta : float) -> void:
+	var max_change : float = ROTATION_SPEED * delta;
+	var angle_diff : float = wrap_angle(target_angle - global_rotation.y);
+	var direction : float = sign(angle_diff);
+
+	global_rotation.y += direction * max_change;
+	
+	# Snap if close enough
+	if abs(angle_diff) < max_change:
+		global_rotation.y = target_angle;
 
 func behaviour_patrol(delta: float) -> void:
 	current_behaviour = Behaviour.PATROL;
-	reset_investigation_params();
 	
 	# If we're patrolling, but the player suspicion level rises sufficiently
 	if SUSPICION_LEVEL >= HUNTING_BEGIN_THRESHOLD:
@@ -78,20 +107,22 @@ func behaviour_patrol(delta: float) -> void:
 	
 	if SUSPICION_LEVEL >= INVESTIGATE_THRESHOLD:
 		# Investigate the player's current position
-		investigate_position = player_node.global_position;
+		INVESTIGATION_POINT = player_node.global_position;
 		
 		return behaviour_investigate(delta);
 		
 	# We have some distraction/trail to investigate
 	if INVESTIGATION_POINT != Vector3.INF:
-		investigate_position = INVESTIGATION_POINT;
-		
 		return behaviour_investigate(delta);
 	
-	if not pathing_to_destination and len(PATROL_PATH) > 0:
-		var destination : Vector3 = PATROL_PATH[current_patrol_index];
+	if not pathing_to_destination:
+		var destination : Vector3;
 		
-		current_patrol_index = (current_patrol_index + 1) % len(PATROL_PATH);
+		if len(PATROL_PATH) == 0:
+			destination = global_position;
+		else:
+			destination = PATROL_PATH[current_patrol_index];
+			current_patrol_index = (current_patrol_index + 1) % len(PATROL_PATH);
 		
 		set_destination(destination);
 	
@@ -99,13 +130,17 @@ func behaviour_investigate(delta: float) -> void:
 	current_behaviour = Behaviour.INVESTIGATE;
 	
 	if SUSPICION_LEVEL > HUNTING_BEGIN_THRESHOLD:
+		reset_investigation_params();
 		return behaviour_hunting(delta);
 	
-	if investigate_position == Vector3.INF:
-		return behaviour_patrol(delta);
-		
-	if investigate_time_left == INF:
+	if INVESTIGATION_POINT != Vector3.INF:
+		set_destination(INVESTIGATION_POINT);
+		INVESTIGATION_POINT = Vector3.INF;
 		investigate_time_left = INVESTIGATION_TIME;
+	
+	if investigate_time_left == 0.0:
+		reset_investigation_params();
+		return behaviour_patrol(delta);
 	
 	# Check if we've arrived at the location
 	if navigation_agent_3d.is_target_reached():
@@ -113,26 +148,30 @@ func behaviour_investigate(delta: float) -> void:
 		velocity.x = 0.0;
 		velocity.z = 0.0;
 		
-		INVESTIGATION_POINT = Vector3.INF;
+		# Begin decreasing the investigation time
 		investigate_time_left = clamp(investigate_time_left - delta, 0.0, INVESTIGATION_TIME);
 		
 		# Go back to patrol
 		if investigate_time_left == 0.0:
+			reset_investigation_params();
 			return behaviour_patrol(delta);
 	
-		# Scan around the place?
-		# Value from 0-1
-		var percent_time_spent = 1.0 - investigate_time_left / INVESTIGATION_TIME;
-		var direction = sign(sin(percent_time_spent * 2.0 * PI * SCAN_TIMES));
-		var speed = (FOV_SCAN * SCAN_TIMES) / INVESTIGATION_TIME;
-		
-		global_rotation.y += direction * speed * delta;
-	else:
-		set_destination(investigate_position);
+		# If we see player during investigation, try to follow them with the camera
+		if CURRENTLY_SEEING_PLAYER:
+			var towards_player : Vector3 = (player_node.global_position - global_position).normalized();
+			var toward_player_angle : float = atan2(towards_player.x, towards_player.z) - PI;
+			set_heading(toward_player_angle);
+		# Otherwise scan around the location to look for them
+		else:
+			# Scan around the place
+			var percent_time_spent : float = 1.0 - investigate_time_left / INVESTIGATION_TIME;
+			var direction : float = sign(sin(percent_time_spent * 2.0 * PI * SCAN_TIMES));
+			var speed : float = (FOV_SCAN * SCAN_TIMES) / INVESTIGATION_TIME;
+			
+			set_heading(target_angle + direction * speed * delta);
 	
 func behaviour_hunting(delta: float) -> void:
 	current_behaviour = Behaviour.HUNTING;
-	reset_investigation_params();
 	
 	# Go back to patrol
 	if SUSPICION_LEVEL < HUNTING_END_THRESHOLD:
@@ -143,7 +182,7 @@ func behaviour_hunting(delta: float) -> void:
 	
 func reset_investigation_params() -> void:
 	investigate_time_left = INF;
-	investigate_position = Vector3.INF;
+	INVESTIGATION_POINT = Vector3.INF;
 
 func set_destination(destination : Vector3) -> void:
 	var closest_point : Vector3 = NavigationServer3D.map_get_closest_point(
@@ -165,16 +204,19 @@ func update_behaviour(delta: float) -> void:
 	if pathing_to_destination and navigation_agent_3d.is_target_reached():
 		pathing_to_destination = false;
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	$ViewZone.VIEW_FOV = VIEW_FOV;
+	$ViewZone.VIEW_RADIUS = VIEW_RADIUS;
+	$ViewZone.CLOSE_RADIUS = CLOSE_RADIUS;
 	$ViewZone.VIEW_DIRECTION = global_rotation.y;
+	$ViewZone.EYE_LEVEL_NODE = $EyeLevel;
 	
 	if player_node != null and $ViewZone.in_detection_range(player_node.global_position):
 		var suspicion_delta : float = DETECTION_SPEED;
 
-		# Be detected twice as slow if sneaking
+		# Be detected slower if sneaking
 		if Input.is_action_pressed("sneak"):
-			suspicion_delta *= 0.5;
+			suspicion_delta *= 1.0 / SNEAKING_MODIFIER;
 			
 		SUSPICION_LEVEL += suspicion_delta * delta;
 		CURRENTLY_SEEING_PLAYER = true;
@@ -185,20 +227,21 @@ func _process(delta: float) -> void:
 	SUSPICION_LEVEL = clamp(SUSPICION_LEVEL, 0.0, 1.0);
 	player_node.ENEMY_TOP_SUSPICION = max(player_node.ENEMY_TOP_SUSPICION, SUSPICION_LEVEL);
 	
-	# TODO: range check?
-	if player_node.DISTRACTION != Vector3.INF:
+	if player_node.DISTRACTION != Vector3.INF and \
+		global_position.distance_to(player_node.DISTRACTION) < DISTRACTION_DETECTION_RANGE:
 		INVESTIGATION_POINT = player_node.DISTRACTION;
-		
+	
 	update_behaviour(delta);
+	update_heading(delta);
 		
 func _physics_process(delta: float) -> void:
 	if pathing_to_destination:
 		var destination : Vector3 = navigation_agent_3d.get_next_path_position();
 		var local_destination : Vector3 = destination - global_position;
 		var direction : Vector3 = local_destination.normalized();
-		var heading : float = atan2(direction.x, direction.z);
+		var heading : float = atan2(direction.x, direction.z) - PI;
 		
-		global_rotation.y = heading - PI;
+		set_heading(heading);
 		
 		var current_speed : float = HUNT_SPEED if current_behaviour == Behaviour.HUNTING else MOVE_SPEED;
 		

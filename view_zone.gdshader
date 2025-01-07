@@ -30,23 +30,23 @@ void fragment() {
 	// Unproject from camera
 	view.xyz /= view.w;
 	float linear_depth = -view.z;
-	
+
 	vec4 world = INV_VIEW_MATRIX * INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
 	// Unproject from camera
 	vec3 world_position = world.xyz / world.w;
-	
+
 	float scaled_view_radius = view_radius / quad_size;
 	float scaled_close_radius = close_radius / quad_size;
-	
+
 	vec2 origin = vec2(0.5, 0.5);
 	float origin_angle = 0.5 * PI;
-	
+
 	float dist = distance(UV, origin);
 	float angle = -(atan(UV.y - origin.y, UV.x - origin.x) - origin_angle);
-	
+
 	// Checking if we're in the instant section
 	float instant_multiplier = (sign(scaled_close_radius - dist) + 1.0) * 0.5;
-	
+
 	// Checking if we're in view section
 	// Calculation is a bit overcomplicated because of ranges
 	float relative_direction_angle = PI - abs(mod(abs(angle), 2.0 * PI) - PI);
@@ -56,11 +56,11 @@ void fragment() {
 	float view_dist_multiplier = (sign(scaled_view_radius - dist) + 1.0) * 0.5;
 	// If both, prioritise instant_multiplier
 	float view_multiplier = view_fov_multiplier * view_dist_multiplier * (1.0 - instant_multiplier);
-	
+
 	vec3 color = view_multiplier * view_color + instant_multiplier * instant_color;
-	
+
 	float any_color_multiplier = view_multiplier + instant_multiplier;
-	
+
 	ALBEDO.rgb = vec3(color);
 	ALPHA = alpha * any_color_multiplier + invisible_alpha * (1.0 - any_color_multiplier);
 }

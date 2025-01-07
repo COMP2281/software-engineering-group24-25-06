@@ -8,8 +8,8 @@ render_priority = 0
 shader = ExtResource("2_kd0m1")
 
 [sub_resource type="QuadMesh" id="QuadMesh_i5wa5"]
+resource_local_to_scene = true
 material = SubResource("ShaderMaterial_br0jy")
-size = Vector2(20, 20)
 orientation = 1
 
 [node name="ViewZone" type="Node3D"]

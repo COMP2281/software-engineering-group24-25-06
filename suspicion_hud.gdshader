@@ -10,7 +10,7 @@ void vertex() {
 void fragment() {
 	// Called for every pixel the material is visible on.
 	vec4 sample_color = texture(alpha_image, UV);
-	
+
 	// Maybe cap at a level below 1.0, like 0.9, since hunting behaviour should begin
 	// 	slightly below max
 	COLOR = vec4(sample_color.rgb, sample_color.r - (1.0 - suspicion_level));
