@@ -15,8 +15,6 @@ extends CharacterBody3D
 @export var DISTRACTION_DURATION : float = 0.3;
 
 @export_group("Script interoperability")
-## Track the top suspicion level of this update
-@export var ENEMY_TOP_SUSPICION : float = 0.0;
 ## Where to create a distraction for enemies
 @export var DISTRACTION : Vector3 = Vector3.INF;
 
@@ -76,9 +74,6 @@ func _process(delta: float) -> void:
 	
 	yaw_input = 0.0;
 	pitch_input = 0.0;
-	
-	$SuspicionView.SUSPICION_LEVEL = ENEMY_TOP_SUSPICION;
-	ENEMY_TOP_SUSPICION = 0.0;
 	
 func _physics_process(delta: float):
 	var input : Vector3 = Vector3.ZERO;

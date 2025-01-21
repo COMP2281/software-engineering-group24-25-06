@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dipbvseepvdun"]
+[gd_scene load_steps=11 format=3 uid="uid://dipbvseepvdun"]
 
 [ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://player.tscn" id="1_8ui7k"]
 [ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://enemy.tscn" id="3_5q7x4"]
@@ -14,12 +14,6 @@ cell_height = 1.0
 border_size = 0.5
 agent_radius = 1.0
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_22yjv"]
-size = Vector2(100, 100)
-
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_nnehf"]
-points = PackedVector3Array(50.7837, 0.793495, 50.7837, -50.7837, -0.793495, -50.7837, -50.7837, 0.793495, -50.7837, 50.7837, -0.793495, -50.7837, -50.7837, -0.793495, 50.7837, -50.7837, 0.793495, 50.7837, 50.7837, 0.793495, -50.7837, 50.7837, -0.793495, 50.7837)
-
 [sub_resource type="BoxMesh" id="BoxMesh_yn2bx"]
 size = Vector3(10, 5, 1)
 
@@ -31,6 +25,13 @@ size = Vector3(2, 2, 2)
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_4ckxt"]
 points = PackedVector3Array(-1, -1, -1, 1, 1, 1, 1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1, -1, -1, -1, 1, -1, 1, -1)
+
+[sub_resource type="Curve3D" id="Curve3D_1fatr"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -0.428714, 1, -16.3929, 0, 0, 0, 0, 0, 0, -8.41434, 1, -16.6003, 0, 0, 0, 0, 0, 0, -12.1997, 1, -10.274, 0, 0, 0, 0, 0, 0, -21.6891, 1, -1.35499, 0, 0, 0, 0, 0, 0, -21.2225, 1, 3.72677, 0, 0, 0, 0, 0, 0, -0.480571, 1, 3.10452, 0, 0, 0, 0, 0, 0, -0.428714, 1, -16.3929),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 7
 
 [node name="MainSceneNode" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 0)
@@ -46,34 +47,16 @@ camera_attributes = SubResource("CameraAttributesPractical_sdpjg")
 
 [node name="Enemy2" parent="." instance=ExtResource("3_5q7x4")]
 transform = Transform3D(0.0574246, 0, -0.99835, 0, 1, 0, 0.99835, 0, 0.0574246, 4.82541, 0, 4.82541)
-VIEW_RADIUS = 15.0
-CLOSE_RADIUS = 2.0
-VIEW_FOV = 0.8
-PATROL_PATH = PackedVector3Array(0, 0, 0)
 
-[node name="Enemy" parent="." instance=ExtResource("3_5q7x4")]
+[node name="Enemy" parent="." node_paths=PackedStringArray("PATROL_PATH") instance=ExtResource("3_5q7x4")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.82541, 0, 0)
 VIEW_RADIUS = 8.0
 CLOSE_RADIUS = 1.0
 VIEW_FOV = 0.3
-PATROL_PATH = PackedVector3Array(0, 0, -16.5, -7, 0, -17, 9, 0, -10.5, 10, 0, -18)
+PATROL_PATH = NodePath("../Path3D")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_n1s8n")
-
-[node name="Floor" type="MeshInstance3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
-mesh = SubResource("PlaneMesh_22yjv")
-skeleton = NodePath("../..")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Floor"]
-collision_mask = 7
-axis_lock_angular_x = true
-axis_lock_angular_y = true
-axis_lock_angular_z = true
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Floor/StaticBody3D"]
-shape = SubResource("ConvexPolygonShape3D_nnehf")
 
 [node name="BoxWall2" type="MeshInstance3D" parent="NavigationRegion3D"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 5.43366, 0, -17.7106)
@@ -157,3 +140,17 @@ axis_lock_angular_z = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Box/StaticBody3D"]
 shape = SubResource("ConvexPolygonShape3D_4ckxt")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.22963, 0)
+use_collision = true
+size = Vector3(100, 0.5, 100)
+
+[node name="Path3D" type="Path3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.6405, 0, -11.4214)
+curve = SubResource("Curve3D_1fatr")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.428714, 1, -16.3929)
+rotation_mode = 0
+tilt_enabled = false

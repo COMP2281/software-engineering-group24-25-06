@@ -15,7 +15,7 @@ material = SubResource("StandardMaterial3D_6jdm4")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_eg2rf"]
 
-[node name="Enemy" type="CharacterBody3D"]
+[node name="Enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 4
 collision_mask = 7
 axis_lock_angular_x = true
@@ -45,13 +45,14 @@ debug_enabled = true
 [node name="EyeLevel" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.499259, 0)
 
-[node name="EnemyStateMachine" type="Node" parent="."]
+[node name="EnemyStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_hji8w")
+initial_state = NodePath("Patrol")
 
 [node name="Patrol" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("4_82nks")
 
-[node name="Investigate" type="Node" parent="EnemyStateMachine" groups=["enemy"]]
+[node name="Investigate" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("6_56s6n")
 
 [node name="Hunting" type="Node" parent="EnemyStateMachine"]

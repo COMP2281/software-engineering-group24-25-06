@@ -1,18 +1,19 @@
 extends EnemyState
 
-func physics_update(delta:float) -> void:	
+func enter(previous_state_path: String, data := {}) -> void:
+	if not enemy.new_INVESTIGATION_POINT:
+		finished.emit(PATROL)
+		return
+	enemy.set_destination(enemy.new_INVESTIGATION_POINT);
+	enemy.new_INVESTIGATION_POINT = Vector3.ZERO
+	enemy.investigate_time_left = enemy.INVESTIGATION_TIME;
+
+func physics_update(delta:float) -> void:
 	if enemy.SUSPICION_LEVEL > enemy.HUNTING_BEGIN_THRESHOLD:
-		enemy.reset_investigation_params();
 		finished.emit(HUNTING);
 		return
 	
-	if enemy.INVESTIGATION_POINT != Vector3.INF:
-		enemy.set_destination(enemy.INVESTIGATION_POINT);
-		enemy.INVESTIGATION_POINT = Vector3.INF;
-		enemy.investigate_time_left = enemy.INVESTIGATION_TIME;
-	
-	if enemy.investigate_time_left == 0.0:
-		enemy.reset_investigation_params();
+	if enemy.investigate_time_left <= 0:
 		finished.emit(PATROL);
 		return 
 	
@@ -24,12 +25,6 @@ func physics_update(delta:float) -> void:
 		
 		# Begin decreasing the investigation time
 		enemy.investigate_time_left = clamp(enemy.investigate_time_left - delta, 0.0, enemy.INVESTIGATION_TIME);
-		
-		# Go back to patrol
-		if enemy.investigate_time_left == 0.0:
-			enemy.reset_investigation_params();
-			finished.emit(PATROL);
-			return 
 	
 		# If we see player during investigation, try to follow them with the camera
 		if enemy.CURRENTLY_SEEING_PLAYER:

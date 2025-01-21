@@ -1,11 +1,19 @@
 extends Node
 
+var SUSPICION_LEVEL : float = 0.0;
+signal changeSusLevel(newLevel:float)
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	changeSusLevel.connect(updateSusLevel)
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	var enemies = get_tree().get_nodes_in_group("enemy") as Array[Enemy]
+	if not enemies: return
+	var max_sus_level = enemies[0].SUSPICION_LEVEL
+	for enemy in enemies:
+		if enemy.SUSPICION_LEVEL > max_sus_level:
+			max_sus_level = enemy.SUSPICION_LEVEL
+	if SUSPICION_LEVEL != max_sus_level: changeSusLevel.emit(max_sus_level)
+
+func updateSusLevel(newLevel:float):
+	SUSPICION_LEVEL = newLevel

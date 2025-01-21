@@ -11,6 +11,6 @@ func physics_update(delta:float) -> void:
 	if enemy.SUSPICION_LEVEL < enemy.HUNTING_END_THRESHOLD:
 		finished.emit(PATROL);
 		return
-		
+	
 	# Just run straight towards player
 	enemy.set_destination(get_tree().get_nodes_in_group("player")[0].global_position);

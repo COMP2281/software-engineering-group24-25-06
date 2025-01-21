@@ -2,33 +2,30 @@ class_name Enemy extends CharacterBody3D;
 
 @export_group("View zone")
 ## Size of view cone
-@export var VIEW_RADIUS : float;
+@export var VIEW_RADIUS : float = 15;
 ## Size of full-circle close-radius view
-@export var CLOSE_RADIUS : float;
+@export var CLOSE_RADIUS : float = 2;
 ## FOV of view cone
-@export_range(0.0, 2.0 * PI) var VIEW_FOV : float;
+@export_range(0.0, 2.0 * PI) var VIEW_FOV : float = .8;
 
-@export_group("Modifiable parameters")
+@export_group("Behaviour Properties")
+@export_subgroup("Movement")
 @export var MOVE_SPEED : float = 5.0;
 @export var HUNT_SPEED : float = 7.5;
+## What distance can you turn in a second
+@export var ROTATION_SPEED : float = PI;
+@export_subgroup("Detection")
 ## Time (roughly in seconds) before full detection
 @export var DETECTION_SPEED : float = 1.0;
 ## Decay in suspicion per second (roughly)
 @export var SUSPICION_DECAY_RATE : float = 0.2;
 ## Range in which we will care about distractions
 @export var DISTRACTION_DETECTION_RANGE : float = 15.0;
-## What distance can you turn in a second
-@export var ROTATION_SPEED : float = PI;
 ## How stealthy sneaking is compared to normal walking for this enemy
 @export_range(1.0, 10.0) var SNEAKING_MODIFIER : float = 2.0;
 
-@export_group("General behaviour")
-@export_range(0.0, 1.0) var SUSPICION_LEVEL : float = 0.0;
-@export var CURRENTLY_SEEING_PLAYER : bool = false;
-
+# NOTE: Maybe we can remove some of this? Seems like excessive customisation, setting investigation time and scan speed will inherently set scan times and fov scan... idk...
 @export_group("Investigate behaviours")
-## Place to investigate
-@export var INVESTIGATION_POINT : Vector3 = Vector3.INF;
 ## At what suspicion level do we stop patrolling to investigate the player position
 @export_range(0.0, 1.0) var INVESTIGATE_THRESHOLD : float = 0.4;
 ## How long to stay in the investigation location
@@ -38,32 +35,22 @@ class_name Enemy extends CharacterBody3D;
 ## How many times to scan area
 @export var SCAN_TIMES : float = 1.5;
 
-@export_group("Patrol behaviours")
-@export var PATROL_PATH : PackedVector3Array;
+@export var PATROL_PATH : Path3D;
 
-@export_group("Hunt behaviours")
 ## At what suspicion level do we begin hunting
 @export_range(0.0, 1.0) var HUNTING_BEGIN_THRESHOLD : float = 0.9;
 ## At what suspicion level do we give up hunting
 @export_range(0.0, 1.0) var HUNTING_END_THRESHOLD : float = 0.5;
 
-var pathing_to_destination : bool = false;
-var target_angle : float = 0.0;
-
-# Patrol variables
-var current_patrol_index : int = 0;
-
-# Investigate variables
-var investigate_time_left : float = INF;
-
-var current_speed : float
-
-# Hunting variables
-# (None)
-
 @onready var navigation_agent_3d : NavigationAgent3D = $NavigationAgent3D;
 
-var gravity : float = ProjectSettings.get_setting("physics/3d/default_gravity");
+var current_speed : float
+## Place to investigate
+var new_INVESTIGATION_POINT : Vector3;
+var target_angle : float = 0.0;
+var SUSPICION_LEVEL : float = 0.0;
+var CURRENTLY_SEEING_PLAYER : bool = false;
+var investigate_time_left : float = INF;
 
 func _ready() -> void:
 	target_angle = global_rotation.y;
@@ -84,21 +71,6 @@ func wrap_angle(angle : float) -> float:
 
 func set_heading(angle : float) -> void:
 	target_angle = wrap_angle(angle);
-	
-func update_heading(delta : float) -> void:
-	var max_change : float = ROTATION_SPEED * delta;
-	var angle_diff : float = wrap_angle(target_angle - global_rotation.y);
-	var direction : float = sign(angle_diff);
-
-	global_rotation.y += direction * max_change;
-	
-	# Snap if close enough
-	if abs(angle_diff) < max_change:
-		global_rotation.y = target_angle;
-
-func reset_investigation_params() -> void:
-	investigate_time_left = INF;
-	INVESTIGATION_POINT = Vector3.INF;
 
 func set_destination(destination : Vector3) -> void:
 	var closest_point : Vector3 = NavigationServer3D.map_get_closest_point(
@@ -106,11 +78,6 @@ func set_destination(destination : Vector3) -> void:
 		destination
 	);
 	navigation_agent_3d.set_target_position(closest_point);
-	pathing_to_destination = true;
-
-func update_behaviour(delta: float) -> void:
-	if pathing_to_destination and navigation_agent_3d.is_target_reached():
-		pathing_to_destination = false;
 
 func _process(delta: float) -> void:
 	$ViewZone.VIEW_FOV = VIEW_FOV;
@@ -133,26 +100,24 @@ func _process(delta: float) -> void:
 		CURRENTLY_SEEING_PLAYER = false;
 		
 	SUSPICION_LEVEL = clamp(SUSPICION_LEVEL, 0.0, 1.0);
-	get_tree().get_nodes_in_group("player")[0].ENEMY_TOP_SUSPICION = max(get_tree().get_nodes_in_group("player")[0].ENEMY_TOP_SUSPICION, SUSPICION_LEVEL);
 	
 	if get_tree().get_nodes_in_group("player")[0].DISTRACTION != Vector3.INF and \
 		global_position.distance_to(get_tree().get_nodes_in_group("player")[0].DISTRACTION) < DISTRACTION_DETECTION_RANGE:
-		INVESTIGATION_POINT = get_tree().get_nodes_in_group("player")[0].DISTRACTION;
+		new_INVESTIGATION_POINT = get_tree().get_nodes_in_group("player")[0].DISTRACTION;
 	
-	update_behaviour(delta);
-	update_heading(delta);
-		
+	rotate_y(sign(wrap_angle(target_angle - global_rotation.y)) * min(abs(wrap_angle(target_angle - global_rotation.y)), ROTATION_SPEED * delta))
+
 func _physics_process(delta: float) -> void:
-	if pathing_to_destination:
-		var destination : Vector3 = navigation_agent_3d.get_next_path_position();
-		var local_destination : Vector3 = destination - global_position;
-		var direction : Vector3 = local_destination.normalized();
-		var heading : float = atan2(direction.x, direction.z) - PI;
-		
-		set_heading(heading);
-				
-		velocity.x = direction.x * current_speed;
-		velocity.z = direction.z * current_speed;
+	var destination : Vector3 = navigation_agent_3d.get_next_path_position();
+	var local_destination : Vector3 = destination - global_position;
+	var direction : Vector3 = local_destination.normalized();
+	var heading : float = atan2(direction.x, direction.z) - PI;
 	
-	velocity.y += -gravity * delta;
+	set_heading(heading);
+	velocity = direction * Vector3(1,0,1) * current_speed;
+	
+	# Add the gravity -> from default template
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+	
 	move_and_slide();
