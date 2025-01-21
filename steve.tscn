@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://dllwsv3qclh7i"]
+
+[ext_resource type="Script" path="res://steve.gd" id="1_xe0kt"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_35g45"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cc58u"]
+
+[node name="Steve" type="CharacterBody3D"]
+script = ExtResource("1_xe0kt")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_35g45")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_cc58u")
