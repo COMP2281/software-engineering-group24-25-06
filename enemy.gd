@@ -1,14 +1,11 @@
 extends CharacterBody3D;
 
-@export var player_node : Node3D = null;
+# TODO: viewzone resource not realy being used in some places
+#	and not a very intuitive system
 
 @export_group("View zone")
-## Size of view cone
-@export var VIEW_RADIUS : float;
-## Size of full-circle close-radius view
-@export var CLOSE_RADIUS : float;
-## FOV of view cone
-@export_range(0.0, 2.0 * PI) var VIEW_FOV : float;
+## Parameters for the view zone
+@export var viewzone_resource : Resource;
 
 @export_group("Modifiable parameters")
 @export var MOVE_SPEED : float = 5.0;
@@ -21,8 +18,10 @@ extends CharacterBody3D;
 @export var DISTRACTION_DETECTION_RANGE : float = 15.0;
 ## What distance can you turn in a second
 @export var ROTATION_SPEED : float = PI;
-## How stealthy sneaking is compared to normal walking for this enemy
-@export_range(1.0, 10.0) var SNEAKING_MODIFIER : float = 2.0;
+## Additive percentage buff to steathiness
+@export var SNEAKING_MODIFIER : float = 0.6;
+## How often are we allowed to recalculate our path/current heading
+@export var NAVIGATION_RECALCULATE_COOLDOWN : float = 0.2;
 
 @export_group("General behaviour")
 @export_range(0.0, 1.0) var SUSPICION_LEVEL : float = 0.0;
@@ -53,7 +52,10 @@ enum Behaviour { PATROL, INVESTIGATE, HUNTING };
 
 var current_behaviour = Behaviour.PATROL;
 var pathing_to_destination : bool = false;
+# Time elapsed pathing to current destination
+var pathing_time : float = INF;
 var target_angle : float = 0.0;
+var stealth_modifier : float = 1.0;
 
 # Patrol variables
 var current_patrol_index : int = 0;
@@ -107,7 +109,7 @@ func behaviour_patrol(delta: float) -> void:
 	
 	if SUSPICION_LEVEL >= INVESTIGATE_THRESHOLD:
 		# Investigate the player's current position
-		INVESTIGATION_POINT = player_node.global_position;
+		INVESTIGATION_POINT = PlayerProperties.global_position;
 		
 		return behaviour_investigate(delta);
 		
@@ -158,7 +160,7 @@ func behaviour_investigate(delta: float) -> void:
 	
 		# If we see player during investigation, try to follow them with the camera
 		if CURRENTLY_SEEING_PLAYER:
-			var towards_player : Vector3 = (player_node.global_position - global_position).normalized();
+			var towards_player : Vector3 = (PlayerProperties.global_position - global_position).normalized();
 			var toward_player_angle : float = atan2(towards_player.x, towards_player.z) - PI;
 			set_heading(toward_player_angle);
 		# Otherwise scan around the location to look for them
@@ -178,19 +180,24 @@ func behaviour_hunting(delta: float) -> void:
 		return behaviour_patrol(delta);
 		
 	# Just run straight towards player
-	set_destination(player_node.global_position);
+	set_destination(PlayerProperties.global_position);
 	
 func reset_investigation_params() -> void:
 	investigate_time_left = INF;
 	INVESTIGATION_POINT = Vector3.INF;
 
 func set_destination(destination : Vector3) -> void:
+	# Ensure we're not attempting to recalculate our path every frame
+	#	add a short cooldown period between updates
+	if pathing_time <= NAVIGATION_RECALCULATE_COOLDOWN: return;
+	
 	var closest_point : Vector3 = NavigationServer3D.map_get_closest_point(
 		navigation_agent_3d.get_navigation_map(),
 		destination
 	);
 	navigation_agent_3d.set_target_position(closest_point);
 	pathing_to_destination = true;
+	pathing_time = 0.0;
 
 func update_behaviour(delta: float) -> void:
 	match current_behaviour:
@@ -203,20 +210,28 @@ func update_behaviour(delta: float) -> void:
 			
 	if pathing_to_destination and navigation_agent_3d.is_target_reached():
 		pathing_to_destination = false;
+		
+func calculate_stealth_modifier(_delta: float) -> void:
+	stealth_modifier = 1.0;
+	
+	# TODO: should probably be a signal the player sends?
+	#	ideally all "player" actions occur in the player script
+	if Input.is_action_pressed("sneak"):
+		stealth_modifier += SNEAKING_MODIFIER;
 
 func _process(delta: float) -> void:
-	$ViewZone.VIEW_FOV = VIEW_FOV;
-	$ViewZone.VIEW_RADIUS = VIEW_RADIUS;
-	$ViewZone.CLOSE_RADIUS = CLOSE_RADIUS;
+	calculate_stealth_modifier(delta);
+	
+	$ViewZone.viewzone_resource = viewzone_resource;
 	$ViewZone.VIEW_DIRECTION = global_rotation.y;
 	$ViewZone.EYE_LEVEL_NODE = $EyeLevel;
-	
-	if player_node != null and $ViewZone.in_detection_range(player_node.global_position):
-		var suspicion_delta : float = DETECTION_SPEED;
 
-		# Be detected slower if sneaking
-		if Input.is_action_pressed("sneak"):
-			suspicion_delta *= 1.0 / SNEAKING_MODIFIER;
+	var detection_manifold : DetectionManifold = $ViewZone.in_detection_range(PlayerProperties.global_position);
+	
+	if detection_manifold.being_seen:
+		var suspicion_delta : float = DETECTION_SPEED;
+			
+		suspicion_delta *= 1.0 / stealth_modifier;
 			
 		SUSPICION_LEVEL += suspicion_delta * delta;
 		CURRENTLY_SEEING_PLAYER = true;
@@ -225,11 +240,21 @@ func _process(delta: float) -> void:
 		CURRENTLY_SEEING_PLAYER = false;
 		
 	SUSPICION_LEVEL = clamp(SUSPICION_LEVEL, 0.0, 1.0);
-	player_node.ENEMY_TOP_SUSPICION = max(player_node.ENEMY_TOP_SUSPICION, SUSPICION_LEVEL);
+	PlayerProperties.ENEMY_TOP_SUSPICION = max(PlayerProperties.ENEMY_TOP_SUSPICION, SUSPICION_LEVEL);
+	PlayerProperties.BEING_SEEN = PlayerProperties.BEING_SEEN or CURRENTLY_SEEING_PLAYER;
+	PlayerProperties.WITHIN_CLOSE_RADIUS = PlayerProperties.WITHIN_CLOSE_RADIUS or detection_manifold.within_close_range;
 	
-	if player_node.DISTRACTION != Vector3.INF and \
-		global_position.distance_to(player_node.DISTRACTION) < DISTRACTION_DETECTION_RANGE:
-		INVESTIGATION_POINT = player_node.DISTRACTION;
+	# TODO: should be a signal
+	# If the player has created a distraction point
+	#	and our distance to the distraction is less than our detection range
+	if PlayerProperties.created_distraction != Vector3.INF and \
+		global_position.distance_to(PlayerProperties.created_distraction) < DISTRACTION_DETECTION_RANGE:
+		INVESTIGATION_POINT = PlayerProperties.created_distraction;
+		
+	if pathing_to_destination:
+		pathing_time += delta;
+	else:
+		pathing_time = INF;
 	
 	update_behaviour(delta);
 	update_heading(delta);
@@ -247,6 +272,10 @@ func _physics_process(delta: float) -> void:
 		
 		velocity.x = direction.x * current_speed;
 		velocity.z = direction.z * current_speed;
+	
+	else:
+		velocity.x = 0.0;
+		velocity.z = 0.0;
 	
 	velocity.y += -gravity * delta;
 	move_and_slide();

@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://cr6oth1fbi3gy"]
+[gd_scene load_steps=7 format=3 uid="uid://cr6oth1fbi3gy"]
 
 [ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://view_zone.tscn" id="1_r0wsg"]
 [ext_resource type="Script" path="res://enemy.gd" id="1_tgd7p"]
+[ext_resource type="Resource" uid="uid://hcf8g06prayd" path="res://standard_enemy_viewzone.tres" id="2_3gv6p"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6jdm4"]
 albedo_color = Color(0, 0.851473, 0.851473, 1)
@@ -19,6 +20,7 @@ axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 script = ExtResource("1_tgd7p")
+viewzone_resource = ExtResource("2_3gv6p")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_pfnw3")
@@ -26,18 +28,16 @@ mesh = SubResource("CapsuleMesh_pfnw3")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("ConvexPolygonShape3D_a53ih")
 
+[node name="EyeLevel" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
 [node name="Nose" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.58867)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.589)
 size = Vector3(0.2, 0.2, 1)
 
-[node name="ViewZone" parent="." instance=ExtResource("1_r0wsg")]
+[node name="ViewZone" parent="." node_paths=PackedStringArray("EYE_LEVEL_NODE") instance=ExtResource("1_r0wsg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-CLOSE_RADIUS = 1.0
-VIEW_RADIUS = 8.0
-VIEW_FOV = 0.5
+EYE_LEVEL_NODE = NodePath("../EyeLevel")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 debug_enabled = true
-
-[node name="EyeLevel" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.499259, 0)

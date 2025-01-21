@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c3y4aglyk1mfp"]
+
+[ext_resource type="Script" path="res://reset_params.gd" id="1_wl5df"]
+
+[node name="ResetParams" type="Node3D"]
+script = ExtResource("1_wl5df")
