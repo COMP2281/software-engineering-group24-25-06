@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://1d8nsckw6cak"]
+[gd_scene load_steps=6 format=3 uid="uid://bp2kqx6gewi8t"]
 
-[ext_resource type="Script" path="res://security_cam.gd" id="1_cbhig"]
+[ext_resource type="Script" path="res://scripts/enemy/security_cam.gd" id="1_cbhig"]
 [ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://view_zone.tscn" id="1_uswrr"]
-[ext_resource type="Resource" uid="uid://dnlca62b8h51l" path="res://camera_enemy_viewzone.tres" id="2_wfyjb"]
+
+[sub_resource type="Resource" id="Resource_vnd8r"]
+metadata/__load_path__ = "res://camera_enemy_viewzone.tres"
 
 [sub_resource type="PrismMesh" id="PrismMesh_jxg61"]
 size = Vector3(1, 1, 2)
@@ -13,10 +15,9 @@ points = PackedVector3Array(0.0237223, 0.531746, 1.01587, -0.5, -0.5, -0.985088,
 [node name="SecurityCam" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 0, 0)
 script = ExtResource("1_cbhig")
-viewzone_resource = ExtResource("2_wfyjb")
+viewzone_resource = SubResource("Resource_vnd8r")
 
-[node name="ViewZone" parent="." node_paths=PackedStringArray("EYE_LEVEL_NODE") instance=ExtResource("1_uswrr")]
-EYE_LEVEL_NODE = NodePath("..")
+[node name="ViewZone" parent="." instance=ExtResource("1_uswrr")]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)

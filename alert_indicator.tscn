@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://d2vdxmwicnjhs"]
+
+[ext_resource type="Shader" path="res://alert_indicator.gdshader" id="1_bmydj"]
+[ext_resource type="Texture2D" uid="uid://dgaphxhkdg6nr" path="res://alert_indicator.png" id="2_htba4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vbwsi"]
+shader = ExtResource("1_bmydj")
+shader_parameter/alertness_level = 0.21
+shader_parameter/background_color = Color(1, 0, 0, 1)
+shader_parameter/alpha_image = ExtResource("2_htba4")
+
+[node name="AlertIndicator" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_vbwsi")
+layout_mode = 0
+offset_right = 133.0
+offset_bottom = 40.0
+mouse_filter = 2

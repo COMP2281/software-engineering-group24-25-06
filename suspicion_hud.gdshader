@@ -3,9 +3,7 @@ shader_type canvas_item;
 uniform sampler2D alpha_image : source_color;
 uniform float suspicion_level : hint_range(0.0, 1.0) = 0.0;
 
-void vertex() {
-	// Called for every vertex the material is visible on.
-}
+void vertex() {}
 
 void fragment() {
 	// Called for every pixel the material is visible on.
@@ -17,8 +15,3 @@ void fragment() {
 	// Go red when at max suspicion
 	COLOR.gb = vec2(abs(sign(suspicion_level - 1.0)));
 }
-
-//void light() {
-	// Called for every pixel for every light affecting the CanvasItem.
-	// Uncomment to replace the default light processing function with this one.
-//}

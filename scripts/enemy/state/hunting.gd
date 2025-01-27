@@ -1,16 +1,22 @@
 extends EnemyState
 
 func enter(previous_state_path: String, data := {}) -> void:
-	enemy.current_speed = enemy.HUNT_SPEED
-
+	enemy.current_speed = enemy.hunt_speed
+	
 func exit():
-	enemy.current_speed = enemy.MOVE_SPEED
+	enemy.current_speed = enemy.move_speed
 
 func physics_update(delta:float) -> void:
 	# Go back to patrol
-	if enemy.SUSPICION_LEVEL < enemy.HUNTING_END_THRESHOLD:
-		finished.emit(PATROL);
+	if enemy.suspicion_level < enemy.hunting_end_threshold:
+		finished.emit(PATROL)
 		return
-	
-	# Just run straight towards player
-	enemy.set_destination(get_tree().get_nodes_in_group("player")[0].global_position);
+		
+	# No clue where the player is, go to investigate
+	# TODO: during investigation, we suddenly gain
+	#	exact knowledge of player position...
+	if enemy.player_position_guess == Vector3.INF:
+		finished.emit(INVESTIGATE)
+		return
+		
+	enemy.set_destination(enemy.player_position_guess)

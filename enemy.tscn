@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://cr6oth1fbi3gy"]
 
 [ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://view_zone.tscn" id="1_r0wsg"]
-[ext_resource type="Script" path="res://enemy.gd" id="1_tgd7p"]
-[ext_resource type="Script" path="res://scripts/utility/StateMachine.gd" id="3_hji8w"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy.gd" id="1_tgd7p"]
+[ext_resource type="Script" path="res://scripts/utility/state_machine.gd" id="3_hji8w"]
 [ext_resource type="Script" path="res://scripts/enemy/state/patrol.gd" id="4_82nks"]
 [ext_resource type="Script" path="res://scripts/enemy/state/hunting.gd" id="5_l26g2"]
 [ext_resource type="Script" path="res://scripts/enemy/state/investigate.gd" id="6_56s6n"]
@@ -22,7 +22,6 @@ axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 script = ExtResource("1_tgd7p")
-viewzone_resource = ExtResource("2_3gv6p")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_pfnw3")
@@ -30,16 +29,12 @@ mesh = SubResource("CapsuleMesh_pfnw3")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_eg2rf")
 
-[node name="EyeLevel" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-
 [node name="Nose" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.589)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.58867)
 size = Vector3(0.2, 0.2, 1)
 
-[node name="ViewZone" parent="." node_paths=PackedStringArray("EYE_LEVEL_NODE") instance=ExtResource("1_r0wsg")]
+[node name="ViewZone" parent="." instance=ExtResource("1_r0wsg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-EYE_LEVEL_NODE = NodePath("../EyeLevel")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 debug_enabled = true

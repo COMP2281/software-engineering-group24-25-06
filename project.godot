@@ -22,6 +22,7 @@ StealthManager="*res://scripts/globals/stealth_manager.gd"
 [global_group]
 
 player=""
+security=""
 
 [input]
 
