@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://c5kx2gemjwxk1"]
+
+[ext_resource type="Script" path="res://viewzone_resources.gd" id="1_wmdkb"]
+
+[resource]
+script = ExtResource("1_wmdkb")
+detection_speed = 0.5
+fov = 0.523599
+close_radius = 0.5
+view_radius = 10.0

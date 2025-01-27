@@ -22,6 +22,7 @@ axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 script = ExtResource("1_tgd7p")
+viewzone_resource = ExtResource("2_3gv6p")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_pfnw3")
@@ -29,15 +30,16 @@ mesh = SubResource("CapsuleMesh_pfnw3")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_eg2rf")
 
+[node name="EyeLevel" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
 [node name="Nose" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.58867)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.589)
 size = Vector3(0.2, 0.2, 1)
 
-[node name="ViewZone" parent="." instance=ExtResource("1_r0wsg")]
+[node name="ViewZone" parent="." node_paths=PackedStringArray("EYE_LEVEL_NODE") instance=ExtResource("1_r0wsg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-CLOSE_RADIUS = 1.0
-VIEW_RADIUS = 8.0
-VIEW_FOV = 0.5
+EYE_LEVEL_NODE = NodePath("../EyeLevel")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 debug_enabled = true
