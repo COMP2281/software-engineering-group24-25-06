@@ -8,9 +8,9 @@ extends CharacterBody3D
 ## Time a distraction will persist for
 @export var DISTRACTION_DURATION : float = 0.3;
 
-var distraction_time_persisted : float = 0.0;
-var yaw_input : float = 0.0;
-var pitch_input : float = 0.0;
+@export_group("Script interoperability")
+## Where to create a distraction for enemies
+@export var DISTRACTION : Vector3 = Vector3.INF;
 
 var gravity : float = ProjectSettings.get_setting("physics/3d/default_gravity");
 
@@ -53,11 +53,15 @@ func _process(delta: float) -> void:
 	if PlayerProperties.BEING_SEEN and PlayerProperties.WITHIN_CLOSE_RADIUS and PlayerProperties.ENEMY_TOP_SUSPICION == 1.0:
 		print("Caught!");
 	
-	# TODO: resetting the suspicion could cause issues with update order (TODO: currently causing issues)
-	# PlayerProperties.ENEMY_TOP_SUSPICION = 0.0;
-	PlayerProperties.BEING_SEEN = false;
-	PlayerProperties.WITHIN_CLOSE_RADIUS = false;
-	PlayerProperties.global_position = global_position;
+	# Clamp both directions
+	pitch_pivot.rotation.x = clamp(
+		pitch_pivot.rotation.x,
+		-DOWN_RANGE * PI,
+		UP_RANGE * PI
+	);
+	
+	yaw_input = 0.0;
+	pitch_input = 0.0;
 	
 func _physics_process(delta: float):
 	var input : Vector3 = Vector3.ZERO;
