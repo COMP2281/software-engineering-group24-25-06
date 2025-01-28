@@ -20,12 +20,12 @@ from IPython.display import Image, display
 
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 credentials = {
-    "url" : "https://us-south.ml.cloud.ibm.com",
-    "apikey" : os.getenv("WATSONX_APIKEY")
+    "url" : "https://eu-gb.ml.cloud.ibm.com",
+    "apikey" : "..."
 }
-###
-project_id = os.getenv("WATSONX_PROJECT_ID")
-model_id = "granite3.1-dense"
+
+project_id = "..."
+model_id = "granite3.1-dense:2b"
 
 model = OllamaLLM(model=model_id)
 persistant_directory = os.path.join(os.path.dirname(__file__), "db", "test1")
@@ -53,7 +53,28 @@ def get_relevant_documents(question):
     context = retriever.invoke(f"{question}")
     return context
 
-tools = [get_relevant_documents]
+@tool 
+def get_relevant_question_from_database(topic: str):
+    """Retrieve a question with 4 options from the database based on the topic."""
+    results = retriever.invoke(f"{topic}")
+    
+    # Parse the results to extract question and options
+    # Assuming results have metadata with "question" and "options"
+    if results and len(results) > 0:
+        doc = results[0]  # Take the first result for simplicity
+        question = doc.get("metadata", {}).get("question", "No question found")
+        options = doc.get("metadata", {}).get("options", ["Option A", "Option B", "Option C", "Option D"])
+        return {
+            "question": question,
+            "options": options
+        }
+    else:
+        return {
+            "question": "No question found in the database.",
+            "options": ["N/A", "N/A", "N/A", "N/A"]
+        }
+
+tools = [get_relevant_documents, get_relevant_question_from_database]
 
 # contextualize_system_prompt = """Given a chat history and the
 #          latest user question which might 
@@ -76,7 +97,7 @@ witty, and maintain a spy/espionage theme while being helpful and accurate. Use 
 "Intel", "Mission" naturally in your responses, but keep it subtle, professional and sophisticated.
 
 If the user asks about AI, CyberSecurity, Data Analytics or Cloud Computing, respond ONLY with:
-"Do you want the data from the DATABASE or from my archives, Agent?"
+"Do you want the data from the DATABASE?"
 
 For all other topics, respond normally while maintaining the spy persona."""
 
@@ -105,6 +126,8 @@ class State(TypedDict):
 graph_builder = StateGraph(State)
 
 def chatbot(state: State):
+    # extract latest message
+    input_message = state["messages"][-1].content
     chain = (
         RunnablePassthrough.assign(
             chat_history=lambda x: state["messages"][:-1] if len(state["messages"]) > 1 else []
@@ -113,10 +136,11 @@ def chatbot(state: State):
         | model
     )
 
-    input_message = state["messages"][-1].content
     result = chain.invoke({"input": input_message})
     
-    return {"messages": [{"role": "assistant", "content": result}]}
+    return {"messages": [{"role": "assistant", "content": result}], 
+            "terminate": True
+    }
 
 def database_node(state: State):
     chain = (
@@ -136,63 +160,53 @@ def database_node(state: State):
         verbose=True
     )
 
-    last_message = state["messages"][-1]
-    input_content = last_message.content
+    last_message = state["messages"][-1].content
 
-    result = agent_executor.invoke({"input": input_content})
+    result = agent_executor.invoke({"input": last_message})
     
+    question = result.get("question", "No question found")
+    options = result.get("options", ["Option A", "Option B", "Option C", "Option D"])
+    formatted_options = "\n".join([f"{chr(65+i)}. {option}" for i, option in enumerate(options)])
     #Parse the actual questions and answers
     return {
-        "messages": [{"role": "assistant", "content": result["output"]}],
-        "current_question": input_content,
-        "current_choices": [],  
-        "correct_answer": ""
+        "messages": [{"role": "assistant", "content": f"Agent, here’s a question from the database:\n\n{question}\n\n{formatted_options}"}]
     }
 
 #gotta look out for typos and other too, not realistic that the user inputs the correct topic each time
 def topic_classifier(state: State) -> Literal["TOPIC_DETECTED", "NORMAL"]:
     last_message = state["messages"][-1].content.lower()
     
-    topics = ["ai", "cybersecurity", "data analytics", "cloud computing"]
+    topics = ["AI", "cybersecurity", "data analytics", "cloud computing"]
     if any(topic in last_message for topic in topics):
         return "TOPIC_DETECTED"
     return "NORMAL"
 
-def db_classifier(state: State) -> Literal["DATABASE", "ARCHIVES", "UNKNOWN"]:
+def db_classifier(state: State) -> Literal["DATABASE", "UNKNOWN"]:
     last_message = state["messages"][-1].content.lower()
     
     if "database" in last_message:
         return "DATABASE"
-    elif "archives" in last_message:
-        return "ARCHIVES"
+    # elif "archives" in last_message:
+    #     return "ARCHIVES"
     return "UNKNOWN"
 
-graph_builder.add_node("chatbot", chatbot)
-graph_builder.add_node("database", database_node)
-
+graph_builder.add_node("chatbot", chatbot)  # Define the chatbot node
+graph_builder.add_node("database", database_node)  # Define the database node
 graph_builder.add_edge(START, "chatbot")
-
-graph_builder.add_conditional_edges(
-    "chatbot",
-    topic_classifier,
-    {
-        "TOPIC_DETECTED": "chatbot",
-        "NORMAL": END
-    }
-)
-####
-graph_builder.add_conditional_edges(
-    "chatbot",
-    db_classifier,
-    {
-        "DATABASE": "database",
-        "ARCHIVES": "chatbot",
-        "UNKNOWN": END
-    }
-)
-
 graph_builder.add_edge("chatbot", END)
 graph_builder.add_edge("database", END)
+graph_builder.add_edge("chatbot", "database")
+
+# graph_builder.add_conditional_edges(
+#     "chatbot",
+#     topic_classifier,
+#     {
+#         "TOPIC_DETECTED": "database",
+#         "NORMAL": END
+#     }
+# )
+
+
 
 memory = MemorySaver()
 graph = graph_builder.compile(checkpointer=memory)
@@ -207,10 +221,14 @@ graph = graph_builder.compile(checkpointer=memory)
 
 def answering(user_input):
     user_message = {"role": "user", "content": user_input}
+
     events = graph.stream({"messages": [user_message]}, config) #Events is an iterator that yields the state of the graph after each step
+    
     for event in events:                                        #Each event represents a state change in the graph, with the state being a dictionary
         for val in event.values():
-            print('AI:', val["messages"][-1]["content"])
+            assistant_response = val["messages"][-1]["content"]
+            print('AI:', assistant_response)
+            return
 
 config = {"configurable" : {"thread_id": "1"}}
 
@@ -224,3 +242,4 @@ while True:
     answering(query)
 
 #CARE FOR QUESTIONS WITH TWO CORRECT CHOICES
+graph_builder.add_edge("chatbot", END)
