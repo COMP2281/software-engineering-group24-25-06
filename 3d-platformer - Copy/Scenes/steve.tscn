@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://dllwsv3qclh7i"]
+
+[ext_resource type="Script" path="res://Scripts/steve.gd" id="1_xe0kt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lmuwx"]
+albedo_color = Color(1, 0.07, 0.0854998, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_qivmc"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_spq7r"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7htbt"]
+
+[node name="Steve" type="CharacterBody3D"]
+floor_block_on_wall = false
+script = ExtResource("1_xe0kt")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_lmuwx")
+mesh = SubResource("CapsuleMesh_qivmc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(-0.00206428, -5.802e-09, -0.692527, -0.535171, 0, 0.00267124, -9.02316e-11, 0.132734, -3.02713e-08, 0.00140761, 0.364922, -0.470326)
+mesh = SubResource("CylinderMesh_spq7r")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_7htbt")
+
+[node name="Camera_controller" type="Node3D" parent="."]
+unique_name_in_owner = true
+top_level = true
+
+[node name="Camera_target" type="Node3D" parent="Camera_controller"]
+transform = Transform3D(1, 0, 0, 0, 0.944508, 0.328488, 0, -0.328488, 0.944508, 0, 2.66134, 5.06573)
+
+[node name="Camera3D" type="Camera3D" parent="Camera_controller/Camera_target"]
