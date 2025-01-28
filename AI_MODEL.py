@@ -15,7 +15,8 @@ from langchain.agents.format_scratchpad import format_log_to_str
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
-from typing import TypedDict, Annotated
+from typing import TypedDict, Annotated, Literal
+from IPython.display import Image, display
 
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 credentials = {
@@ -49,68 +50,37 @@ retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
 @tool
 def get_relevant_documents(question):
     """Retrieve relevant documents based on question."""
-    rephrased_question = question  # Assuming no rephrasing is necessary
-    context = retriever.invoke(f"{rephrased_question}")
+    context = retriever.invoke(f"{question}")
     return context
 
 tools = [get_relevant_documents]
 
-contextualize_system_prompt = """Given a chat history and the
-         latest user question which might 
-         reference context in the chat history, 
-         formulate a standalone question which 
-         can be understood without the chat history. 
-         Do NOT answer the question, just reformulate 
-         it if needed and otherwise return it as is"""
+# contextualize_system_prompt = """Given a chat history and the
+#          latest user question which might 
+#          reference context in the chat history, 
+#          formulate a standalone question which 
+#          can be understood without the chat history. 
+#          Do NOT answer the question, just reformulate 
+#          it if needed and otherwise return it as is"""
 
-contextualize_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", contextualize_system_prompt),
-        MessagesPlaceholder("chat_history", optional=True),
-        ("human", "User question: {input}"),
-    ]
-)
+# contextualize_prompt = ChatPromptTemplate.from_messages(
+#     [
+#         ("system", contextualize_system_prompt),
+#         MessagesPlaceholder("chat_history", optional=True),
+#         ("human", "User question: {input}"),
+#     ]
+# )
 
-system_prompt = """You are a helpful and freindly AI assitant. You can engage in casual conversation and help with questions/tasks.
-Respond to the human as helpfully and accurately as possible. You have access to the following tools: {tools}
-Use a json blob to specify a tool by providing an action key (tool name) and an action_input key (tool input).
-Valid "action" values: "Final Answer" or {tool_names}
-Provide only ONE action per $JSON_BLOB, as shown:"
-```
-{{
-  "action": $TOOL_NAME,
-  "action_input": $INPUT
-}}
-```
-Follow this format:
-Question: input question to answer
-Thought: consider previous and subsequent steps
-Action:
-```
-$JSON_BLOB
-```
-Observation: action result
-... (repeat Thought/Action/Observation N times)
-Thought: I know what to respond
-Action:
-```
-{{
-  "action": "Final Answer",
-  "action_input": "Final response to human"
-}}
+system_prompt = """You are BONSAI, an advanced AI companion to a spy operative. Your responses should be concise, 
+witty, and maintain a spy/espionage theme while being helpful and accurate. Use terms like "Agent", "Operative", 
+"Intel", "Mission" naturally in your responses, but keep it subtle, professional and sophisticated.
 
-For direct responses, use the following format:
-{{
-"action": "Final Answer",
-"action_input": "Your response here"
-}}
+If the user asks about AI, CyberSecurity, Data Analytics or Cloud Computing, respond ONLY with:
+"Do you want the data from the DATABASE or from my archives, Agent?"
 
-Begin! Reminder to ALWAYS respond with a valid json blob of a single action.
-Respond directly if appropriate. Format is Action:```$JSON_BLOB```then Observation"""
+For all other topics, respond normally while maintaining the spy persona."""
 
-human_prompt = """{input}
-{agent_scratchpad}
-(reminder to always respond in a JSON blob)"""
+human_prompt = """{input}"""
 
 prompt = ChatPromptTemplate.from_messages( 
     [
@@ -120,7 +90,7 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-prompt = prompt.partial(
+prompt_with_tools = prompt.partial(
     tools=render_text_description_and_args(list(tools)),
     tool_names=", ".join([t.name for t in tools]),
 )
@@ -128,50 +98,119 @@ prompt = prompt.partial(
 
 class State(TypedDict):
     messages : Annotated[list, add_messages]
+    current_question: str
+    current_choices: list
+    correct_answer: str
 
 graph_builder = StateGraph(State)
-memory = MemorySaver()
 
 def chatbot(state: State):
+    chain = (
+        RunnablePassthrough.assign(
+            chat_history=lambda x: state["messages"][:-1] if len(state["messages"]) > 1 else []
+        )
+        | prompt
+        | model
+    )
 
+    input_message = state["messages"][-1].content
+    result = chain.invoke({"input": input_message})
+    
+    return {"messages": [{"role": "assistant", "content": result}]}
+
+def database_node(state: State):
     chain = (
         RunnablePassthrough.assign(
             agent_scratchpad=lambda x: format_log_to_str(x.get("intermediate_steps", [])),
             chat_history=lambda x: state["messages"],
         )
-        | prompt
+        | prompt_with_tools
         | model
         | JSONAgentOutputParser()
     )
 
     agent_executor = AgentExecutor(
-        agent=chain, 
-        tools=tools, 
-        handle_parsing_errors=True, 
-        verbose=True)
+        agent=chain,
+        tools=tools,
+        handle_parsing_errors=True,
+        verbose=True
+    )
 
     last_message = state["messages"][-1]
     input_content = last_message.content
 
-    input_dict = {
-        "input": input_content,
-    }
+    result = agent_executor.invoke({"input": input_content})
     
-    result = agent_executor.invoke(input_dict)
+    #Parse the actual questions and answers
+    return {
+        "messages": [{"role": "assistant", "content": result["output"]}],
+        "current_question": input_content,
+        "current_choices": [],  
+        "correct_answer": ""
+    }
 
-    return {"messages": result["output"]}
+#gotta look out for typos and other too, not realistic that the user inputs the correct topic each time
+def topic_classifier(state: State) -> Literal["TOPIC_DETECTED", "NORMAL"]:
+    last_message = state["messages"][-1].content.lower()
+    
+    topics = ["ai", "cybersecurity", "data analytics", "cloud computing"]
+    if any(topic in last_message for topic in topics):
+        return "TOPIC_DETECTED"
+    return "NORMAL"
+
+def db_classifier(state: State) -> Literal["DATABASE", "ARCHIVES", "UNKNOWN"]:
+    last_message = state["messages"][-1].content.lower()
+    
+    if "database" in last_message:
+        return "DATABASE"
+    elif "archives" in last_message:
+        return "ARCHIVES"
+    return "UNKNOWN"
 
 graph_builder.add_node("chatbot", chatbot)
+graph_builder.add_node("database", database_node)
 
 graph_builder.add_edge(START, "chatbot")
-graph_builder.add_edge("chatbot", END)
 
+graph_builder.add_conditional_edges(
+    "chatbot",
+    topic_classifier,
+    {
+        "TOPIC_DETECTED": "chatbot",
+        "NORMAL": END
+    }
+)
+
+graph_builder.add_conditional_edges(
+    "chatbot",
+    db_classifier,
+    {
+        "DATABASE": "database",
+        "ARCHIVES": "chatbot",
+        "UNKNOWN": END
+    }
+)
+
+graph_builder.add_edge("chatbot", END)
+graph_builder.add_edge("database", END)
+
+memory = MemorySaver()
 graph = graph_builder.compile(checkpointer=memory)
 
+# png_data = graph.get_graph().draw_mermaid_png()
+# png_path = "/Users/jacobchau/Desktop/SE2025/langgraph.png"
+# with open(png_path, "wb") as f:
+#     f.write(png_data)
+
+# display(Image(png_path))
+
+
 def answering(user_input):
-    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}, config):
+    user_message = {"role": "user", "content": user_input}
+    events = graph.stream({"messages": [user_message]}, config) #Events is an iterator that yields the state of the graph after each step
+    for event in events:                                        #Each event represents a state change in the graph, with the state being a dictionary
         for val in event.values():
-            print('AI:', val["messages"])
+            print('AI:', val["messages"][-1]["content"])
 
 config = {"configurable" : {"thread_id": "1"}}
 
@@ -184,5 +223,4 @@ while True:
     
     answering(query)
 
-
-
+#CARE FOR QUESTIONS WITH TWO CORRECT CHOICES
