@@ -23,7 +23,7 @@ credentials = {
     "url" : "https://us-south.ml.cloud.ibm.com",
     "apikey" : os.getenv("WATSONX_APIKEY")
 }
-
+###
 project_id = os.getenv("WATSONX_PROJECT_ID")
 model_id = "granite3.1-dense"
 
@@ -180,7 +180,7 @@ graph_builder.add_conditional_edges(
         "NORMAL": END
     }
 )
-
+####
 graph_builder.add_conditional_edges(
     "chatbot",
     db_classifier,
