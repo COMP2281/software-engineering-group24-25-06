@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bo2h5yuq7f3sn"
-path="res://.godot/imported/Prop_Barrel2_Open.gltf-1992ddf3534b0a3fb0a4ce979549021f.scn"
+uid="uid://d2gw6pxmeccth"
+path="res://.godot/imported/world_blocks.glb-288e50286ae1c7bc6edd8a6a3430a9b5.scn"
 
 [deps]
 
-source_file="res://Assets/Models/glTF/Prop_Barrel2_Open.gltf"
-dest_files=["res://.godot/imported/Prop_Barrel2_Open.gltf-1992ddf3534b0a3fb0a4ce979549021f.scn"]
+source_file="res://Assets/Models/world_blocks.glb"
+dest_files=["res://.godot/imported/world_blocks.glb-288e50286ae1c7bc6edd8a6a3430a9b5.scn"]
 
 [params]
 
