@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://hcf8g06prayd"]
+[gd_resource type="Resource" script_class="ViewzoneResource" load_steps=2 format=3 uid="uid://hcf8g06prayd"]
 
 [ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="1_k48hh"]
 
@@ -6,5 +6,8 @@
 script = ExtResource("1_k48hh")
 detection_speed = 1.0
 fov = 0.872665
-close_radius = 0.5
+close_radius = 2.0
 view_radius = 5.0
+decay_rate = 0.2
+distraction_range = 15.0
+communication_range = 20.0

@@ -36,7 +36,7 @@ func _process(delta: float) -> void:
 		
 		var result := space_state.intersect_ray(query)
 		
-		if not result:
+		if result:
 			StealthManager.create_distraction(result.position)
 	
 func _physics_process(delta: float):
