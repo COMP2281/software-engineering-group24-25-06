@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://ce3p1lm0i2ps0" path="res://suspicion_level.png" id="2_153xl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oi24o"]
+resource_local_to_scene = true
 shader = ExtResource("1_fpull")
 shader_parameter/suspicion_level = 0.0
 shader_parameter/alpha_image = ExtResource("2_153xl")

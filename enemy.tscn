@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://cr6oth1fbi3gy"]
+[gd_scene load_steps=11 format=3 uid="uid://cr6oth1fbi3gy"]
 
 [ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://view_zone.tscn" id="1_r0wsg"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy.gd" id="1_tgd7p"]
+[ext_resource type="Resource" uid="uid://hcf8g06prayd" path="res://settings/viewzones/standard_enemy_viewzone.tres" id="2_lj6m4"]
 [ext_resource type="Script" path="res://scripts/utility/state_machine.gd" id="3_hji8w"]
 [ext_resource type="Script" path="res://scripts/enemy/state/patrol.gd" id="4_82nks"]
 [ext_resource type="Script" path="res://scripts/enemy/state/hunting.gd" id="5_l26g2"]
@@ -22,6 +23,7 @@ axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 script = ExtResource("1_tgd7p")
+viewzone_resource = ExtResource("2_lj6m4")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_pfnw3")

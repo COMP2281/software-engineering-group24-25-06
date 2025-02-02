@@ -3,8 +3,12 @@
 [ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="1_ogihh"]
 
 [resource]
+resource_local_to_scene = true
 script = ExtResource("1_ogihh")
 detection_speed = 0.5
 fov = 1.39626
 close_radius = 0.0
 view_radius = 7.0
+decay_rate = 0.2
+distraction_range = 0.0
+communication_range = 20.0

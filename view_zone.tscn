@@ -4,6 +4,7 @@
 [ext_resource type="Shader" path="res://view_zone.gdshader" id="2_kd0m1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_br0jy"]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_kd0m1")
 

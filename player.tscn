@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scripts/player/camera_arm.gd" id="2_4bayo"]
 [ext_resource type="PackedScene" uid="uid://cv8hqe5t8wwo0" path="res://suspicion_hud.tscn" id="3_g44f7"]
 [ext_resource type="PackedScene" uid="uid://d2vdxmwicnjhs" path="res://alert_indicator.tscn" id="3_s0651"]
-[ext_resource type="Script" path="res://alert_indicator.gd" id="4_75fte"]
+[ext_resource type="Script" path="res://scripts/hud/alert_indicator.gd" id="4_75fte"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_44oyu"]
 

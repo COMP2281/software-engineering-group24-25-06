@@ -4,10 +4,10 @@
 #	and suspicion calculations
 class_name ViewZone extends Node3D
 
-const OBSERVATION_EXPIRY = 1.0
-const OMNIPOTENCE_DURATION = 0.5
+const OBSERVATION_EXPIRY: float = 1.0
+const OMNIPOTENCE_DURATION: float = 0.5
 
-var viewzone_resource: ViewzoneResource
+var viewzone_resource: ViewzoneResource = null
 
 var view_direction: float = 0.0
 var eye_level_position: Vector3
@@ -25,6 +25,8 @@ signal new_distraction(location: Vector3)
 signal new_suspicion_level(suspicion_level: float, seeing_player: bool)
 
 func update_properties(stealth_modifier: float):
+	if viewzone_resource == null: return
+	
 	var multiplier: float = 1.0 / stealth_modifier
 	
 	close_radius = viewzone_resource.close_radius
@@ -43,8 +45,10 @@ func _ready() -> void:
 	StealthManager.change_stealth_level.connect(update_properties)
 
 func _process(delta: float) -> void:
-	# TODO: better to do this, _ready seems to be running in a different order
+	# TODO: better way to do this? _ready seems to be running in a different order
 	#	manually update properties
+	if viewzone_resource == null: return
+	
 	if view_radius == INF:
 		update_properties(1.0)
 		

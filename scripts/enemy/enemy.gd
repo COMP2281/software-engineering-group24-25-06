@@ -2,7 +2,7 @@ class_name Enemy extends CharacterBody3D
 
 @export_group("View zone")
 ## Resource containing detection properties
-@export var viewzone_resource : ViewzoneResource
+@export var viewzone_resource: ViewzoneResource
 
 @export_group("Behaviour Properties")
 @export_subgroup("Movement")
@@ -71,6 +71,10 @@ func set_destination(destination: Vector3) -> void:
 	navigation_agent_3d.set_target_position(closest_point)
 
 func _process(delta: float) -> void:
+	# TODO: surely better way
+	if $ViewZone.viewzone_resource == null:
+		$ViewZone.viewzone_resource = viewzone_resource
+	
 	$ViewZone.view_direction = global_rotation.y
 	$ViewZone.eye_level_position = $EyeLevel.global_position
 	

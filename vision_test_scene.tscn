@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://duasf3tupv7lt"]
+
+[ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://player.tscn" id="1_rohnn"]
+[ext_resource type="PackedScene" uid="uid://bp2kqx6gewi8t" path="res://security_cam.tscn" id="2_yqjhc"]
+[ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://enemy.tscn" id="4_khivw"]
+
+[sub_resource type="Environment" id="Environment_qa0di"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_e3rre"]
+
+[node name="VisionTestScene" type="Node3D"]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+size = Vector3(20, 1, 20)
+
+[node name="Player" parent="." instance=ExtResource("1_rohnn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.933924, -0.357472, 4.67501e-07, 0.294241, -0.768728, 0.567873, -0.202998, 0.53035, 0.823116, -1.56931, 5.90376, 5.01552)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_qa0di")
+camera_attributes = SubResource("CameraAttributesPractical_e3rre")
+
+[node name="SecurityCam" parent="." groups=["enemy"] instance=ExtResource("2_yqjhc")]
+transform = Transform3D(-1, 4.37114e-08, -7.57103e-08, 0, 0.866025, 0.5, 8.74228e-08, 0.5, -0.866025, 0.806678, 2.26172, -11.3212)
+
+[node name="Enemy" parent="." instance=ExtResource("4_khivw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0)

@@ -15,5 +15,9 @@ func update_suspicion_level(new_suspicion: float, seeing_player: bool):
 	currently_seeing_player = seeing_player
 
 func _process(delta: float) -> void:
+	# TODO: surely better way
+	if $ViewZone.viewzone_resource == null:
+		$ViewZone.viewzone_resource = viewzone_resource
+	
 	$ViewZone.view_direction = global_rotation.y
 	player_position_guess = $ViewZone.guess_player_position()
