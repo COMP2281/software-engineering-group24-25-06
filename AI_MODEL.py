@@ -21,10 +21,10 @@ from IPython.display import Image, display
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 credentials = {
     "url" : "https://eu-gb.ml.cloud.ibm.com",
-    "apikey" : "..."
+    "apikey" : "JOzHijjg6zn8G9hfkZxY34kJ_jHTXo4pzFLAjoTnzdIw"
 }
 
-project_id = "..."
+project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
 model_id = "granite3.1-dense:2b"
 
 model = OllamaLLM(model=model_id)
