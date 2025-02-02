@@ -2,13 +2,13 @@ extends EnemyState
 
 func enter(previous_state_path: String, data := {}) -> void:
 	# If there is no new investigation point, go to patrol
-	if not enemy.new_investigation_point:
+	if enemy.new_investigation_point == Vector3.INF:
 		finished.emit(PATROL)
 		return
-	
+		
 	# Otherwise, path to the investigation point
 	enemy.set_destination(enemy.new_investigation_point)
-	enemy.new_investigation_point = Vector3.ZERO
+	enemy.new_investigation_point = Vector3.INF
 	enemy.investigate_time_left = enemy.investigation_time
 
 func physics_update(delta: float) -> void:
@@ -16,9 +16,14 @@ func physics_update(delta: float) -> void:
 		finished.emit(HUNTING)
 		return
 	
-	if enemy.investigate_time_left <= 0:
+	if enemy.investigate_time_left <= 0.0:
 		finished.emit(PATROL)
-		return 
+		return
+		
+	if enemy.new_investigation_point != Vector3.INF:
+		enemy.set_destination(enemy.new_investigation_point)
+		enemy.new_investigation_point = Vector3.INF
+		enemy.investigate_time_left = enemy.investigation_time
 	
 	# Check if we've arrived at the location
 	if enemy.navigation_agent_3d.is_target_reached():

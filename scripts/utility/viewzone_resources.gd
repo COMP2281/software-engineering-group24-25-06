@@ -9,8 +9,9 @@ class_name ViewzoneResource extends Resource
 ## The radius of the view cone of the enemy
 @export var view_radius: float = 5.0
 ## How quickly suspicion decays from this enemy when not being seen
-@export var decay_rate: float = 0.2
-## The range at which this unit detects distractions
-@export var distraction_range: float = 0.0
+@export var decay_rate: float = 0.1
+# TODO: attach to hearing modifier?
 ## The range at which this unit communicates with others
 @export var communication_range: float = 20.0
+## Higher values signify this enemy can hear things from further away
+@export var hearing_modifier: float = 1.0

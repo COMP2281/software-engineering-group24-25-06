@@ -3,7 +3,7 @@ extends EnemyState
 func enter(previous_state_path: String, data := {}) -> void:
 	enemy.current_speed = enemy.hunt_speed
 	
-func exit():
+func exit() -> void:
 	enemy.current_speed = enemy.move_speed
 
 func physics_update(delta:float) -> void:

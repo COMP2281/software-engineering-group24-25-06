@@ -28,6 +28,7 @@ class_name Enemy extends CharacterBody3D
 ## The path about which this unit patrols
 @export var patrol_path: Path3D
 
+@export_group("Hunting behaviours")
 ## At what suspicion level do we begin hunting
 @export_range(0.0, 1.0) var hunting_begin_threshold: float = 0.9
 ## At what suspicion level do we give up hunting
@@ -42,7 +43,7 @@ var suspicion_level: float = 0.0
 var currently_seeing_player: bool = false
 var investigate_time_left: float = INF
 # The enemies best guess on the player's position
-var player_position_guess: Vector3 = Vector3.ZERO
+var player_position_guess: Vector3 = Vector3.INF
 
 func _ready() -> void:
 	target_angle = global_rotation.y
@@ -64,6 +65,8 @@ func set_heading(angle: float) -> void:
 	target_angle = wrapf(angle, -1.0 * PI, 1.0 * PI)
 
 func set_destination(destination: Vector3) -> void:
+	if destination == Vector3.INF: return
+	
 	var closest_point: Vector3 = NavigationServer3D.map_get_closest_point(
 		navigation_agent_3d.get_navigation_map(),
 		destination

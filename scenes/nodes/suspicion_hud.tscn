@@ -1,14 +1,14 @@
 [gd_scene load_steps=5 format=3 uid="uid://cv8hqe5t8wwo0"]
 
-[ext_resource type="Shader" path="res://suspicion_hud.gdshader" id="1_fpull"]
-[ext_resource type="Script" path="res://scripts/hud/suspicion_hud.gd" id="1_ota5a"]
-[ext_resource type="Texture2D" uid="uid://ce3p1lm0i2ps0" path="res://suspicion_level.png" id="2_153xl"]
+[ext_resource type="Script" path="res://scripts/hud/suspicion_hud.gd" id="1_3pud1"]
+[ext_resource type="Shader" path="res://shaders/suspicion_hud.gdshader" id="2_iapd4"]
+[ext_resource type="Texture2D" uid="uid://ce3p1lm0i2ps0" path="res://images/suspicion_level.png" id="3_0sdn8"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oi24o"]
 resource_local_to_scene = true
-shader = ExtResource("1_fpull")
+shader = ExtResource("2_iapd4")
 shader_parameter/suspicion_level = 0.0
-shader_parameter/alpha_image = ExtResource("2_153xl")
+shader_parameter/alpha_image = ExtResource("3_0sdn8")
 
 [node name="SuspicionView" type="Control"]
 layout_mode = 3
@@ -18,7 +18,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("1_ota5a")
+script = ExtResource("1_3pud1")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_oi24o")

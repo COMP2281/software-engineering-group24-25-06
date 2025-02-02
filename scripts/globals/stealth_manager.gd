@@ -1,9 +1,10 @@
 extends Node
 
-const SNEAKING_STEALTH_MODIFIER = 0.6
+const SNEAKING_STEALTH_MODIFIER: float = 0.6
 # By how much does global alertness influence the player's detectability
-const GLOBAL_ALERTNESS_WEIGHT = 0.3
-const BASELINE_GLOBAL_ALERTNESS = 0.2
+const GLOBAL_ALERTNESS_WEIGHT: float = 0.3
+const BASELINE_GLOBAL_ALERTNESS: float = 0.2
+const OBSERVATION_SCORE_WEIGHT: float = 0.2
 
 # Value ranging from 0.0 - 1.0,
 #	either a global difficulty
@@ -11,14 +12,19 @@ var global_alertness_level: float = BASELINE_GLOBAL_ALERTNESS
 
 var suspicion_level: float = 0.0
 var player_position: Vector3 = Vector3.ZERO
-var stealth_modifier: float = 0.0
+var stealth_modifier: float = 1.0
 
 var player_observed_position: Vector3 = Vector3.INF
 var player_observed_elapsed: float = 0.0
 var player_observer_position: Vector3 = Vector3.INF
 
-# How many units have seen us in the last minute
-var number_observations: int = 0
+# TODO: remove
+# Tracks the timestamp of every observation
+#	check delta time, if under a minute, filter
+#	length is number of observations in last minute
+#	TODO: weight observations effect on global alertness by recency?
+var observation_tracker: PackedFloat32Array = []
+var observation_amnesia: float = 60.0
 
 signal change_suspicion_level(new_level: float)
 signal change_stealth_level(new_stealth: float)
@@ -44,7 +50,14 @@ func get_security() -> Array[ViewZone]:
 func calculate_global_alertness() -> void:
 	var global_alertness: float = BASELINE_GLOBAL_ALERTNESS
 	
-	global_alertness += number_observations * 0.1
+	# The more times the player has been recently observed, the higher this score is
+	#	ranges from 0-number of units
+	var observation_score: float = 0.0
+	
+	for time_since_observed in observation_tracker:
+		observation_score += 1.0 - (time_since_observed / observation_amnesia)
+	
+	global_alertness += observation_score * OBSERVATION_SCORE_WEIGHT
 	global_alertness = clamp(global_alertness, 0.0, 1.0)
 	
 	if global_alertness != global_alertness_level:
@@ -60,16 +73,16 @@ func _process(delta: float) -> void:
 	if not security: return
 	
 	# Get maximum suspicion level of all enemies
-	var max_sus_level = security[0].suspicion_level
-	number_observations = 0
+	var max_sus_level: float = security[0].suspicion_level
+	observation_tracker = []
 	
 	for unit in security:
 		# Suspicion level calculation
 		if unit.suspicion_level > max_sus_level:
 			max_sus_level = unit.suspicion_level
 			
-		if unit.time_since_seen_player < 60.0:
-			number_observations += 1
+		if unit.time_since_seen_player < observation_amnesia:
+			observation_tracker.append(unit.time_since_seen_player)
 			
 	# Update suspicion level if changed
 	if suspicion_level != max_sus_level:
@@ -93,10 +106,12 @@ func calculate_stealth_modifier():
 		current_stealth += SNEAKING_STEALTH_MODIFIER
 	
 	if stealth_modifier != current_stealth: change_stealth_level.emit(current_stealth)
-	
-func create_distraction(location: Vector3):
+
+# Volume parameter describes how "severe" a sound is, where moving is of low interest,
+#	but the player-made distraction is of maximum volume
+func player_makes_sound(location: Vector3, hearing_range: float, volume: float):
 	var security: Array[ViewZone] = get_security()
 	if not security: return
 	
 	for unit in security:
-		unit.process_distraction(location)
+		unit.process_distraction(location, hearing_range, volume)

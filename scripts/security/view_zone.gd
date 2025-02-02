@@ -19,7 +19,7 @@ var detection_speed: float = 0.0
 
 var suspicion_level: float = 0.0
 var currently_seeing_player: bool = false
-var time_since_seen_player: float = 0.0
+var time_since_seen_player: float = INF
 
 signal new_distraction(location: Vector3)
 signal new_suspicion_level(suspicion_level: float, seeing_player: bool)
@@ -105,11 +105,22 @@ func in_detection_range(player_position: Vector3) -> DetectionManifold:
 	
 	return manifold
 	
-func process_distraction(location: Vector3) -> void:
+func process_distraction(location: Vector3, hearing_range: float, volume: float) -> void:
+	if viewzone_resource.hearing_modifier == 0.0: return
+	
 	# TODO: for now, we're just getting straight distance
 	#	in future, use something in navigation to get "real"
 	#	distance
-	if global_position.distance_to(location) < viewzone_resource.distraction_range:
+	var dist: float = global_position.distance_to(location)
+	
+	volume /= StealthManager.stealth_modifier
+	# Linear fall-off of volume and distance
+	volume *= 1.0 - min(1.0, (dist / (viewzone_resource.hearing_modifier * hearing_range)))
+	
+	print("Unit received sound, volume was ", volume, " distance was ", dist)
+	
+	# TODO: Random constant
+	if volume > 0.05:
 		new_distraction.emit(location)
 		
 func guess_player_position() -> Vector3:

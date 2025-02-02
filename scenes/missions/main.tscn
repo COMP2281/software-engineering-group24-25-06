@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dipbvseepvdun"]
+
+[ext_resource type="PackedScene" uid="uid://bbhvgdj8cy05u" path="res://scenes/missions/enemy_hunt_scene.tscn" id="1_t8uv5"]
+
+[node name="MainSceneNode" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 0)
+
+[node name="EnemyHuntScene" parent="." instance=ExtResource("1_t8uv5")]

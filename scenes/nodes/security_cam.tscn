@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://bp2kqx6gewi8t"]
 
-[ext_resource type="Script" path="res://scripts/enemy/security_cam.gd" id="1_cbhig"]
-[ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://view_zone.tscn" id="1_uswrr"]
-[ext_resource type="Resource" uid="uid://cgmw082vs1qwk" path="res://settings/viewzones/camera_enemy_viewzone.tres" id="2_ydt4m"]
+[ext_resource type="Script" path="res://scripts/enemy/security_cam.gd" id="1_85dlm"]
+[ext_resource type="Resource" uid="uid://cgmw082vs1qwk" path="res://settings/viewzones/camera_enemy_viewzone.tres" id="2_ar836"]
+[ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://scenes/nodes/view_zone.tscn" id="3_kxi3s"]
 
 [sub_resource type="PrismMesh" id="PrismMesh_jxg61"]
 size = Vector3(1, 1, 2)
@@ -12,10 +12,10 @@ points = PackedVector3Array(0.0237223, 0.531746, 1.01587, -0.5, -0.5, -0.985088,
 
 [node name="SecurityCam" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 0, 0)
-script = ExtResource("1_cbhig")
-viewzone_resource = ExtResource("2_ydt4m")
+script = ExtResource("1_85dlm")
+viewzone_resource = ExtResource("2_ar836")
 
-[node name="ViewZone" parent="." instance=ExtResource("1_uswrr")]
+[node name="ViewZone" parent="." instance=ExtResource("3_kxi3s")]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)

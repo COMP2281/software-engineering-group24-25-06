@@ -1,0 +1,132 @@
+[gd_scene load_steps=16 format=3 uid="uid://duasf3tupv7lt"]
+
+[ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/nodes/player.tscn" id="1_rohnn"]
+[ext_resource type="PackedScene" uid="uid://bp2kqx6gewi8t" path="res://scenes/nodes/security_cam.tscn" id="2_yqjhc"]
+[ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="3_su60l"]
+[ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://scenes/nodes/enemy.tscn" id="4_khivw"]
+
+[sub_resource type="Environment" id="Environment_qa0di"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_e3rre"]
+
+[sub_resource type="Resource" id="Resource_isor4"]
+resource_local_to_scene = true
+script = ExtResource("3_su60l")
+detection_speed = 1.0
+fov = 75.0
+close_radius = 0.0
+view_radius = 5.0
+decay_rate = 0.1
+communication_range = 20.0
+hearing_modifier = 1.0
+
+[sub_resource type="GDScript" id="GDScript_2vfhe"]
+script/source = "class_name ViewzoneResource extends Resource
+
+## How quickly a player will get detected, 1 / time
+@export var detection_speed: float = 1.0
+## The FOV of the enemy
+@export_range(0.0, 180.0, 0.5, \"radians_as_degrees\") var fov: float = 75.0
+## The close-range circle around which the player will be detected
+@export var close_radius: float = 0.5
+## The radius of the view cone of the enemy
+@export var view_radius: float = 5.0
+## How quickly suspicion decays from this enemy when not being seen
+@export var decay_rate: float = 0.2
+## The range at which this unit detects distractions
+@export var distraction_range: float = 0.0
+## The range at which this unit communicates with others
+@export var communication_range: float = 20.0
+"
+
+[sub_resource type="Resource" id="Resource_kpow5"]
+resource_local_to_scene = true
+script = SubResource("GDScript_2vfhe")
+detection_speed = 1.0
+fov = 0.872665
+close_radius = 2.0
+view_radius = 5.0
+decay_rate = 0.2
+distraction_range = 15.0
+communication_range = 20.0
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_huyi3"]
+vertices = PackedVector3Array(-5.5, -0.5, -14.75, -4, -0.5, -14.75, -4.25, -0.5, -49, -6.25, -0.5, -14, -49, -0.5, -49, -49, -0.5, -13, -6.25, -0.5, -13, 3.75, -0.5, -14.75, 4, -0.5, -49, 5.25, -0.5, -14.75, 6, -0.5, -14, 49, -0.5, -13, 49, -0.5, -49, 6, -0.5, -13, -6.25, -0.5, -12.25, -5.5, -0.5, -11.5, -49, -0.5, 49, -3.5, -0.5, 49, -3.5, -0.5, -11.5, 6, -0.5, -12.25, 5.25, -0.5, -11.5, 3.25, -0.5, 49, 49, -0.5, 49, 3.25, -0.5, -11.5)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(0, 3, 2), PackedInt32Array(2, 3, 4), PackedInt32Array(4, 3, 5), PackedInt32Array(3, 6, 5), PackedInt32Array(1, 2, 7), PackedInt32Array(7, 2, 8), PackedInt32Array(9, 7, 8), PackedInt32Array(9, 8, 10), PackedInt32Array(10, 8, 12), PackedInt32Array(10, 12, 11), PackedInt32Array(11, 13, 10), PackedInt32Array(5, 6, 14), PackedInt32Array(14, 15, 5), PackedInt32Array(5, 15, 16), PackedInt32Array(16, 15, 17), PackedInt32Array(15, 18, 17), PackedInt32Array(19, 13, 11), PackedInt32Array(19, 11, 20), PackedInt32Array(20, 11, 22), PackedInt32Array(20, 22, 21), PackedInt32Array(21, 23, 20), PackedInt32Array(18, 23, 17), PackedInt32Array(17, 23, 21)]
+cell_height = 1.0
+border_size = 0.5
+agent_radius = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_hoa7v"]
+size = Vector3(10, 5, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_gn831"]
+points = PackedVector3Array(-5.07738, -2.57937, -0.579365, 4.76966, 2.5, 0.498076, 5.07738, 2.65873, -0.579365, 5.07738, -2.57937, -0.579365, -5.07738, 2.65873, -0.579365, -4.78724, -2.42971, 0.5, 4.78724, -2.42971, 0.5, -4.76966, 2.5, 0.498076)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7y0kr"]
+size = Vector2(100, 100)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_58swx"]
+points = PackedVector3Array(50.7837, 0.793495, 50.7837, -50.7837, -0.793495, -50.7837, -50.7837, 0.793495, -50.7837, 50.7837, -0.793495, -50.7837, -50.7837, -0.793495, 50.7837, -50.7837, 0.793495, 50.7837, 50.7837, 0.793495, -50.7837, 50.7837, -0.793495, 50.7837)
+
+[sub_resource type="Curve3D" id="Curve3D_ikn36"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0377035, 0, -11.4451, 0, 0, 0, 0, 0, 0, -14.3031, 0, -11.5243, 0, 0, 0, 0, 0, 0, -15.0162, 0, -0.59047, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+}
+point_count = 5
+
+[node name="VisionTestScene" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource("1_rohnn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.933924, -0.357472, 4.67501e-07, 0.294241, -0.768728, 0.567873, -0.202998, 0.53035, 0.823116, -1.56931, 5.90376, 5.01552)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_qa0di")
+camera_attributes = SubResource("CameraAttributesPractical_e3rre")
+
+[node name="SecurityCam" parent="." groups=["enemy"] instance=ExtResource("2_yqjhc")]
+transform = Transform3D(-1, 4.37114e-08, -7.57103e-08, 0, 0.866025, 0.5, 8.74228e-08, 0.5, -0.866025, 0.806678, 2.26172, -11.3212)
+viewzone_resource = SubResource("Resource_isor4")
+
+[node name="Enemy" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("4_khivw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0)
+viewzone_resource = SubResource("Resource_kpow5")
+patrol_path = NodePath("../Path3D")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_huyi3")
+
+[node name="BoxWall" type="MeshInstance3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.022, 0, -13.081)
+mesh = SubResource("BoxMesh_hoa7v")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/BoxWall"]
+collision_mask = 7
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/BoxWall/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_gn831")
+
+[node name="Floor" type="MeshInstance3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.27579, 0)
+mesh = SubResource("PlaneMesh_7y0kr")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Floor"]
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Floor/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_58swx")
+
+[node name="Path3D" type="Path3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -5)
+curve = SubResource("Curve3D_ikn36")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.999995, 0, -0.00329428, 0, 1, 0, 0.00329428, 0, 0.999995, 0, 0, 0)

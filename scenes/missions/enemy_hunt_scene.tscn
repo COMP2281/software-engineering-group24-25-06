@@ -1,46 +1,46 @@
-[gd_scene load_steps=16 format=3 uid="uid://cgqo76ko6ys4d"]
+[gd_scene load_steps=18 format=3 uid="uid://bbhvgdj8cy05u"]
 
-[ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://player.tscn" id="1_ywsxv"]
-[ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://enemy.tscn" id="2_rsxf5"]
-[ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="3_535q4"]
-[ext_resource type="PackedScene" uid="uid://bp2kqx6gewi8t" path="res://security_cam.tscn" id="5_8fer3"]
+[ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/nodes/player.tscn" id="1_h4kwu"]
+[ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://scenes/nodes/enemy.tscn" id="2_8uedt"]
+[ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="3_qvbrg"]
+[ext_resource type="PackedScene" uid="uid://bp2kqx6gewi8t" path="res://scenes/nodes/security_cam.tscn" id="4_entd0"]
 
 [sub_resource type="Environment" id="Environment_3sjj3"]
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_t51aw"]
 
-[sub_resource type="Resource" id="Resource_cubyy"]
+[sub_resource type="Resource" id="Resource_a4nis"]
 resource_local_to_scene = true
-script = ExtResource("3_535q4")
+script = ExtResource("3_qvbrg")
 detection_speed = 0.5
 fov = 0.523599
 close_radius = 1.0
 view_radius = 10.0
-decay_rate = 0.2
-distraction_range = 15.0
+decay_rate = 0.1
 communication_range = 20.0
+hearing_modifier = 1.0
 
-[sub_resource type="Resource" id="Resource_m1dk5"]
+[sub_resource type="Resource" id="Resource_wmyiq"]
 resource_local_to_scene = true
-script = ExtResource("3_535q4")
+script = ExtResource("3_qvbrg")
 detection_speed = 1.0
-fov = 0.872665
-close_radius = 2.0
-view_radius = 5.0
-decay_rate = 0.2
-distraction_range = 15.0
+fov = 1.0472
+close_radius = 1.0
+view_radius = 8.0
+decay_rate = 0.1
 communication_range = 20.0
+hearing_modifier = 1.0
 
-[sub_resource type="Resource" id="Resource_1gtcc"]
+[sub_resource type="Resource" id="Resource_kjex3"]
 resource_local_to_scene = true
-script = ExtResource("3_535q4")
+script = ExtResource("3_qvbrg")
 detection_speed = 0.5
 fov = 1.39626
 close_radius = 0.0
 view_radius = 7.0
-decay_rate = 0.2
-distraction_range = 0.0
+decay_rate = 0.1
 communication_range = 20.0
+hearing_modifier = 1.0
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_pauip"]
 vertices = PackedVector3Array(-15, -0.5, -28, -13, -0.5, -28, -13, -0.5, -49, -15.75, -0.5, -27.25, -49, -0.5, -49, -49, -0.5, -26, -15.75, -0.5, -25.75, -5.25, -0.5, -28, -5.25, -0.5, -49, 7, -0.5, -18.25, 11.75, -0.5, -18.25, 11.75, -0.5, -19.75, 7, -0.5, -23, 12.5, -0.5, -20.5, -3.25, -0.5, -28, -2.5, -0.5, -27.25, 4.75, -0.5, -23.75, 6.25, -0.5, -23.75, 13.25, -0.5, -49, 13.25, -0.5, -20.5, -2.5, -0.5, -25.75, 15.25, -0.5, -20.5, 16, -0.5, -19.75, 49, -0.5, -18.25, 49, -0.5, -49, 16, -0.5, -18.25, -49, -0.5, -17.75, -15.75, -0.5, -18, -12.5, -0.5, -20.75, -12, -0.5, -20.75, -12, -0.5, -22.25, -12.5, -0.5, -24.75, -3.25, -0.5, -24.75, -8.5, -0.5, -23, -7.75, -0.5, -22.25, -11.25, -0.5, -23, -9, -0.5, -18.75, -6.25, -0.5, -13.75, -5.5, -0.5, -14.75, -7.75, -0.5, -19.75, 3.75, -0.5, -23, 3.75, -0.5, -14.75, -12, -0.5, -19.5, -12.5, -0.5, -16.5, -15.75, -0.5, -16.5, -11.25, -0.5, -18.75, -13.25, -0.5, -15.75, -6.25, -0.5, -12.25, -15, -0.5, -15.75, -5.5, -0.5, -11.5, -49, -0.5, 49, -3.5, -0.5, 49, -3.5, -0.5, -11.5, 11.75, -0.5, -17, 12.5, -0.5, -16.25, 7, -0.5, -12.25, 15.25, -0.5, -16.25, 6.25, -0.5, -11.5, 4.25, -0.5, 49, 49, -0.5, 49, 4.25, -0.5, -11.5, 16, -0.5, -17)
@@ -61,6 +61,12 @@ size = Vector3(2, 2, 2)
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_dgasc"]
 points = PackedVector3Array(-1, -1, -1, 1, 1, 1, 1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1, -1, -1, -1, 1, -1, 1, -1)
 
+[sub_resource type="PlaneMesh" id="PlaneMesh_nc7gc"]
+size = Vector2(100, 100)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_uo2qw"]
+points = PackedVector3Array(50.7837, 0.793495, 50.7837, -50.7837, -0.793495, -50.7837, -50.7837, 0.793495, -50.7837, 50.7837, -0.793495, -50.7837, -50.7837, -0.793495, 50.7837, -50.7837, 0.793495, 50.7837, 50.7837, 0.793495, -50.7837, 50.7837, -0.793495, 50.7837)
+
 [sub_resource type="Curve3D" id="Curve3D_7g3qx"]
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, -0.428714, 1, -16.3929, 0, 0, 0, 0, 0, 0, -8.41434, 1, -16.6003, 0, 0, 0, 0, 0, 0, -12.1997, 1, -10.274, 0, 0, 0, 0, 0, 0, -21.6891, 1, -1.35499, 0, 0, 0, 0, 0, 0, -21.2225, 1, 3.72677, 0, 0, 0, 0, 0, 0, -0.480571, 1, 3.10452, 0, 0, 0, 0, 0, 0, -0.428714, 1, -16.3929),
@@ -68,7 +74,7 @@ _data = {
 }
 point_count = 7
 
-[node name="DefaultScene" type="Node3D"]
+[node name="EnemyHuntScene" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.933924, -0.357472, 4.67501e-07, 0.294241, -0.768728, 0.567873, -0.202998, 0.53035, 0.823116, -1.56931, 5.90376, 5.01552)
@@ -77,20 +83,20 @@ transform = Transform3D(-0.933924, -0.357472, 4.67501e-07, 0.294241, -0.768728, 
 environment = SubResource("Environment_3sjj3")
 camera_attributes = SubResource("CameraAttributesPractical_t51aw")
 
-[node name="Player" parent="." instance=ExtResource("1_ywsxv")]
+[node name="Player" parent="." instance=ExtResource("1_h4kwu")]
 
-[node name="SniperEnemy" parent="." instance=ExtResource("2_rsxf5")]
-transform = Transform3D(0.0574246, 0, -0.99835, 0, 1, 0, 0.99835, 0, 0.0574246, 4.82541, 0, 4.82541)
-viewzone_resource = SubResource("Resource_cubyy")
+[node name="SniperEnemy" parent="." instance=ExtResource("2_8uedt")]
+transform = Transform3D(0.0574246, 0, -0.99835, 0, 1, 0, 0.99835, 0, 0.0574246, 4.82541, 0, 25.2603)
+viewzone_resource = SubResource("Resource_a4nis")
 
-[node name="StandardEnemy" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("2_rsxf5")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.82541, 0, 0)
-viewzone_resource = SubResource("Resource_m1dk5")
+[node name="StandardEnemy" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("2_8uedt")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.82541, 0, -5.04964)
+viewzone_resource = SubResource("Resource_wmyiq")
 patrol_path = NodePath("../Path3D")
 
-[node name="SecurityCam" parent="." groups=["enemy"] instance=ExtResource("5_8fer3")]
+[node name="SecurityCam" parent="." groups=["enemy"] instance=ExtResource("4_entd0")]
 transform = Transform3D(-1, 4.37114e-08, -7.57103e-08, 0, 0.866025, 0.5, 8.74228e-08, 0.5, -0.866025, 0.806678, 2.26172, -11.3212)
-viewzone_resource = SubResource("Resource_1gtcc")
+viewzone_resource = SubResource("Resource_kjex3")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_pauip")
@@ -178,10 +184,15 @@ axis_lock_angular_z = true
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Box/StaticBody3D"]
 shape = SubResource("ConvexPolygonShape3D_dgasc")
 
-[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.22963, 0)
-use_collision = true
-size = Vector3(100, 0.5, 100)
+[node name="Floor" type="MeshInstance3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.27579, 0)
+mesh = SubResource("PlaneMesh_nc7gc")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Floor"]
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Floor/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_uo2qw")
 
 [node name="Path3D" type="Path3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.6405, 0, -11.4214)
