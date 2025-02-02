@@ -24,10 +24,10 @@ from typing_extensions import Literal
 # IBM Watson Credentials
 credentials = {
     "url": "https://eu-gb.ml.cloud.ibm.com",
-    "apikey": "JOzHijjg6zn8G9hfkZxY34kJ_jHTXo4pzFLAjoTnzdIw"
+    "apikey": "..."
 }
 
-project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
+project_id = "..."
 model_id = "granite3.1-dense:2b"
 
 # Initialize Model
