@@ -12,234 +12,337 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain.agents.output_parsers import JSONAgentOutputParser
 from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad import format_log_to_str
+import re
 from langgraph.graph import StateGraph, START, END
+from IPython.display import Image, display
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from typing import TypedDict, Annotated, Literal
 from IPython.display import Image, display
+from langchain_core.messages import HumanMessage, SystemMessage
+from pydantic import BaseModel, Field
+from typing_extensions import Literal
 
 #EU = "https://eu-gb.ml.cloud.ibm.com"
+#NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url" : "https://eu-gb.ml.cloud.ibm.com",
-    "apikey" : "JOzHijjg6zn8G9hfkZxY34kJ_jHTXo4pzFLAjoTnzdIw"
+    "url": "https://us-south.ml.cloud.ibm.com",
+    "apikey": os.getenv("WATSONX_APIKEY"),
 }
 
-project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
-model_id = "granite3.1-dense:2b"
+project_id = os.getenv("WATSONX_PROJECT_ID")
+model_id = "granite3.1-dense"
 
+# Initialize Model
 model = OllamaLLM(model=model_id)
 persistant_directory = os.path.join(os.path.dirname(__file__), "db", "test1")
 
+# Initialize Embeddings
 embeddings = WatsonxEmbeddings(
     model_id=EmbeddingTypes.IBM_SLATE_30M_ENG.value,
-    url = credentials.get("url"),
-    apikey = credentials.get("apikey"),
-    project_id = project_id,
+    url=credentials["url"],
+    apikey=credentials["apikey"],
+    project_id=project_id,
 )
-#20 AI questions, 19 Cyberseucrity questions, 21 Data Analytic questions, 27 Cloud questions.
 
+# Initialize Vector Store
 vectorstore = Chroma(persist_directory=persistant_directory, embedding_function=embeddings)
-
-#Can also apply filters like "filter": {"metadata.credential": "Getting Started with Artificial Intelligence"}
-search_kwargs = {
-    "k": 4,
-}
-
+search_kwargs = {"k": 4}
 retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
 
 @tool
 def get_relevant_documents(question):
     """Retrieve relevant documents based on question."""
-    context = retriever.invoke(f"{question}")
+    context = retriever.invoke(question)
     return context
 
 @tool 
 def get_relevant_question_from_database(topic: str):
     """Retrieve a question with 4 options from the database based on the topic."""
-    results = retriever.invoke(f"{topic}")
-    
-    # Parse the results to extract question and options
-    # Assuming results have metadata with "question" and "options"
+    results = retriever.invoke(topic)
+
+    # print("\nDEBUG: Retrieved results:", results)  # Debugging Line
+
     if results and len(results) > 0:
-        doc = results[0]  # Take the first result for simplicity
-        question = doc.get("metadata", {}).get("question", "No question found")
-        options = doc.get("metadata", {}).get("options", ["Option A", "Option B", "Option C", "Option D"])
-        return {
-            "question": question,
-            "options": options
-        }
+        doc = results[0]  # Take the first result
+        print("\nDEBUG: Retrieved document page_content:", doc.page_content)  # Debugging Line
+        
+        # Extract question and choices using regex
+        question_match = re.search(r'question:\s(.*?)\schoice1:', doc.page_content)
+        choice1_match = re.search(r'choice1:\s(.*?)\schoice2:', doc.page_content)
+        choice2_match = re.search(r'choice2:\s(.*?)\schoice3:', doc.page_content)
+        choice3_match = re.search(r'choice3:\s(.*?)\schoice4:', doc.page_content)
+        choice4_match = re.search(r'choice4:\s(.*?)\s', doc.page_content)
+        correct_answer_match = re.search(r'correctChoices:\s(\d)', doc.page_content)
+
+        question = question_match.group(1) if question_match else "No question found"
+        options = [
+            choice1_match.group(1) if choice1_match else "Option A",
+            choice2_match.group(1) if choice2_match else "Option B",
+            choice3_match.group(1) if choice3_match else "Option C",
+            choice4_match.group(1) if choice4_match else "Option D",
+        ]
+        correct_answer = correct_answer_match.group(1) if correct_answer_match else "N/A"
+
+        if correct_answer in ["1", "2", "3", "4"]:
+            correct_answer = chr(64 + int(correct_answer)) 
+
+        return {"question": question, "options": options, "correct_answer": correct_answer}
     else:
-        return {
-            "question": "No question found in the database.",
-            "options": ["N/A", "N/A", "N/A", "N/A"]
-        }
+        return {"question": "No question found in the database.", "options": ["N/A", "N/A", "N/A", "N/A"]}
+
+
 
 tools = [get_relevant_documents, get_relevant_question_from_database]
 
-# contextualize_system_prompt = """Given a chat history and the
-#          latest user question which might 
-#          reference context in the chat history, 
-#          formulate a standalone question which 
-#          can be understood without the chat history. 
-#          Do NOT answer the question, just reformulate 
-#          it if needed and otherwise return it as is"""
+# Define chatbot node
+def chatbot(state: "State"):
+    """Handles normal chatbot responses."""
+    if not state["messages"]:
+        return {"messages": [{"role": "assistant", "content": "I didn't receive a message."}]}
 
-# contextualize_prompt = ChatPromptTemplate.from_messages(
-#     [
-#         ("system", contextualize_system_prompt),
-#         MessagesPlaceholder("chat_history", optional=True),
-#         ("human", "User question: {input}"),
-#     ]
-# )
+    user_input = state["messages"][-1].content
+    response = model.invoke(user_input).strip()
 
-system_prompt = """You are BONSAI, an advanced AI companion to a spy operative. Your responses should be concise, 
-witty, and maintain a spy/espionage theme while being helpful and accurate. Use terms like "Agent", "Operative", 
-"Intel", "Mission" naturally in your responses, but keep it subtle, professional and sophisticated.
-
-If the user asks about AI, CyberSecurity, Data Analytics or Cloud Computing, respond ONLY with:
-"Do you want the data from the DATABASE?"
-
-For all other topics, respond normally while maintaining the spy persona."""
-
-human_prompt = """{input}"""
-
-prompt = ChatPromptTemplate.from_messages( 
-    [
-        ("system", system_prompt),
-        MessagesPlaceholder("chat_history", optional=True),
-        ("human", human_prompt),
-    ]
-)
-
-prompt_with_tools = prompt.partial(
-    tools=render_text_description_and_args(list(tools)),
-    tool_names=", ".join([t.name for t in tools]),
-)
-
-
-class State(TypedDict):
-    messages : Annotated[list, add_messages]
-    current_question: str
-    current_choices: list
-    correct_answer: str
-
-graph_builder = StateGraph(State)
-
-def chatbot(state: State):
-    # extract latest message
-    input_message = state["messages"][-1].content
-    chain = (
-        RunnablePassthrough.assign(
-            chat_history=lambda x: state["messages"][:-1] if len(state["messages"]) > 1 else []
-        )
-        | prompt
-        | model
-    )
-
-    result = chain.invoke({"input": input_message})
-    
-    return {"messages": [{"role": "assistant", "content": result}], 
-            "terminate": True
+    return {
+        "messages": [{"role": "assistant", "content": response}]
     }
 
-def database_node(state: State):
-    chain = (
-        RunnablePassthrough.assign(
-            agent_scratchpad=lambda x: format_log_to_str(x.get("intermediate_steps", [])),
-            chat_history=lambda x: state["messages"],
-        )
-        | prompt_with_tools
-        | model
-        | JSONAgentOutputParser()
-    )
+# Define database node
+def database_node(state: "State"):
+    """Retrieves a relevant question from the database."""
+    if not state["messages"]:
+        return {"messages": [{"role": "assistant", "content": "I didn't receive a valid request."}]}
 
-    agent_executor = AgentExecutor(
-        agent=chain,
-        tools=tools,
-        handle_parsing_errors=True,
-        verbose=True
-    )
-
-    last_message = state["messages"][-1].content
-
-    result = agent_executor.invoke({"input": last_message})
+    user_input = state["messages"][-1].content
+    result = get_relevant_question_from_database.invoke(user_input)
     
     question = result.get("question", "No question found")
     options = result.get("options", ["Option A", "Option B", "Option C", "Option D"])
+    correct_answer = result.get("correct_answer", "N/A")
     formatted_options = "\n".join([f"{chr(65+i)}. {option}" for i, option in enumerate(options)])
-    #Parse the actual questions and answers
+
+    print("\nDEBUG: Retrieved question:", question)  # Debugging Line
+
     return {
-        "messages": [{"role": "assistant", "content": f"Agent, here’s a question from the database:\n\n{question}\n\n{formatted_options}"}]
+        "messages": [{"role": "assistant", "content": f"Agent, here’s a question from the database:\n\n{question}\n\n{formatted_options}"}],
+        "current_question": question,
+        "current_choices": options,
+        "correct_answer": correct_answer
     }
 
-#gotta look out for typos and other too, not realistic that the user inputs the correct topic each time
-def topic_classifier(state: State) -> Literal["TOPIC_DETECTED", "NORMAL"]:
-    last_message = state["messages"][-1].content.lower()
-    
-    topics = ["AI", "cybersecurity", "data analytics", "cloud computing"]
-    if any(topic in last_message for topic in topics):
-        return "TOPIC_DETECTED"
-    return "NORMAL"
+# Define answer_checker node
+def answer_checker(state: "State"):
+    """Checks the user's answer against the correct answer."""
+    if not state["messages"]:
+        return {"messages": [{"role": "assistant", "content": "I didn't receive a valid request."}]}
 
-def db_classifier(state: State) -> Literal["DATABASE", "UNKNOWN"]:
-    last_message = state["messages"][-1].content.lower()
+    user_input = state["messages"][-1].content
     
-    if "database" in last_message:
-        return "DATABASE"
-    # elif "archives" in last_message:
-    #     return "ARCHIVES"
-    return "UNKNOWN"
+    extraction_prompt = f"""
+    Extract the answer choice A,B,C,D from the user input.
+    If the user input is a word like 'first' or number like '1', convert it to the corresponding letter.
+    Return only the UPPERCASE letter and nothing else.
+    If no clear answer is found, return 'N/A'.
 
-graph_builder.add_node("chatbot", chatbot)  # Define the chatbot node
-graph_builder.add_node("database", database_node)  # Define the database node
-graph_builder.add_edge(START, "chatbot")
+    Examples:
+    "I think the answer is C" -> C
+    "Option 2?" -> B
+    "Picking the fourth one" -> D
+    "Is the answer A?" -> A
+
+    User Input: {user_input}
+    """
+
+    response = model.invoke(extraction_prompt).strip().lower()
+
+    print("\nDEBUG: Extracted answer:", response)  # Debugging Line
+
+    if response == "N/A":
+        return {"messages": [{"role": "assistant", "content": "I couldn't extract a clear answer from the user input. Please try again."}]}
+
+    question = state["current_question"]
+    choices = state["current_choices"]
+    correct_answer = state["correct_answer"].lower()
+
+    is_correct = response.lower() == correct_answer.lower()
+
+    print("\nDEBUG: Correct Answer :", correct_answer)  # Debugging Line
+
+    print("\nDEBUG: is_correct :", is_correct)  # Debugging Line
+
+    if is_correct:
+        prompt = f"""
+        The agent correctly answered the question. You should act as a proud and enthusiastic compnaion.
+        Formulate one short and concise sentence to congratulate them on their success and encourage them to continue. 
+
+        Example Responses:
+        Correct answer! Keep up the good work!
+        Absoulutely, your grasp of the material is truly impressive!
+        """
+        feedback = model.invoke(prompt)
+
+        #Clears the state when we reset the question
+        return {
+            "messages": [{"role": "assistant", "content": feedback}],
+            "current_question": "",
+            "current_choices": [],
+            "correct_answer": ""
+        }
+    
+    elif is_correct == False and correct_answer == "":
+        prompt = f"""
+        You are unsure which question the agent answered. 
+        Ask them user if they want to answer a new question.
+
+        Example Responses:
+        Sorry Agent, I'm not sure which question you answered. Would you like to try another one?
+        """
+        feedback = model.invoke(prompt)
+
+        return {
+            "messages": [{"role": "assistant", "content": feedback}],
+            "current_question": "",
+            "current_choices": [],
+            "correct_answer": ""
+        }
+    
+    else:
+        prompt = f"""
+        The agent answered a question incorrectly (The question : {question}). Generate a supportive and educational response that:
+        Gently informs them their ANSWER was incorrect.
+        Tells them the correct answer which is {correct_answer} and
+        explains why that answer is correct and why the other {choices} are incorrect.
+        Format your response so that each choice is on a new line.
+        Remove the ** around the choices.
+        """
+        feedback = model.invoke(prompt)
+
+        # Keep the state for retry
+        return {
+            "messages": [{"role": "assistant", "content": feedback}],
+            "current_question": "",
+            "current_choices": [],
+            "correct_answer": ""
+        }
+    
+# Define router function
+def router(state: "State"):
+    """Routes the input to the chatbot, database or answer_checker node based on intent."""
+
+    if not state["messages"]:  
+        return {"decision": "chatbot"}  # Default to chatbot if no messages exist
+
+    user_input = state["messages"][-1].content  
+
+    routing_prompt = f"""
+    Your task is to classify the following user input as either 'chatbot', 'database' or 'answerchecker'.
+    Return only one word: either 'chatbot', 'database' or 'answerchecker' and nothing else.
+
+    User Input: {user_input}
+    """
+
+    response = model.invoke(routing_prompt).strip().lower()
+
+    print("\nDEBUG: Routing response:", response)  # Debugging Line
+
+    # Ensure valid decision
+    if "database" in response:
+        decision = "database"
+    elif "answerchecker" in response:
+        decision = "answer_checker"
+    else:
+        decision = "chatbot"
+
+    return {"decision": decision}
+
+# Define state structure
+class State(TypedDict):
+    messages: Annotated[list, add_messages]
+    decision: str
+    current_question: Annotated[str, "current_question"]
+    current_choices: Annotated[list, "current_choices"]  
+    correct_answer: Annotated[str, "correct_answer"]
+
+# Create the graph
+graph_builder = StateGraph(State)
+
+# Add nodes
+graph_builder.add_node("router", router)
+graph_builder.add_node("chatbot", chatbot)
+graph_builder.add_node("database", database_node)
+graph_builder.add_node("answer_checker", answer_checker)
+
+# Define conditional edges
+graph_builder.add_edge(START, "router")
+graph_builder.add_conditional_edges(
+    "router",
+    lambda state: state["decision"],
+    {
+        "chatbot": "chatbot",
+        "database": "database",
+        "answer_checker": "answer_checker",
+    }
+)
+
 graph_builder.add_edge("chatbot", END)
 graph_builder.add_edge("database", END)
-graph_builder.add_edge("chatbot", "database")
+graph_builder.add_edge("answer_checker", END)
 
-# graph_builder.add_conditional_edges(
-#     "chatbot",
-#     topic_classifier,
-#     {
-#         "TOPIC_DETECTED": "database",
-#         "NORMAL": END
-#     }
-# )
-
-
-
+# Compile the graph
 memory = MemorySaver()
 graph = graph_builder.compile(checkpointer=memory)
 
-# png_data = graph.get_graph().draw_mermaid_png()
-# png_path = "/Users/jacobchau/Desktop/SE2025/langgraph.png"
-# with open(png_path, "wb") as f:
-#     f.write(png_data)
-
-# display(Image(png_path))
-
-
+# Define answering function
 def answering(user_input):
+    """Handles user queries and processes responses from the AI."""
+    config = {"configurable": {"thread_id": "1"}}
+
     user_message = {"role": "user", "content": user_input}
 
-    events = graph.stream({"messages": [user_message]}, config) #Events is an iterator that yields the state of the graph after each step
-    
-    for event in events:                                        #Each event represents a state change in the graph, with the state being a dictionary
+    # Ensure State is always initialized properly
+    try:
+        current_state = graph.get_state(config)
+        state = {
+            "messages": [user_message],
+            "decision": "",
+            "current_question": current_state.values.get("current_question", ""),
+            "current_choices": current_state.values.get("current_choices", []),
+            "correct_answer": current_state.values.get("correct_answer", "")
+        }
+    except:
+        state = {
+            "messages": [user_message],
+            "decision": "",
+            "current_question": "",
+            "current_choices": [],
+            "correct_answer": ""
+        }
+
+
+    events = graph.stream(state, config)
+
+    assistant_response = "No response received."  # Default fallback response
+
+    for event in events:
         for val in event.values():
-            assistant_response = val["messages"][-1]["content"]
-            print('AI:', assistant_response)
-            return
+            if "messages" in val and val["messages"]:
+                assistant_response = val["messages"][-1]["content"]
+    
+    print('AI:', assistant_response)  # ✅ Always prints a response
 
-config = {"configurable" : {"thread_id": "1"}}
 
+png_data = graph.get_graph().draw_mermaid_png()
+
+png_path = "langgraph.png"
+with open(png_path, "wb") as f:
+    f.write(png_data)
+
+# Start chatbot loop
 print("Start chatting with the AI! Type '!exit' to quit.")
 while True:
     query = input("You: ")
     if query.lower() == "!exit":
         print("Byebye")
         break
-    
     answering(query)
-
-#CARE FOR QUESTIONS WITH TWO CORRECT CHOICES
-graph_builder.add_edge("chatbot", END)
