@@ -1,16 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://bhhyrcyu5vw0e"]
+[gd_scene load_steps=5 format=3 uid="uid://bhhyrcyu5vw0e"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_5s08m"]
-[ext_resource type="Script" path="res://camera_spring_arm.gd" id="2_8kwvw"]
 [ext_resource type="PackedScene" uid="uid://cv8hqe5t8wwo0" path="res://suspicion_hud.tscn" id="3_g44f7"]
-[ext_resource type="Script" path="res://vignette.gd" id="3_o56q8"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_44oyu"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ht1ik"]
 
 [node name="Player" type="CharacterBody3D" groups=["player"]]
-
 collision_layer = 2
 collision_mask = 5
 axis_lock_angular_x = true
@@ -24,20 +21,15 @@ mesh = SubResource("CapsuleMesh_44oyu")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_ht1ik")
 
-[node name="SpringArm3D" type="SpringArm3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.967828, 0.251613, 0, -0.251613, 0.967828, 0, 1.04333, 0.259)
-shape = SubResource("SeparationRayShape3D_nks45")
-spring_length = 3.0
-script = ExtResource("2_8kwvw")
+[node name="YawCameraPivot" type="Node3D" parent="."]
 
-[node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
+[node name="PitchCameraPivot" type="Node3D" parent="YawCameraPivot"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="YawCameraPivot/PitchCameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.978509, 0.206204, 0, -0.206204, 0.978509, 0, 1.54023, 2.259)
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="YawCameraPivot/PitchCameraPivot/SpringArm3D"]
 
 [node name="SuspicionView" parent="." instance=ExtResource("3_g44f7")]
 mouse_filter = 2
-
-[node name="Vignette" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 227.0
-offset_bottom = 137.0
-script = ExtResource("3_o56q8")

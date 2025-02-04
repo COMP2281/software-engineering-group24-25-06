@@ -3,6 +3,12 @@ extends CharacterBody3D
 @export_group("Modifiable Parameters")
 ## Player move speed
 @export var MOVE_SPEED : float = 12.0;
+## Camera sensitivity
+@export var MOUSE_SENSITIVITY : float = 0.001;
+## Range (radians) in which you can look down
+@export var DOWN_RANGE : float = 0.3;
+## Range (radians) in which you can look up
+@export var UP_RANGE : float = 0.3;
 ## Maximum distraction raycast length
 @export var MAX_THROW_LENGTH : float = 20.0;
 ## Time a distraction will persist for
@@ -12,29 +18,39 @@ extends CharacterBody3D
 ## Where to create a distraction for enemies
 @export var DISTRACTION : Vector3 = Vector3.INF;
 
-var gravity : float = ProjectSettings.get_setting("physics/3d/default_gravity");
+var distraction_time_persisted = 0.0;
+var yaw_input = 0.0;
+var pitch_input = 0.0;
+
+var gravity = ProjectSettings.get_setting("physics/3d/default_gravity");
+
+@onready var camera_node := $YawCameraPivot/PitchCameraPivot/SpringArm3D/Camera3D;
+@onready var pitch_pivot := $YawCameraPivot/PitchCameraPivot;
+@onready var yaw_pivot := $YawCameraPivot;
+
+func _ready() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED);
 
 func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("ui_cancel"):
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE);
+		
 	if Input.is_action_pressed("sneak"):
 		scale.y = 0.75;
 	else:
 		scale.y = 1.0;
-	
-	# Update how long the distraction has lasted
+		
 	distraction_time_persisted -= delta;
 	distraction_time_persisted = clamp(distraction_time_persisted, 0.0, DISTRACTION_DURATION);
 	
-	# Delete the distraction
 	if distraction_time_persisted == 0.0:
-		PlayerProperties.created_distraction = Vector3.INF;
+		DISTRACTION = Vector3.INF;
 	
-	# Hitman-style distraction creation
 	if Input.is_action_just_pressed("coin_toss"):
 		var space_state = get_world_3d().direct_space_state;
-		# TODO: what did past me mean by this?
 		# TODO: should probably have some lookup instead of using direct values
 		var self_world = global_position;
-		var ray : Vector3 = -get_global_transform().basis.z;
+		var ray : Vector3 = -camera_node.get_global_transform().basis.z;
 		var ray_world = self_world + ray * MAX_THROW_LENGTH;
 		
 		var query = PhysicsRayQueryParameters3D.create(self_world, ray_world, 1);
@@ -42,16 +58,12 @@ func _process(delta: float) -> void:
 		
 		var result = space_state.intersect_ray(query);
 		
-		# If raycast collided with some environment, create a distraction
-		#	at that point in the environment
 		if not result.is_empty():
-			PlayerProperties.created_distraction = result.position;
+			DISTRACTION = result.position;
 			distraction_time_persisted = DISTRACTION_DURATION;
 		
-	# TODO: this should invoke some "encounter"
-	# TODO: pause all movement, suspicion, etc.
-	if PlayerProperties.BEING_SEEN and PlayerProperties.WITHIN_CLOSE_RADIUS and PlayerProperties.ENEMY_TOP_SUSPICION == 1.0:
-		print("Caught!");
+	yaw_pivot.rotate_y(yaw_input);
+	pitch_pivot.rotate_x(pitch_input);
 	
 	# Clamp both directions
 	pitch_pivot.rotation.x = clamp(
@@ -68,15 +80,15 @@ func _physics_process(delta: float):
 	input.z = Input.get_axis("forward", "backward");
 	input.x = Input.get_axis("strafe_left", "strafe_right");
 	
-	var dir = Vector3(input.x, 0.0, input.z).normalized();
+	var dir = (yaw_pivot.transform.basis * input).normalized();
 	
-	var direction : Vector3 = dir.rotated(Vector3.UP, $SpringArm3D.global_rotation.y);
-	
-	if is_on_floor():
-		velocity.y = 0.0;
-	
-	velocity.z = direction.z * MOVE_SPEED;
+	velocity.z = dir.z * MOVE_SPEED;
 	velocity.y += -gravity * delta;
-	velocity.x = direction.x * MOVE_SPEED;
-	
+	velocity.x = dir.x * MOVE_SPEED;
 	move_and_slide();
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			yaw_input = -event.relative.x * MOUSE_SENSITIVITY;
+			pitch_input = -event.relative.y * MOUSE_SENSITIVITY;

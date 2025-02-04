@@ -50,7 +50,6 @@ var new_INVESTIGATION_POINT : Vector3;
 var target_angle : float = 0.0;
 var SUSPICION_LEVEL : float = 0.0;
 var CURRENTLY_SEEING_PLAYER : bool = false;
-
 var investigate_time_left : float = INF;
 
 func _ready() -> void:
@@ -74,10 +73,6 @@ func set_heading(angle : float) -> void:
 	target_angle = wrap_angle(angle);
 
 func set_destination(destination : Vector3) -> void:
-	# Ensure we're not attempting to recalculate our path every frame
-	#	add a short cooldown period between updates
-	if pathing_time <= NAVIGATION_RECALCULATE_COOLDOWN: return;
-	
 	var closest_point : Vector3 = NavigationServer3D.map_get_closest_point(
 		navigation_agent_3d.get_navigation_map(),
 		destination
@@ -85,18 +80,18 @@ func set_destination(destination : Vector3) -> void:
 	navigation_agent_3d.set_target_position(closest_point);
 
 func _process(delta: float) -> void:
-	calculate_stealth_modifier(delta);
-	
-	$ViewZone.viewzone_resource = viewzone_resource;
+	$ViewZone.VIEW_FOV = VIEW_FOV;
+	$ViewZone.VIEW_RADIUS = VIEW_RADIUS;
+	$ViewZone.CLOSE_RADIUS = CLOSE_RADIUS;
 	$ViewZone.VIEW_DIRECTION = global_rotation.y;
 	$ViewZone.EYE_LEVEL_NODE = $EyeLevel;
-
-	var detection_manifold : DetectionManifold = $ViewZone.in_detection_range(PlayerProperties.global_position);
 	
 	if get_tree().get_nodes_in_group("player")[0] != null and $ViewZone.in_detection_range(get_tree().get_nodes_in_group("player")[0].global_position):
 		var suspicion_delta : float = DETECTION_SPEED;
-			
-		suspicion_delta *= 1.0 / stealth_modifier;
+
+		# Be detected slower if sneaking
+		if Input.is_action_pressed("sneak"):
+			suspicion_delta *= 1.0 / SNEAKING_MODIFIER;
 			
 		SUSPICION_LEVEL += suspicion_delta * delta;
 		CURRENTLY_SEEING_PLAYER = true;
@@ -105,7 +100,7 @@ func _process(delta: float) -> void:
 		CURRENTLY_SEEING_PLAYER = false;
 		
 	SUSPICION_LEVEL = clamp(SUSPICION_LEVEL, 0.0, 1.0);
-
+	
 	if get_tree().get_nodes_in_group("player")[0].DISTRACTION != Vector3.INF and \
 		global_position.distance_to(get_tree().get_nodes_in_group("player")[0].DISTRACTION) < DISTRACTION_DETECTION_RANGE:
 		new_INVESTIGATION_POINT = get_tree().get_nodes_in_group("player")[0].DISTRACTION;

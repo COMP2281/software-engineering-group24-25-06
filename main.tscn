@@ -1,10 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://dipbvseepvdun"]
 
 [ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://player.tscn" id="1_8ui7k"]
-[ext_resource type="PackedScene" uid="uid://c3y4aglyk1mfp" path="res://reset_params.tscn" id="1_us6li"]
 [ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://enemy.tscn" id="3_5q7x4"]
-[ext_resource type="PackedScene" uid="uid://1d8nsckw6cak" path="res://security_cam.tscn" id="3_iwh52"]
-[ext_resource type="Resource" uid="uid://c5kx2gemjwxk1" path="res://sniper_enemy_viewzone.tres" id="5_7mx7k"]
 
 [sub_resource type="Environment" id="Environment_m6y7s"]
 
@@ -38,22 +35,6 @@ point_count = 7
 
 [node name="MainSceneNode" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 0)
-
-[node name="ResetParams" parent="." instance=ExtResource("1_us6li")]
-
-[node name="SecurityCam" parent="." instance=ExtResource("3_iwh52")]
-transform = Transform3D(-1, -4.37114e-08, 7.57103e-08, 0, 0.866025, 0.5, -8.74228e-08, 0.5, -0.866025, 0, 1.8116, -11.3781)
-
-[node name="Enemy" parent="." instance=ExtResource("3_5q7x4")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.82541, 0, 0)
-PATROL_PATH = PackedVector3Array(0, 0, -16.5, -7, 0, -17, 9, 0, -10.5, 10, 0, -18)
-
-[node name="Enemy2" parent="." instance=ExtResource("3_5q7x4")]
-transform = Transform3D(0.0574246, 0, -0.99835, 0, 1, 0, 0.99835, 0, 0.0574246, 5, 0, 5)
-viewzone_resource = ExtResource("5_7mx7k")
-PATROL_PATH = PackedVector3Array(5, 0, 5, 5, 0, 5)
-
-[node name="Player" parent="." instance=ExtResource("1_8ui7k")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.933924, -0.357472, 4.67501e-07, 0.294241, -0.768728, 0.567873, -0.202998, 0.53035, 0.823116, -1.56931, 5.90376, 5.01552)

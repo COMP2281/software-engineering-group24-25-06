@@ -4,6 +4,7 @@ render_mode unshaded, fog_disabled;
 uniform sampler2D depth_texture : source_color, hint_depth_texture;
 instance uniform float view_radius;
 instance uniform float view_fov;
+instance uniform float view_direction;
 instance uniform float close_radius;
 instance uniform float quad_size;
 instance uniform vec3 instant_color : source_color = vec3(1.0, 0.0, 0.0);
