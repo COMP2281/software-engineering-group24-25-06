@@ -1,6 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://sxwm712fxj0e"]
+[gd_scene load_steps=10 format=3 uid="uid://sxwm712fxj0e"]
 
 [ext_resource type="Script" path="res://Scripts/world_select.gd" id="1_vvqx2"]
+[ext_resource type="PackedScene" uid="uid://c8lj4bah1i8a0" path="res://Scenes/ProgressTracking/cyber_security.tscn" id="2_rxjkf"]
+[ext_resource type="PackedScene" uid="uid://houxlwtnpp7o" path="res://Scenes/level_1.tscn" id="3_dqr3s"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7bsfj"]
 
@@ -35,6 +37,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_vvqx2")
+cyber_security_scene = ExtResource("2_rxjkf")
+main_menu_scene = ExtResource("3_dqr3s")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
