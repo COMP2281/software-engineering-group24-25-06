@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://cr6oth1fbi3gy"]
 
-[ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://view_zone.tscn" id="1_r0wsg"]
-[ext_resource type="Script" path="res://enemy.gd" id="1_tgd7p"]
+[ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://scenes/prefabs/view_zone.tscn" id="1_r0wsg"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy.gd" id="1_tgd7p"]
 [ext_resource type="Script" path="res://scripts/utility/StateMachine.gd" id="3_hji8w"]
 [ext_resource type="Script" path="res://scripts/enemy/state/patrol.gd" id="4_82nks"]
 [ext_resource type="Script" path="res://scripts/enemy/state/hunting.gd" id="5_l26g2"]

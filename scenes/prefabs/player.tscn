@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bhhyrcyu5vw0e"]
 
-[ext_resource type="Script" path="res://player.gd" id="1_5s08m"]
-[ext_resource type="PackedScene" uid="uid://cv8hqe5t8wwo0" path="res://suspicion_hud.tscn" id="3_g44f7"]
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_5s08m"]
+[ext_resource type="PackedScene" uid="uid://cv8hqe5t8wwo0" path="res://scenes/prefabs/suspicion_hud.tscn" id="3_g44f7"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_44oyu"]
 

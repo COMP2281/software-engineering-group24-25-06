@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://cv8hqe5t8wwo0"]
 
-[ext_resource type="Shader" path="res://suspicion_hud.gdshader" id="1_fpull"]
-[ext_resource type="Script" path="res://suspicion_hud.gd" id="1_ota5a"]
-[ext_resource type="Texture2D" uid="uid://ce3p1lm0i2ps0" path="res://suspicion_level.png" id="2_153xl"]
+[ext_resource type="Shader" path="res://shaders/suspicion_hud.gdshader" id="1_fpull"]
+[ext_resource type="Script" path="res://scripts/ui/suspicion_hud.gd" id="1_ota5a"]
+[ext_resource type="Texture2D" uid="uid://ce3p1lm0i2ps0" path="res://images/suspicion_level.png" id="2_153xl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oi24o"]
 shader = ExtResource("1_fpull")

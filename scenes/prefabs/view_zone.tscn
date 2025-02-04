@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bwdwd8kfjqocc"]
 
-[ext_resource type="Script" path="res://view_zone.gd" id="1_jc0ip"]
-[ext_resource type="Shader" path="res://view_zone.gdshader" id="2_kd0m1"]
+[ext_resource type="Script" path="res://scripts/security/view_zone.gd" id="1_jc0ip"]
+[ext_resource type="Shader" path="res://shaders/view_zone.gdshader" id="2_kd0m1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_br0jy"]
 render_priority = 0
