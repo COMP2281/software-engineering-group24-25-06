@@ -25,7 +25,7 @@ func _on_ai_pressed() -> void:
 # Handle Cyber Security button press
 func _on_cyber_security_pressed() -> void:
 	if cyber_security_scene:
-		get_tree().change_scene_to_packed(cyber_security_scene)  # Use the PackedScene variable
+		get_tree().change_scene_to_file("res://Scenes/ProgressTracking/cyber_security.tscn")  # Use the PackedScene variable
 	else:
 		print("Cyber Security scene not linked!")
 

@@ -1,6 +1,6 @@
 extends Control
 
-@export var world_select_scene: PackedScene  # Exported for linking in the Inspector
+#@export var world_select_scene: PackedScene  # Exported for linking in the Inspector
 
 # Variables to track level status
 var lvl1 = true
@@ -61,7 +61,4 @@ func update_progress_bar():
 	percentage_label.text = str(progress_percentage) + "%"  # Display percentage
 
 func _on_back_btn_pressed() -> void:
-	if world_select_scene:
-		get_tree().change_scene_to_packed(world_select_scene)  # Use PackedScene
-	else:
-		print("World select scene is not linked!")
+	get_tree().change_scene_to_file("res://Scenes/ProgressTracking/world_select.tscn")  # Use PackedScene
