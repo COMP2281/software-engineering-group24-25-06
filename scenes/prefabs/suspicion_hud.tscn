@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cv8hqe5t8wwo0"]
 
-[ext_resource type="Script" path="res://scripts/hud/suspicion_hud.gd" id="1_3pud1"]
+[ext_resource type="Script" path="res://scripts/ui/suspicion_hud.gd" id="1_3pud1"]
 [ext_resource type="Shader" path="res://shaders/suspicion_hud.gdshader" id="2_iapd4"]
 [ext_resource type="Texture2D" uid="uid://ce3p1lm0i2ps0" path="res://images/suspicion_level.png" id="3_0sdn8"]
 

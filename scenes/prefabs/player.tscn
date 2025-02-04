@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://bhhyrcyu5vw0e"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_m78fg"]
-[ext_resource type="PackedScene" uid="uid://cv8hqe5t8wwo0" path="res://scenes/nodes/suspicion_hud.tscn" id="2_uw33c"]
-[ext_resource type="PackedScene" uid="uid://d2vdxmwicnjhs" path="res://scenes/nodes/alert_indicator.tscn" id="3_afela"]
-[ext_resource type="Script" path="res://scripts/hud/alert_indicator.gd" id="4_f7gb4"]
+[ext_resource type="PackedScene" uid="uid://cv8hqe5t8wwo0" path="res://scenes/prefabs/suspicion_hud.tscn" id="2_uw33c"]
+[ext_resource type="PackedScene" uid="uid://d2vdxmwicnjhs" path="res://scenes/prefabs/alert_indicator.tscn" id="3_afela"]
+[ext_resource type="Script" path="res://scripts/ui/alert_indicator.gd" id="4_f7gb4"]
 [ext_resource type="Script" path="res://scripts/player/camera_arm.gd" id="5_e8u7l"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_44oyu"]

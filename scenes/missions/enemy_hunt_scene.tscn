@@ -1,9 +1,9 @@
 [gd_scene load_steps=18 format=3 uid="uid://bbhvgdj8cy05u"]
 
-[ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/nodes/player.tscn" id="1_h4kwu"]
-[ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://scenes/nodes/enemy.tscn" id="2_8uedt"]
+[ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/prefabs/player.tscn" id="1_h4kwu"]
+[ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://scenes/prefabs/enemy.tscn" id="2_8uedt"]
 [ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="3_qvbrg"]
-[ext_resource type="PackedScene" uid="uid://bp2kqx6gewi8t" path="res://scenes/nodes/security_cam.tscn" id="4_entd0"]
+[ext_resource type="PackedScene" uid="uid://bp2kqx6gewi8t" path="res://scenes/prefabs/security_cam.tscn" id="4_entd0"]
 
 [sub_resource type="Environment" id="Environment_3sjj3"]
 
