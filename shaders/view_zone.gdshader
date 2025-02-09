@@ -7,6 +7,9 @@ instance uniform float view_fov;
 instance uniform float view_direction;
 instance uniform float close_radius;
 instance uniform float quad_size;
+instance uniform vec2 sound_instance_vector = vec2(0.0, 0.0);
+instance uniform float hearing_offset_world = 2.0; // irrespective of quad size?
+instance uniform vec3 hearing_color : source_color = vec3(0.8, 0.2, 0.0);
 instance uniform vec3 inner_color : source_color = vec3(0.1, 0.6, 0.8);
 instance uniform float frequency = 0.5;
 instance uniform float num_waves = 16.0;
@@ -27,6 +30,21 @@ vec2 random_point(vec2 p) {
 // Simple pseudo-random noise, sample a high-frequency sin-wave and take less significant values of the sin-wave
 float random_float(float x) {
 	return fract(sin(x * 48142.1858151) * 43758.5453123);
+}
+
+vec2 rotate_vec2(float angle, vec2 vec, vec2 pivot) {
+	float cos_angle = cos(angle);
+	float sin_angle = sin(angle);
+	
+	mat2 rot_matrix;
+	rot_matrix[0] = vec2(cos_angle, -sin_angle);
+	rot_matrix[1] = vec2(sin_angle, cos_angle);
+	
+	vec -= pivot;
+	vec *= rot_matrix;
+	vec += pivot;
+	
+	return vec;
 }
 
 // Combined worley-voronoi noise
@@ -133,6 +151,33 @@ vec4 sample_point(vec2 uv) {
 	if (dist < scaled_view_radius && relative_direction_angle < view_fov) {
 		draw_color = inner_color * (1.0 + scanner_sample * 0.3);
 		draw_alpha = scanner_sample + voronoi.w;
+	}
+	
+	// Sound considerations
+	// If vec2 not set to 0,0
+	//	draw circle at point for now
+	if (sound_instance_vector != vec2(0.0, 0.0)) {
+		float hearing_offset = hearing_offset_world / quad_size;
+		
+		// now just circle at point where sound heard
+		// want to create multiple sin waves
+		// need two circles
+		// - inner deadzone
+		// - outer range
+		// deadzone should be offset inwards
+		float deadzone_offset_percent = 1.0 - 0.2;
+		float deadzone_range = 0.04;
+		float draw_range = 0.05;
+		vec2 sound_rotated = rotate_vec2(view_direction, sound_instance_vector, vec2(0.0));
+		vec2 sound_vec = normalize(-sound_rotated) * hearing_offset;
+		
+		float deadzone_dist = distance(uv, sound_vec * deadzone_offset_percent + vec2(0.5));
+		float hearing_dist = distance(uv, sound_vec + vec2(0.5));
+		
+		if (hearing_dist < draw_range && deadzone_dist > deadzone_range) {
+			draw_color = hearing_color;
+			draw_alpha = 1.0;
+		}
 	}
 	
 	return vec4(draw_color.rgb, draw_alpha);

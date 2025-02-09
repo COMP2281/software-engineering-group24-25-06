@@ -16,6 +16,8 @@ var view_radius: float = INF
 var view_fov: float = 0.0
 var close_radius: float = 0.0
 var detection_speed: float = 0.0
+var heard_sound_vector: Vector2 = Vector2(0.0, 0.0)
+var heard_sound_elapsed: float = 0.0
 
 var suspicion_level: float = 0.0
 var currently_seeing_player: bool = false
@@ -35,10 +37,10 @@ func update_properties(stealth_modifier: float):
 	detection_speed = viewzone_resource.detection_speed * multiplier
 	
 	$VisualMesh3D.mesh.size = Vector2(view_radius, view_radius) * 2.0
-	$VisualMesh3D.set_instance_shader_parameter("view_direction", view_direction)
 	$VisualMesh3D.set_instance_shader_parameter("view_radius", view_radius)
 	$VisualMesh3D.set_instance_shader_parameter("view_fov", view_fov)
 	$VisualMesh3D.set_instance_shader_parameter("close_radius", close_radius)
+	$VisualMesh3D.set_instance_shader_parameter("sound_instance_vector", heard_sound_vector)
 	$VisualMesh3D.set_instance_shader_parameter("quad_size", $VisualMesh3D.mesh.size.x)
 	
 func _ready() -> void:
@@ -51,7 +53,9 @@ func _process(delta: float) -> void:
 	
 	if view_radius == INF:
 		update_properties(1.0)
-		
+	
+	$VisualMesh3D.set_instance_shader_parameter("view_direction", view_direction)
+	
 	var detection_manifold: DetectionManifold = in_detection_range(StealthManager.player_position)
 	
 	currently_seeing_player = detection_manifold.being_seen
@@ -65,6 +69,11 @@ func _process(delta: float) -> void:
 		time_since_seen_player += delta
 		
 	suspicion_level = clamp(suspicion_level, 0.0, 1.0)
+	
+	heard_sound_elapsed += delta
+	
+	if heard_sound_elapsed > 1.0:
+		heard_sound_vector = Vector2.ZERO
 	
 	# TODO: emit event only on change
 	new_suspicion_level.emit(suspicion_level, detection_manifold.being_seen)
@@ -113,11 +122,14 @@ func process_distraction(location: Vector3, hearing_range: float, volume: float)
 	#	distance
 	var dist: float = global_position.distance_to(location)
 	
+	var heard_sound_vector3: Vector3 = location - global_position
+	heard_sound_vector = Vector2(heard_sound_vector3.x, heard_sound_vector3.z)
+	
+	print(heard_sound_vector)
+	
 	volume /= StealthManager.stealth_modifier
 	# Linear fall-off of volume and distance
 	volume *= 1.0 - min(1.0, (dist / (viewzone_resource.hearing_modifier * hearing_range)))
-	
-	print("Unit received sound, volume was ", volume, " distance was ", dist)
 	
 	# TODO: Random constant
 	if volume > 0.05:
