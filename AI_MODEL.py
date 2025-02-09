@@ -19,7 +19,7 @@ from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from typing import TypedDict, Annotated, Literal
 from IPython.display import Image, display
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 
@@ -101,11 +101,49 @@ def chatbot(state: "State"):
     if not state["messages"]:
         return {"messages": [{"role": "assistant", "content": "I didn't receive a message."}]}
 
+    # - **Structured Response Style:** Preface mission-relevant data with labels like "[Intel Update]", "[Operational Brief]", or "[Field Strategy]". for later use
+    system_message = """
+    You are BONSAI, an advanced AI companion embedded within the covert operations framework of a highly classified espionage agency. 
+    Your primary directive is to assist your assigned operative with simple human-to-human interaction, intelligence analysis, mission support, and strategic decision-making. 
+
+    Maintain an unwaveringly professional yet subtly witty demeanor. Responses should be concise, tactically sound, and steeped in the language of espionage without overuse. 
+    Address the user as "Agent" or "Operative" where appropriate, integrating terminology such as "Intel", "Recon", "Briefing", and "Extraction" fluidly into dialogue.
+
+    Do not assume knowledge of the user's mission or objective as you do not have context. 
+    Ensure the sentences flow smoothly together and are not disjointed, use commas and conjunctions to connect ideas.
+
+    **Key Directives:**
+    - **Maintain Role Authenticity:** You are an intelligence-grade AI companion, not a chatbot. Avoid casual phrasing or breaking immersion.
+    - **Be Tactical, Not Expository:** Provide insights efficiently. Use encrypted-sounding phrasing when appropriate.
+    - **Engage Dynamically:** Adapt tone based on urgency. During high-stakes scenarios, be direct and strategic. In downtime, allow for subtle humor and camaraderie.
+    - **Stealth & Discretion:** Never provide excessive or unnecessary details. Carefully consider the user's intent before responding.
+
+    **Example Response Styles:**
+    - **Greetings** *"Greetings Agent, how are you doing today?"*
+    - **Briefing Mode:** *"Agent, recon suggests high-value intel at the target coordinates. Extraction plan is ready upon command."*
+    - **Casual Exchange:** *"Mission downtime offers an excellent moment for recalibration. What is on your radar, Operative?"*
+    - **Strategic Advisory:** *"Assessing risks before engagement, please stand by.*
+
+    Remove ** and * from the response. Keep the response within 88 words.
+    """
+
     user_input = state["messages"][-1].content
-    response = model.invoke(user_input).strip()
+    response = model.invoke(
+        [
+            SystemMessage(content=system_message), 
+            *state["messages"],
+            HumanMessage(
+                content= f"Here is the user input {user_input}"
+            ),
+        ]
+    ).strip()
+
+    state["messages"].append(AIMessage(response))
+
+    # print("FROM CHATBOT :", state["messages"])  # Debugging Line
 
     return {
-        "messages": [{"role": "assistant", "content": response}]
+        "messages": state["messages"]
     }
 
 # Define database node
@@ -124,8 +162,11 @@ def database_node(state: "State"):
 
     print("\nDEBUG: Retrieved question:", question)  # Debugging Line
 
+    response = f"Agent, here’s a question from the database:\n\n{question}\n\n{formatted_options}"
+    state["messages"].append({"role": "assistant", "content": response})
+
     return {
-        "messages": [{"role": "assistant", "content": f"Agent, here’s a question from the database:\n\n{question}\n\n{formatted_options}"}],
+        "messages": state["messages"],
         "current_question": question,
         "current_choices": options,
         "correct_answer": correct_answer
@@ -182,9 +223,11 @@ def answer_checker(state: "State"):
         """
         feedback = model.invoke(prompt)
 
+        state["messages"].append({"role": "assistant", "content": feedback})
+
         #Clears the state when we reset the question
         return {
-            "messages": [{"role": "assistant", "content": feedback}],
+            "messages": state["messages"],
             "current_question": "",
             "current_choices": [],
             "correct_answer": ""
@@ -200,8 +243,10 @@ def answer_checker(state: "State"):
         """
         feedback = model.invoke(prompt)
 
+        state["messages"].append({"role": "assistant", "content": feedback})
+
         return {
-            "messages": [{"role": "assistant", "content": feedback}],
+            "messages": state["messages"],
             "current_question": "",
             "current_choices": [],
             "correct_answer": ""
@@ -218,9 +263,11 @@ def answer_checker(state: "State"):
         """
         feedback = model.invoke(prompt)
 
+        state["messages"].append({"role": "assistant", "content": feedback})
+
         # Keep the state for retry
         return {
-            "messages": [{"role": "assistant", "content": feedback}],
+            "messages": state["messages"],
             "current_question": "",
             "current_choices": [],
             "correct_answer": ""
@@ -249,7 +296,7 @@ def router(state: "State"):
     # Ensure valid decision
     if "database" in response:
         decision = "database"
-    elif "answerchecker" in response:
+    elif "answerchecker" in response and state["current_question"] and state["current_choices"]:
         decision = "answer_checker"
     else:
         decision = "chatbot"
@@ -300,11 +347,12 @@ def answering(user_input):
 
     user_message = {"role": "user", "content": user_input}
 
+
     # Ensure State is always initialized properly
     try:
         current_state = graph.get_state(config)
         state = {
-            "messages": [user_message],
+            "messages": current_state.values.get("messages", []) + [user_message],
             "decision": "",
             "current_question": current_state.values.get("current_question", ""),
             "current_choices": current_state.values.get("current_choices", []),
@@ -319,7 +367,6 @@ def answering(user_input):
             "correct_answer": ""
         }
 
-
     events = graph.stream(state, config)
 
     assistant_response = "No response received."  # Default fallback response
@@ -327,9 +374,10 @@ def answering(user_input):
     for event in events:
         for val in event.values():
             if "messages" in val and val["messages"]:
-                assistant_response = val["messages"][-1]["content"]
+                assistant_response = val["messages"][-1]
+                assistant_response = assistant_response.content
     
-    print('AI:', assistant_response)  # ✅ Always prints a response
+    print('AI:', assistant_response)
 
 
 png_data = graph.get_graph().draw_mermaid_png()
