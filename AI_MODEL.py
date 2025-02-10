@@ -26,12 +26,54 @@ from typing_extensions import Literal
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url": "https://us-south.ml.cloud.ibm.com",
-    "apikey": os.getenv("WATSONX_APIKEY"),
+    "url": "https://eu-gb.ml.cloud.ibm.com",
+    "apikey": "...",
 }
 
-project_id = os.getenv("WATSONX_PROJECT_ID")
-model_id = "granite3.1-dense"
+project_id = "..."
+model_id = "granite3.1-dense:2b"
+
+#Alex - granite3.1-dense:2b
+
+
+#--------------------------------------------------------
+#-------------------MIssion Stuff------------------------
+
+
+missions = {
+    "Silent Strike": {
+        "description": "Eliminate 10 high-value targets and extract encrypted intel from the vault.",
+        "objectives": [
+            "Neutralize all 10 targets.",
+            "Retrieve the encryption keys.",
+            "Evade enemy detection."
+        ]
+    },
+    "Cyber Heist": {
+        "description": "Infiltrate the mainframe, extract classified documents, and escape unnoticed.",
+        "objectives": [
+            "Hack the bank's security system.",
+            "Download confidential files.",
+            "Exit through the safehouse."
+        ]
+    },
+    "Operation Blackout": {
+        "description": "Disable the city’s power grid to create a diversion for your team’s entry.",
+        "objectives": [
+            "Locate the power station control room.",
+            "Disable critical generators.",
+            "Escape before the backup systems activate."
+        ]
+    }
+}
+
+
+selected_mission = "Silent Strike"
+mission_data = missions[selected_mission]
+
+
+#--------------------------------------------------------
+#--------------------------------------------------------
 
 # Initialize Model
 model = OllamaLLM(model=model_id)
@@ -57,14 +99,23 @@ def get_relevant_documents(question):
     return context
 
 @tool 
-def get_relevant_question_from_database(topic: str):
+def get_relevant_question_from_database(topic: str, mission_context: str):
     """Retrieve a question with 4 options from the database based on the topic."""
-    results = retriever.invoke(topic)
+
+    query = f"{mission_context} {topic}" if mission_context else topic  
+    results = retriever.invoke(query)
 
     # print("\nDEBUG: Retrieved results:", results)  # Debugging Line
 
     if results and len(results) > 0:
-        doc = results[0]  # Take the first result
+        # Filter for the most relevant mission-based question
+        best_match = None
+        for doc in results:
+            if mission_context.lower() in doc.page_content.lower():
+                best_match = doc  # Prioritize mission-related question
+                break  
+
+        doc = best_match if best_match else results[0]  # Fallback to first result
         print("\nDEBUG: Retrieved document page_content:", doc.page_content)  # Debugging Line
         
         # Extract question and choices using regex
@@ -87,9 +138,14 @@ def get_relevant_question_from_database(topic: str):
         if correct_answer in ["1", "2", "3", "4"]:
             correct_answer = chr(64 + int(correct_answer)) 
 
-        return {"question": question, "options": options, "correct_answer": correct_answer}
+        return {
+            "question": f"[Mission: {mission_context}] {question}" if mission_context else question,
+            "options": options,
+            "correct_answer": correct_answer
+        }
+    
     else:
-        return {"question": "No question found in the database.", "options": ["N/A", "N/A", "N/A", "N/A"]}
+        return {"question": "No mission-relevant question found in the database.", "options": ["N/A", "N/A", "N/A", "N/A"]}
 
 
 
@@ -152,9 +208,12 @@ def database_node(state: "State"):
     if not state["messages"]:
         return {"messages": [{"role": "assistant", "content": "I didn't receive a valid request."}]}
 
+    mission_context = state.get("mission_context", "")
     user_input = state["messages"][-1].content
-    result = get_relevant_question_from_database.invoke(user_input)
-    
+
+    result = get_relevant_question_from_database.invoke(user_input, mission_context)
+
+
     question = result.get("question", "No question found")
     options = result.get("options", ["Option A", "Option B", "Option C", "Option D"])
     correct_answer = result.get("correct_answer", "N/A")
@@ -199,12 +258,14 @@ def answer_checker(state: "State"):
 
     print("\nDEBUG: Extracted answer:", response)  # Debugging Line
 
-    if response == "N/A":
-        return {"messages": [{"role": "assistant", "content": "I couldn't extract a clear answer from the user input. Please try again."}]}
-
+    if response not in ["A", "B", "C", "D"]:
+        return {
+            "messages": [{"role": "assistant", "content": "I couldn't extract a clear answer from your response. Please try again."}]
+        }
+    
     question = state["current_question"]
-    choices = state["current_choices"]
-    correct_answer = state["correct_answer"].lower()
+    choices = state.get("current_choices", [])
+    correct_answer = state.get("correct_answer", "").upper()  # Convert to uppercase
 
     is_correct = response.lower() == correct_answer.lower()
 
@@ -380,11 +441,11 @@ def answering(user_input):
     print('AI:', assistant_response)
 
 
-png_data = graph.get_graph().draw_mermaid_png()
+# png_data = graph.get_graph().draw_mermaid_png()
 
-png_path = "langgraph.png"
-with open(png_path, "wb") as f:
-    f.write(png_data)
+# png_path = "langgraph.png"
+# with open(png_path, "wb") as f:
+#     f.write(png_data)
 
 # Start chatbot loop
 print("Start chatting with the AI! Type '!exit' to quit.")
