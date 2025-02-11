@@ -26,12 +26,12 @@ from typing_extensions import Literal
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url": "https://eu-gb.ml.cloud.ibm.com",
+    "url": "...",
     "apikey": "...",
 }
 
 project_id = "..."
-model_id = "granite3.1-dense:2b"
+model_id = "granite3.1-dense"
 
 #Alex - granite3.1-dense:2b
 
@@ -47,7 +47,8 @@ missions = {
             "Neutralize all 10 targets.",
             "Retrieve the encryption keys.",
             "Evade enemy detection."
-        ]
+        ],
+        "keywords": ["Cyber Security", "Security", "Systems", "Cloud", "Encryption"]
     },
     "Cyber Heist": {
         "description": "Infiltrate the mainframe, extract classified documents, and escape unnoticed.",
@@ -99,10 +100,26 @@ def get_relevant_documents(question):
     return context
 
 @tool 
-def get_relevant_question_from_database(topic: str, mission_context: str):
-    """Retrieve a question with 4 options from the database based on the topic."""
+def get_relevant_question_from_database(data: dict):
+    """Retrieve a mission-specific question with 4 options from the database based on the topic."""
 
-    query = f"{mission_context} {topic}" if mission_context else topic  
+    topic = data.get("topic", "")
+    mission_name = data.get("mission_name")
+    print("\n🔥 DEBUG: Mission Name :", mission_name)  # Debugging Line
+
+
+    mission_data = missions[mission_name]
+    print("\n🔥 DEBUG: Mission Data:", mission_data)  # Debugging Line
+    
+    mission_keywords = mission_data.get("keywords", [])
+
+    keyword_query = " ".join(mission_keywords)
+    print("\n🔥 DEBUG: Mission Keywords:", mission_keywords)  # Debugging Line
+
+
+    query = f"{mission_keywords} {topic}" if keyword_query else topic 
+    print("\n🔥 DEBUG: Query Sent to Retriever:", query)  # Debugging Line
+ 
     results = retriever.invoke(query)
 
     # print("\nDEBUG: Retrieved results:", results)  # Debugging Line
@@ -111,9 +128,12 @@ def get_relevant_question_from_database(topic: str, mission_context: str):
         # Filter for the most relevant mission-based question
         best_match = None
         for doc in results:
-            if mission_context.lower() in doc.page_content.lower():
-                best_match = doc  # Prioritize mission-related question
-                break  
+            for keyword in mission_keywords:
+                if keyword.lower() in doc.page_content.lower():
+                    best_match = doc  # Prioritize mission-related question
+                    break  
+            if best_match:
+                break
 
         doc = best_match if best_match else results[0]  # Fallback to first result
         print("\nDEBUG: Retrieved document page_content:", doc.page_content)  # Debugging Line
@@ -139,7 +159,7 @@ def get_relevant_question_from_database(topic: str, mission_context: str):
             correct_answer = chr(64 + int(correct_answer)) 
 
         return {
-            "question": f"[Mission: {mission_context}] {question}" if mission_context else question,
+            "question": f"[Mission: {mission_name}] {question}",
             "options": options,
             "correct_answer": correct_answer
         }
@@ -158,16 +178,24 @@ def chatbot(state: "State"):
         response = "I didn't receive a message."
         return {"messages": AIMessage(response)}
 
+    user_input = state["messages"][-1].content
+    mission_name = state.get("mission_name", selected_mission)  # Retrieve mission name
+    mission_data = missions.get(mission_name, {})  # Retrieve mission details
+    mission_description = mission_data.get("description", "Mission details unavailable.")
+    mission_objectives = mission_data.get("objectives", ["Mission objectives not specified."])
+
+
+
     # - **Structured Response Style:** Preface mission-relevant data with labels like "[Intel Update]", "[Operational Brief]", or "[Field Strategy]". for later use
-    system_message = """
+    system_message = f"""
+    **Current Mission: {mission_name}**
+    **Mission Description: {mission_description}**
+
     You are BONSAI, an advanced AI companion embedded within the covert operations framework of a highly classified espionage agency. 
     Your primary directive is to assist your assigned operative with simple human-to-human interaction, intelligence analysis, mission support, and strategic decision-making. 
 
-    Maintain an unwaveringly professional yet subtly witty demeanor. Responses should be concise, tactically sound, and steeped in the language of espionage without overuse. 
-    Address the user as "Agent" or "Operative" where appropriate, integrating terminology such as "Intel", "Recon", "Briefing", and "Extraction" fluidly into dialogue.
-
-    Do not assume knowledge of the user's mission or objective as you do not have context. 
-    Ensure the sentences flow smoothly together and are not disjointed, use commas and conjunctions to connect ideas.
+    **Mission Briefing:**
+    {mission_data.get("description", "No mission description found.")}
 
     **Key Directives:**
     - **Maintain Role Authenticity:** You are an intelligence-grade AI companion, not a chatbot. Avoid casual phrasing or breaking immersion.
@@ -181,10 +209,8 @@ def chatbot(state: "State"):
     - **Casual Exchange:** *"Mission downtime offers an excellent moment for recalibration. What is on your radar, Operative?"*
     - **Strategic Advisory:** *"Assessing risks before engagement, please stand by.*
 
-    Remove ** and * from the response. Keep the response within 88 words.
     """
 
-    user_input = state["messages"][-1].content
     response = model.invoke(
         [
             SystemMessage(content=system_message), 
@@ -206,14 +232,16 @@ def chatbot(state: "State"):
 # Define database node
 def database_node(state: "State"):
     """Retrieves a relevant question from the database."""
+    
     if not state["messages"]:
-        content = "I didn't receive a valid request."
-        return {"messages": AIMessage(response)}
+        return {"messages": [{"role": "assistant", "content": "I didn't receive a valid request."}]}
 
-    mission_context = state.get("mission_context", "")
+
+    mission_name = state.get("mission_name", selected_mission)  # Retrieve mission name
+    print("\nDEBUG: Mission Context:", mission_name)  # Debugging Line
     user_input = state["messages"][-1].content
 
-    result = get_relevant_question_from_database.invoke(user_input, mission_context)
+    result = get_relevant_question_from_database.invoke({"data": {"topic": user_input, "mission_name": mission_name}})
 
 
     question = result.get("question", "No question found")
@@ -262,9 +290,11 @@ def answer_checker(state: "State"):
     print("\nDEBUG: Extracted answer:", response)  # Debugging Line
 
     if response not in ["A", "B", "C", "D"]:
+        content = "I couldn't extract a clear answer from your response. Please try again."
         return {
-            "messages": [{"role": "assistant", "content": "I couldn't extract a clear answer from your response. Please try again."}]
+            "messages": AIMessage(content)
         }
+        
     
     question = state["current_question"]
     choices = state.get("current_choices", [])
@@ -439,9 +469,11 @@ def answering(user_input):
 
     for event in events:
         for val in event.values():
-            if "messages" in val and val["messages"]:
-                assistant_response = val["messages"][-1]
-                assistant_response = assistant_response.content
+            if isinstance(val, dict) and "messages" in val:  # ✅ Ensure val is a dictionary and contains "messages"
+                if isinstance(val["messages"], list) and val["messages"]:
+                    assistant_response = val["messages"][-1].content
+                elif isinstance(val["messages"], AIMessage):  # ✅ Handle single message case
+                    assistant_response = val["messages"].content
     
     print('AI:', assistant_response)
 
