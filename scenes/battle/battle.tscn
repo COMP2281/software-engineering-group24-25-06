@@ -1,0 +1,66 @@
+[gd_scene load_steps=8 format=3 uid="uid://c7f4ajlxoh1vx"]
+
+[ext_resource type="Script" path="res://scripts/battle.gd" id="1_w45sv"]
+[ext_resource type="Script" path="res://scripts/camera.gd" id="2_3jjtx"]
+[ext_resource type="Script" path="res://scripts/ui.gd" id="3_wuvo2"]
+[ext_resource type="PackedScene" uid="uid://btwm2jtg8xwdv" path="res://scenes/battle/enemy.tscn" id="4_3c4ox"]
+[ext_resource type="PackedScene" uid="uid://bh3bddjjqpymk" path="res://scenes/battle/player.tscn" id="5_pkckq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b5i7k"]
+albedo_color = Color(0.172549, 0.243137, 0.313726, 1)
+metallic = 0.3
+roughness = 0.7
+
+[sub_resource type="LabelSettings" id="LabelSettings_yfy37"]
+
+[node name="Battle" type="Node3D"]
+script = ExtResource("1_w45sv")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 3, 6)
+fov = 60.0
+script = ExtResource("2_3jjtx")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, 0.353553, -0.353553, 0, 0.707107, 0.707107, 0.5, -0.612372, 0.612372, 2, 5, 3)
+light_energy = 1.5
+
+[node name="Floor" type="CSGBox3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 0.1, 0, 0, 0, 10, 0, 0, 0)
+material = SubResource("StandardMaterial3D_b5i7k")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_wuvo2")
+
+[node name="Playerhealth" type="ProgressBar" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 220.0
+offset_bottom = 50.0
+
+[node name="Enemyhealth" type="ProgressBar" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_left = 932.0
+offset_top = 20.0
+offset_right = 1132.0
+offset_bottom = 50.0
+
+[node name="Successrate" type="Label" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+label_settings = SubResource("LabelSettings_yfy37")
+horizontal_alignment = 1
+
+[node name="enemy" parent="." instance=ExtResource("4_3c4ox")]
+
+[node name="player" parent="." instance=ExtResource("5_pkckq")]
