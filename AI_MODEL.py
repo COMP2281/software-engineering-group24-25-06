@@ -155,7 +155,8 @@ tools = [get_relevant_documents, get_relevant_question_from_database]
 def chatbot(state: "State"):
     """Handles normal chatbot responses."""
     if not state["messages"]:
-        return {"messages": [{"role": "assistant", "content": "I didn't receive a message."}]}
+        response = "I didn't receive a message."
+        return {"messages": AIMessage(response)}
 
     # - **Structured Response Style:** Preface mission-relevant data with labels like "[Intel Update]", "[Operational Brief]", or "[Field Strategy]". for later use
     system_message = """
@@ -206,7 +207,8 @@ def chatbot(state: "State"):
 def database_node(state: "State"):
     """Retrieves a relevant question from the database."""
     if not state["messages"]:
-        return {"messages": [{"role": "assistant", "content": "I didn't receive a valid request."}]}
+        content = "I didn't receive a valid request."
+        return {"messages": AIMessage(response)}
 
     mission_context = state.get("mission_context", "")
     user_input = state["messages"][-1].content
@@ -222,7 +224,7 @@ def database_node(state: "State"):
     print("\nDEBUG: Retrieved question:", question)  # Debugging Line
 
     response = f"Agent, here’s a question from the database:\n\n{question}\n\n{formatted_options}"
-    state["messages"].append({"role": "assistant", "content": response})
+    state["messages"].append(AIMessage(response))
 
     return {
         "messages": state["messages"],
@@ -235,7 +237,8 @@ def database_node(state: "State"):
 def answer_checker(state: "State"):
     """Checks the user's answer against the correct answer."""
     if not state["messages"]:
-        return {"messages": [{"role": "assistant", "content": "I didn't receive a valid request."}]}
+        content = "I didn't receive a valid request."
+        return {"messages": AIMessage(response)}
 
     user_input = state["messages"][-1].content
     
@@ -284,7 +287,7 @@ def answer_checker(state: "State"):
         """
         feedback = model.invoke(prompt)
 
-        state["messages"].append({"role": "assistant", "content": feedback})
+        state["messages"].append(AIMessage(feedback))
 
         #Clears the state when we reset the question
         return {
@@ -304,7 +307,7 @@ def answer_checker(state: "State"):
         """
         feedback = model.invoke(prompt)
 
-        state["messages"].append({"role": "assistant", "content": feedback})
+        state["messages"].append(AIMessage(feedback))
 
         return {
             "messages": state["messages"],
@@ -324,7 +327,7 @@ def answer_checker(state: "State"):
         """
         feedback = model.invoke(prompt)
 
-        state["messages"].append({"role": "assistant", "content": feedback})
+        state["messages"].append(AIMessage(feedback))
 
         # Keep the state for retry
         return {
@@ -343,9 +346,11 @@ def router(state: "State"):
 
     user_input = state["messages"][-1].content  
 
+    # WE NEED TO FIX WHEN THE USER SIMPLY SAYS A B C D THEN IT SHOULD GO ANSWER CHECKER
     routing_prompt = f"""
     Your task is to classify the following user input as either 'chatbot', 'database' or 'answerchecker'.
     Return only one word: either 'chatbot', 'database' or 'answerchecker' and nothing else.
+
 
     User Input: {user_input}
     """
