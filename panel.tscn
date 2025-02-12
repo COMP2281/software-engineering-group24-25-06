@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://dff2o3oq51mj1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_npwt6"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="Goad UI" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(1024, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_npwt6")
+
+[node name="Label" type="Label" parent="PanelContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 72
+text = "Come Closer and Fight Me...
+I have no legs"
+horizontal_alignment = 1
+vertical_alignment = 1

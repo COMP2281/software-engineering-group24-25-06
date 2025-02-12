@@ -1,0 +1,606 @@
+[gd_scene load_steps=28 format=3 uid="uid://dsr2af3qpnx5b"]
+
+[ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://addons/proto_controller/proto_controller_3p.tscn" id="1_qyio0"]
+[ext_resource type="Script" path="res://enemy.gd" id="2_ror24"]
+[ext_resource type="Texture2D" uid="uid://bc8sb34gk3uvf" path="res://assets/vs_Lbg.png" id="3_ck6p1"]
+[ext_resource type="Texture2D" uid="uid://bienbyyqywdrv" path="res://assets/vs_Rbg.png" id="4_ln6d3"]
+[ext_resource type="PackedScene" uid="uid://bweguqmdvuy5d" path="res://addons/beam_particle/lightning.tscn" id="5_os5fu"]
+[ext_resource type="Texture2D" uid="uid://dk5qbbaxtyjvs" path="res://assets/personaui/playerb.png" id="6_omsds"]
+[ext_resource type="Texture2D" uid="uid://dbsm3acgytaib" path="res://assets/personaui/playerw.png" id="7_uwtgk"]
+[ext_resource type="Texture2D" uid="uid://cvs1iu0egobug" path="res://assets/personaui/titleBG.png" id="8_3v0i0"]
+[ext_resource type="Texture2D" uid="uid://c84at16e7y2ah" path="res://assets/personaui/enemyb.png" id="9_b7poj"]
+[ext_resource type="Texture2D" uid="uid://b0haab6prlxmm" path="res://assets/personaui/enemyw.png" id="10_7f10m"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_70xo7"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_srcno"]
+sky_material = SubResource("ProceduralSkyMaterial_70xo7")
+
+[sub_resource type="Environment" id="Environment_w84nm"]
+background_mode = 2
+sky = SubResource("Sky_srcno")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_5fove"]
+size = Vector2(30, 30)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_3ss6q"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_cnuyt"]
+height = 4.96517
+radius = 2.79357
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_da05m"]
+height = 4.96517
+radius = 6.74205
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_ejs1d"]
+viewport_path = NodePath("enemy/Sprite3D/SubViewport")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_npwt6"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="Environment" id="Environment_7ug3u"]
+background_mode = 3
+glow_enabled = true
+glow_intensity = 3.41
+glow_bloom = 0.1
+glow_hdr_threshold = 0.46
+glow_hdr_scale = 0.15
+glow_hdr_luminance_cap = 60.9
+
+[sub_resource type="World3D" id="World3D_1qrd2"]
+environment = SubResource("Environment_7ug3u")
+
+[sub_resource type="Animation" id="Animation_hxhky"]
+resource_name = "lock_in"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control3:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(3, 1),
+"update": 0,
+"values": [Vector2(851, 0), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Control2:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(3, 1),
+"update": 0,
+"values": [Vector2(-857, 0), Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SubViewportContainer/SubViewport/LightningBeam:always_shoot")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_miov5"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Control3:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SubViewportContainer/SubViewport/LightningBeam:always_shoot")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_u2dah"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Control3:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SubViewportContainer/SubViewport/LightningBeam:always_shoot")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_w4eaa"]
+resource_name = "lock_in"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control3:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(0.3, 3),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(851, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Control2:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(0.3, 3),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-857, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SubViewportContainer/SubViewport/LightningBeam:always_shoot")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.833333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_u0svw"]
+resource_name = "locked_out"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_34yh6"]
+_data = {
+"Locked_In": SubResource("Animation_u2dah"),
+"RESET": SubResource("Animation_miov5"),
+"lock_in": SubResource("Animation_hxhky"),
+"lock_out": SubResource("Animation_w4eaa"),
+"locked_out": SubResource("Animation_u0svw")
+}
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_w84nm")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="ProtoController3P" parent="." instance=ExtResource("1_qyio0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10.6139)
+collision_layer = 3
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="."]
+use_collision = true
+mesh = SubResource("PlaneMesh_5fove")
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.77719, 1.58388, 13.6814)
+size = Vector3(17.9077, 4.26282, 1)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.77719, 0.0176867, 5.64577)
+size = Vector3(17.9077, 1.13043, 1)
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.77719, -0.136443, 1.55277)
+size = Vector3(17.9077, 0.822175, 1)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.77719, 1.58388, -4.14624)
+size = Vector3(17.9077, 4.26282, 1)
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCombiner3D/CSGBox3D4"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.60052, 0)
+operation = 2
+radius = 2.29433
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(-0.0218149, 0, -0.999762, 0, 1, 0, 0.999762, 0, -0.0218149, -9.71227, 1.58388, 4.42906)
+size = Vector3(17.9077, 4.26282, 1)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(-0.0218149, 0, -0.999762, 0, 1, 0, 0.999762, 0, -0.0218149, 6.12801, 0.48131, 4.42906)
+size = Vector3(17.9077, 2.05768, 1)
+
+[node name="enemy" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.435, 1, -1.644)
+mesh = SubResource("CapsuleMesh_3ss6q")
+script = ExtResource("2_ror24")
+
+[node name="Area3D" type="Area3D" parent="enemy"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy/Area3D"]
+shape = SubResource("CylinderShape3D_cnuyt")
+
+[node name="Area3D2" type="Area3D" parent="enemy"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy/Area3D2"]
+shape = SubResource("CylinderShape3D_da05m")
+
+[node name="Sprite3D" type="Sprite3D" parent="enemy"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0210952, 1.55693, -0.00969052)
+billboard = 2
+texture = SubResource("ViewportTexture_ejs1d")
+
+[node name="SubViewport" type="SubViewport" parent="enemy/Sprite3D"]
+transparent_bg = true
+size = Vector2i(1024, 512)
+
+[node name="Panel" type="CenterContainer" parent="enemy/Sprite3D/SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="enemy/Sprite3D/SubViewport/Panel"]
+custom_minimum_size = Vector2(1024, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_npwt6")
+
+[node name="Label" type="Label" parent="enemy/Sprite3D/SubViewport/Panel/PanelContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 30
+text = "Come Closer and Fight Me...
+I have no legs"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/Panel"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="Control/Panel/SubViewportContainer"]
+own_world_3d = true
+world_3d = SubResource("World3D_1qrd2")
+transparent_bg = true
+handle_input_locally = false
+use_hdr_2d = true
+size = Vector2i(1280, 720)
+render_target_update_mode = 0
+
+[node name="LightningBeam" parent="Control/Panel/SubViewportContainer/SubViewport" instance=ExtResource("5_os5fu")]
+z_index = 1
+position = Vector2(900, -100)
+target_position = Vector2(-520, 900)
+flashes = 1
+flash_time = 0.2
+bounces_max = 10
+always_shoot = true
+
+[node name="Label3" type="Label" parent="Control/Panel"]
+z_index = 2
+layout_mode = 0
+offset_left = 534.0
+offset_top = 274.0
+offset_right = 710.0
+offset_bottom = 479.0
+rotation = -0.0193833
+theme_override_constants/outline_size = 50
+theme_override_font_sizes/font_size = 150
+text = "VS"
+
+[node name="Control2" type="Control" parent="Control/Panel"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect3" type="TextureRect" parent="Control/Panel/Control2"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+texture = ExtResource("3_ck6p1")
+
+[node name="TextureRect" type="TextureRect" parent="Control/Panel/Control2"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 43.0
+offset_top = 128.0
+offset_right = 477.0
+offset_bottom = 615.0
+texture = ExtResource("6_omsds")
+expand_mode = 1
+stretch_mode = 4
+flip_h = true
+
+[node name="TextureRect2" type="TextureRect" parent="Control/Panel/Control2"]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 139.0
+offset_right = 510.0
+offset_bottom = 625.0
+texture = ExtResource("7_uwtgk")
+expand_mode = 1
+stretch_mode = 4
+flip_h = true
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Control/Panel/Control2"]
+layout_mode = 0
+offset_left = 29.0
+offset_top = 39.0
+offset_right = 644.0
+offset_bottom = 109.0
+texture = ExtResource("8_3v0i0")
+patch_margin_top = 9
+patch_margin_bottom = 14
+
+[node name="Label2" type="Label" parent="Control/Panel/Control2"]
+layout_mode = 0
+offset_left = 210.0
+offset_top = 54.0
+offset_right = 462.0
+offset_bottom = 96.0
+rotation = -0.0193833
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 30
+text = "YOU, THE PLAYER"
+
+[node name="Control3" type="Control" parent="Control/Panel"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect3" type="TextureRect" parent="Control/Panel/Control3"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+texture = ExtResource("4_ln6d3")
+
+[node name="TextureRect" type="TextureRect" parent="Control/Panel/Control3"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 800.0
+offset_top = 117.0
+offset_right = 1234.0
+offset_bottom = 604.0
+texture = ExtResource("9_b7poj")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="TextureRect2" type="TextureRect" parent="Control/Panel/Control3"]
+layout_mode = 0
+offset_left = 791.0
+offset_top = 121.0
+offset_right = 1175.0
+offset_bottom = 600.0
+texture = ExtResource("10_7f10m")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Control/Panel/Control3"]
+layout_mode = 0
+offset_left = 632.0
+offset_top = 612.0
+offset_right = 1247.0
+offset_bottom = 682.0
+texture = ExtResource("8_3v0i0")
+patch_margin_top = 9
+patch_margin_bottom = 14
+
+[node name="Label2" type="Label" parent="Control/Panel/Control3"]
+layout_mode = 0
+offset_left = 677.0
+offset_top = 631.0
+offset_right = 1225.0
+offset_bottom = 673.0
+rotation = -0.0193833
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 30
+text = "DOOR STOPPER"
+horizontal_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Control/Panel"]
+libraries = {
+"": SubResource("AnimationLibrary_34yh6")
+}
+
+[connection signal="body_entered" from="enemy/Area3D" to="enemy" method="_on_area_3d_body_entered"]
+[connection signal="body_entered" from="enemy/Area3D2" to="enemy" method="_on_area_3d_2_body_entered"]
+[connection signal="body_exited" from="enemy/Area3D2" to="enemy" method="_on_area_3d_2_body_exited"]

@@ -1,0 +1,207 @@
+[gd_scene load_steps=15 format=3 uid="uid://krws14uenr3p"]
+
+[ext_resource type="Script" path="res://encounter.gd" id="1_cxe2u"]
+[ext_resource type="PackedScene" uid="uid://bv6wki212s8eo" path="res://battle_player_ui.tscn" id="2_5g0m3"]
+[ext_resource type="Texture2D" uid="uid://ip4i4auv5y82" path="res://assets/personaui/battleoptionBG.png" id="2_cb0th"]
+[ext_resource type="Texture2D" uid="uid://c84at16e7y2ah" path="res://assets/personaui/enemyb.png" id="3_42ycy"]
+[ext_resource type="Texture2D" uid="uid://dk5qbbaxtyjvs" path="res://assets/personaui/playerb.png" id="3_fc6iy"]
+[ext_resource type="Texture2D" uid="uid://dbsm3acgytaib" path="res://assets/personaui/playerw.png" id="4_jaewg"]
+[ext_resource type="Texture2D" uid="uid://b0haab6prlxmm" path="res://assets/personaui/enemyw.png" id="4_xjtmc"]
+[ext_resource type="Texture2D" uid="uid://b6vprxwgwhcum" path="res://assets/personaui/health1.png" id="6_7ur8d"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ytdec"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_7m8xw"]
+sky_material = SubResource("ProceduralSkyMaterial_ytdec")
+
+[sub_resource type="Environment" id="Environment_bvmrw"]
+background_mode = 2
+sky = SubResource("Sky_7m8xw")
+tonemap_mode = 2
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_t25lk"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_1sk06"]
+viewport_path = NodePath("player_placeholder/Sprite3D/SubViewport")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mognc"]
+texture = ExtResource("2_cb0th")
+modulate_color = Color(0, 0, 0, 1)
+
+[node name="Encounter" type="Node3D"]
+script = ExtResource("1_cxe2u")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bvmrw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.265869, 0)
+size = Vector3(10, 0.468, 10)
+
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.319276, 0, 2.63376)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.680708, 0, 0.732555, 0, 1, 0, -0.732555, 0, 0.680708, 6.27137, 1.61827, 4.8947)
+
+[node name="enemy_placeholder" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.18403, 0.949784, -3.44608)
+mesh = SubResource("CapsuleMesh_t25lk")
+
+[node name="player_placeholder" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6889, 0.949784, 3.4485)
+mesh = SubResource("CapsuleMesh_t25lk")
+
+[node name="Sprite3D" type="Sprite3D" parent="player_placeholder"]
+billboard = 2
+no_depth_test = true
+texture = SubResource("ViewportTexture_1sk06")
+
+[node name="SubViewport" type="SubViewport" parent="player_placeholder/Sprite3D"]
+transparent_bg = true
+
+[node name="Panel" parent="player_placeholder/Sprite3D/SubViewport" instance=ExtResource("2_5g0m3")]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="Control"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect3" type="TextureRect" parent="Control/Control"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 1091.0
+offset_top = 594.0
+offset_right = 1176.0
+offset_bottom = 690.0
+texture = ExtResource("3_42ycy")
+
+[node name="TextureRect4" type="TextureRect" parent="Control/Control"]
+layout_mode = 0
+offset_left = 1095.0
+offset_top = 600.0
+offset_right = 1162.0
+offset_bottom = 768.0
+texture = ExtResource("4_xjtmc")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Panel2" type="Panel" parent="Control/Control"]
+layout_mode = 0
+offset_left = 1113.0
+offset_top = 657.0
+offset_right = 1241.0
+offset_bottom = 697.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_mognc")
+
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="Control/Control"]
+layout_mode = 0
+offset_left = 1145.0
+offset_top = 677.0
+offset_right = 1239.0
+offset_bottom = 694.0
+value = 30.0
+texture_under = ExtResource("6_7ur8d")
+texture_progress = ExtResource("6_7ur8d")
+tint_progress = Color(1, 0, 0, 1)
+
+[node name="Label2" type="Label" parent="Control/Control"]
+layout_mode = 0
+offset_left = 1125.0
+offset_top = 662.0
+offset_right = 1183.0
+offset_bottom = 685.0
+text = "ENEMY"
+
+[node name="Label" type="Label" parent="Control/Control/Label2"]
+layout_mode = 0
+offset_left = 69.0
+offset_top = -8.0
+offset_right = 127.0
+offset_bottom = 15.0
+theme_override_constants/outline_size = 10
+text = "20/80"
+
+[node name="Control2" type="Control" parent="Control"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/Control2"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 837.0
+offset_top = 589.0
+offset_right = 922.0
+offset_bottom = 685.0
+texture = ExtResource("3_fc6iy")
+
+[node name="TextureRect2" type="TextureRect" parent="Control/Control2"]
+layout_mode = 0
+offset_left = 841.0
+offset_top = 595.0
+offset_right = 908.0
+offset_bottom = 763.0
+texture = ExtResource("4_jaewg")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Panel" type="Panel" parent="Control/Control2"]
+layout_mode = 0
+offset_left = 859.0
+offset_top = 652.0
+offset_right = 987.0
+offset_bottom = 692.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_mognc")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Control/Control2"]
+layout_mode = 0
+offset_left = 891.0
+offset_top = 672.0
+offset_right = 985.0
+offset_bottom = 689.0
+value = 30.0
+texture_under = ExtResource("6_7ur8d")
+texture_progress = ExtResource("6_7ur8d")
+tint_progress = Color(0.823452, 0.00162412, 0.955567, 1)
+
+[node name="Label" type="Label" parent="Control/Control2"]
+layout_mode = 0
+offset_left = 871.0
+offset_top = 657.0
+offset_right = 929.0
+offset_bottom = 680.0
+text = "PLAYER"
+
+[node name="Label" type="Label" parent="Control/Control2/Label"]
+layout_mode = 0
+offset_left = 69.0
+offset_top = -8.0
+offset_right = 127.0
+offset_bottom = 15.0
+theme_override_constants/outline_size = 10
+text = "20/80"
+
+[node name="Button" type="Button" parent="Control"]
+layout_mode = 0
+offset_left = 982.0
+offset_top = 304.0
+offset_right = 1031.0
+offset_bottom = 335.0
+text = "Done"
+
+[connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
