@@ -1,6 +1,6 @@
 extends EnemyState
 
-func enter(previous_state_path: String, data := {}) -> void:
+func enter(_previous_state_path: String, _data := {}) -> void:
 	# If there is no new investigation point, go to patrol
 	if enemy.new_investigation_point == Vector3.INF:
 		finished.emit(PATROL)

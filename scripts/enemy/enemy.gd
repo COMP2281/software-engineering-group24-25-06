@@ -53,7 +53,7 @@ func _ready() -> void:
 	# NOTE: we want the suspicion level from our view zone,
 	#	not the global suspicion level from the stealth manager
 	$ViewZone.new_suspicion_level.connect(update_suspicion_level)
-	
+
 func process_distraction(location: Vector3) -> void:
 	new_investigation_point = location
 	
@@ -67,6 +67,8 @@ func set_heading(angle: float) -> void:
 func set_destination(destination: Vector3) -> void:
 	if destination == Vector3.INF: return
 	
+	# TODO: also ignore call if made before first map synchronisation
+	
 	var closest_point: Vector3 = NavigationServer3D.map_get_closest_point(
 		navigation_agent_3d.get_navigation_map(),
 		destination
@@ -74,10 +76,6 @@ func set_destination(destination: Vector3) -> void:
 	navigation_agent_3d.set_target_position(closest_point)
 
 func _process(delta: float) -> void:
-	# TODO: surely better way
-	if $ViewZone.viewzone_resource == null:
-		$ViewZone.viewzone_resource = viewzone_resource
-	
 	$ViewZone.view_direction = global_rotation.y
 	$ViewZone.eye_level_position = $EyeLevel.global_position
 	

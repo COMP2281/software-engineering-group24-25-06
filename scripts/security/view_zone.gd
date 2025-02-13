@@ -54,6 +54,7 @@ func _process(delta: float) -> void:
 	if view_radius == INF:
 		update_properties(1.0)
 	
+	# Set the view direction each frame since it likely changes every frame
 	$VisualMesh3D.set_instance_shader_parameter("view_direction", view_direction)
 	
 	var detection_manifold: DetectionManifold = in_detection_range(StealthManager.player_position)
@@ -114,25 +115,14 @@ func in_detection_range(player_position: Vector3) -> DetectionManifold:
 	
 	return manifold
 	
-func process_distraction(location: Vector3, hearing_range: float, volume: float) -> void:
+func process_distraction(location: Vector3, hearing_range: float) -> void:
 	if viewzone_resource.hearing_modifier == 0.0: return
-	
-	# TODO: for now, we're just getting straight distance
-	#	in future, use something in navigation to get "real"
-	#	distance
-	var dist: float = global_position.distance_to(location)
 	
 	var heard_sound_vector3: Vector3 = location - global_position
 	heard_sound_vector = Vector2(heard_sound_vector3.x, heard_sound_vector3.z)
 	
-	print(heard_sound_vector)
-	
-	volume /= StealthManager.stealth_modifier
-	# Linear fall-off of volume and distance
-	volume *= 1.0 - min(1.0, (dist / (viewzone_resource.hearing_modifier * hearing_range)))
-	
-	# TODO: Random constant
-	if volume > 0.05:
+	var dist: float = global_position.distance_to(location)
+	if dist < hearing_range * viewzone_resource.hearing_modifier / StealthManager.stealth_modifier:
 		new_distraction.emit(location)
 		
 func guess_player_position() -> Vector3:

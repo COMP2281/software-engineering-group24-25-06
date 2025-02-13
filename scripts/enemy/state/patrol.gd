@@ -17,7 +17,7 @@ func find_closest_abs_pos(path: Path3D, global_pos: Vector3):
 	curve_pos = path_transform * curve_pos
 	return curve_pos
 
-func enter(previous_state_path: String, data := {}) -> void:
+func enter(previous_state_path: String, _data := {}) -> void:
 	if not enemy.patrol_path: return
 	enemy.patrol_path.get_child(0).progress = enemy.patrol_path.curve.get_closest_offset(enemy.global_position)
 	

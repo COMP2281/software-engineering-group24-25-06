@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://c65y6vjf2c7jf"]
+
+[ext_resource type="Script" path="res://scripts/utility/debug_remove.gd" id="1_7n38b"]
+
+[sub_resource type="Environment" id="Environment_eycxy"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_a64mo"]
+
+[node name="BattleScene" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.742128, 0.670258, 0, -0.670258, 0.742128, 0, 1.19053, 1.30969)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.806114, 0, 0.59176, 0, 1, 0, -0.59176, 0, 0.806114, 1.52927, 0.80048, 2.01039)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+size = Vector3(10, 1, 10)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_eycxy")
+camera_attributes = SubResource("CameraAttributesPractical_a64mo")
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("1_7n38b")

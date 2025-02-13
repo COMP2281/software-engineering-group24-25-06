@@ -15,7 +15,8 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
+	# TODO: use player group instead
 	StealthManager.player_position = global_position
 	
 	# Advanced sneaking model
@@ -39,7 +40,7 @@ func _process(delta: float) -> void:
 		var result := space_state.intersect_ray(query)
 		
 		if result:
-			StealthManager.player_makes_sound(result.position, coin_toss_range, 1.0)
+			StealthManager.player_makes_sound(result.position, coin_toss_range)
 	
 func _physics_process(delta: float):
 	var input: Vector3 = Vector3.ZERO
@@ -53,7 +54,7 @@ func _physics_process(delta: float):
 	
 	# If the player is moving (pretty bad way to check)
 	if abs(direction.x) > 0.0 or abs(direction.z) > 0.0:
-		StealthManager.player_makes_sound(global_position, player_movement_range, 0.2)
+		StealthManager.player_makes_sound(global_position, player_movement_range)
 
 	if not is_on_floor():
 		velocity.y += -gravity * delta

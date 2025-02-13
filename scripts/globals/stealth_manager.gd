@@ -26,18 +26,22 @@ var player_observer_position: Vector3 = Vector3.INF
 var observation_tracker: PackedFloat32Array = []
 var observation_amnesia: float = 60.0
 
+var in_encounter: bool = false
+
 signal change_suspicion_level(new_level: float)
 signal change_stealth_level(new_stealth: float)
 signal change_global_alertness(new_level: float)
 
 func _ready() -> void:
+	# TODO: use anonymous functions/lambdas instead, better
+	#	to attach functionality in same area as the signal connection
 	change_suspicion_level.connect(update_suspicion_level)
 	change_stealth_level.connect(update_stealth_modifier)
 	change_global_alertness.connect(update_global_alertness)
 	
-func observe_player(player_position: Vector3, security_position: Vector3):
+func observe_player(observed_player_position: Vector3, security_position: Vector3):
 	player_observed_elapsed = 0.0
-	player_observed_position = player_position
+	player_observed_position = observed_player_position
 	player_observer_position = security_position
 	
 func get_security() -> Array[ViewZone]:
@@ -109,9 +113,9 @@ func calculate_stealth_modifier():
 
 # Volume parameter describes how "severe" a sound is, where moving is of low interest,
 #	but the player-made distraction is of maximum volume
-func player_makes_sound(location: Vector3, hearing_range: float, volume: float):
+func player_makes_sound(location: Vector3, hearing_range: float):
 	var security: Array[ViewZone] = get_security()
 	if not security: return
 	
 	for unit in security:
-		unit.process_distraction(location, hearing_range, volume)
+		unit.process_distraction(location, hearing_range)
