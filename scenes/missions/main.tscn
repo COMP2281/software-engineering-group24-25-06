@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://bbhvgdj8cy05u" path="res://scenes/missions/enemy_hunt_scene.tscn" id="1_t8uv5"]
 [ext_resource type="PackedScene" uid="uid://c65y6vjf2c7jf" path="res://scenes/missions/battle_scene.tscn" id="2_wsxg2"]
 [ext_resource type="Script" path="res://scripts/utility/state_machine.gd" id="3_1sp55"]
-[ext_resource type="Script" path="res://scripts/globals/mission_state.gd" id="4_2jaig"]
-[ext_resource type="Script" path="res://scripts/globals/encounter_state.gd" id="5_oicvy"]
+[ext_resource type="Script" path="res://scripts/scene_coordinator/states/mission_state.gd" id="4_2jaig"]
+[ext_resource type="Script" path="res://scripts/scene_coordinator/states/encounter_state.gd" id="5_oicvy"]
 
 [node name="MainSceneNode" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 0)

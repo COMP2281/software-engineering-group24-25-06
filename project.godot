@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-StealthManager="*res://scripts/globals/stealth_manager.gd"
-SceneCoordinator="*res://scripts/globals/scene_coordinator.gd"
+StealthManager="*res://scripts/security/stealth_manager.gd"
+SceneCoordinator="*res://scripts/scene_coordinator/scene_coordinator.gd"
 
 [global_group]
 

@@ -44,9 +44,9 @@ func observe_player(observed_player_position: Vector3, security_position: Vector
 	player_observed_position = observed_player_position
 	player_observer_position = security_position
 	
-func get_security() -> Array[ViewZone]:
+func get_security() -> Array[Security]:
 	var security_group: Array[Node] = get_tree().get_nodes_in_group("security")
-	var security: Array[ViewZone]
+	var security: Array[Security]
 	security.assign(security_group)
 	
 	return security
@@ -73,7 +73,7 @@ func _process(delta: float) -> void:
 	
 	player_observed_elapsed += delta
 	
-	var security: Array[ViewZone] = get_security()
+	var security: Array[Security] = get_security()
 	if not security: return
 	
 	# Get maximum suspicion level of all enemies
@@ -114,7 +114,7 @@ func calculate_stealth_modifier():
 # Volume parameter describes how "severe" a sound is, where moving is of low interest,
 #	but the player-made distraction is of maximum volume
 func player_makes_sound(location: Vector3, hearing_range: float):
-	var security: Array[ViewZone] = get_security()
+	var security: Array[Security] = get_security()
 	if not security: return
 	
 	for unit in security:

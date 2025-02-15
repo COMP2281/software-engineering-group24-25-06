@@ -1,7 +1,6 @@
 shader_type spatial;
 render_mode unshaded, fog_disabled;
 
-uniform sampler2D depth_texture : source_color, hint_depth_texture;
 instance uniform float view_radius;
 instance uniform float view_fov;
 instance uniform float view_direction;
@@ -11,8 +10,10 @@ instance uniform vec2 sound_instance_vector = vec2(0.0, 0.0);
 instance uniform float hearing_offset_world = 2.0;
 instance uniform vec3 hearing_color : source_color = vec3(0.8, 0.2, 0.0);
 instance uniform vec3 inner_color : source_color = vec3(0.1, 0.6, 0.8);
-instance uniform float frequency = 0.5;
-instance uniform float num_waves = 16.0;
+
+const float SCANNER_WAVE_SPEED = 0.5;
+const float SCANNER_FREQUENCY = 16.0;
+const float SCANNER_SHARPENING = 1.5;
 
 const vec2 local_uv[] = { vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0) };
 varying vec2 LOCAL_UV;
@@ -90,16 +91,16 @@ vec3 voronoi(vec2 uv) {
 	return result;
 }
 
-// Calculate distance to border for every coordinate
-float scanner_effect(vec2 uv, float time) {
-	vec2 origin = vec2(0.5, 0.5);
+float wave_effect(vec2 uv, vec2 origin, float wave_speed, float wave_frequency, float sharpening) {
 	float dist = distance(uv, origin);
-	float sample_point = dist - fract(time * frequency);
-	float sin_frequency = 2.0 * num_waves;
+	float sample_point = dist - fract(TIME * wave_speed);
+	float sin_frequency = 2.0 * wave_frequency;
 	
+	// Normalise sin wave
 	float sample = (sin(sin_frequency * sample_point) + 1.0) * 0.5;
 	// Reduce width of dividing lines/sharpening effect/gamma correction
-	sample = pow(sample, 1.5);
+	sample = pow(sample, sharpening);
+	
 	// Quadratic distance fall-off
 	float distance_fade = max(0.0, 1.0 - 4.0 * dist * dist);
 	
@@ -117,22 +118,17 @@ vec4 sample_point(vec2 uv) {
 	float angle = -(atan(uv.y - origin.y, uv.x - origin.x) - origin_angle);
 	float dist_close_border = abs(dist - scaled_close_radius);
 	float dist_view_border = abs(dist - scaled_view_radius);
-	// Calculation is a bit overcomplicated because of ranges
-	// TODO: can be simplified now?
-	float relative_direction_angle = PI - abs(mod(abs(angle), 2.0 * PI) - PI);
+	float relative_direction_angle = abs(angle);
 	
 	vec3 draw_color = inner_color;
 	float draw_alpha = 0.0;
 	
-	float scanner_sample = scanner_effect(uv, TIME) * 0.8 + 0.1;
+	float scanner_sample = wave_effect(uv, vec2(0.5), SCANNER_WAVE_SPEED, SCANNER_FREQUENCY, SCANNER_SHARPENING) * 0.8 + 0.1;
 	vec3 voronoi = voronoi(uv) * 1.0;
 	// TODO: distance fade should be applied to both of these?
 	// TODO: distance fade that also applies to edges of view zone
 	//	requires some maths to find vectors of edges, and project
 	//	against those edges to find distance to edges
-	// Applying additional sharpening?
-	// TODO: apply sharpening in one place...
-	voronoi.x = pow(voronoi.x, 1.5);
 	
 	if (dist < scaled_close_radius) {
 		draw_color = inner_color * (1.0 + scanner_sample * 0.3);
@@ -157,17 +153,19 @@ vec4 sample_point(vec2 uv) {
 		// - outer range
 		// deadzone should be offset inwards
 		float deadzone_offset_percent = 1.0 - 0.2;
-		float deadzone_range = 0.04;
-		float draw_range = 0.05;
+		float deadzone_range = 0.8 / quad_size;
+		float draw_range = 1.0 / quad_size;
 		vec2 sound_rotated = rotate_vec2(view_direction, sound_instance_vector, vec2(0.0));
 		vec2 sound_vec = normalize(-sound_rotated) * hearing_offset;
 		
+		vec2 hearing_origin = vec2(0.5) + sound_vec;
+		
 		float deadzone_dist = distance(uv, sound_vec * deadzone_offset_percent + vec2(0.5));
-		float hearing_dist = distance(uv, sound_vec + vec2(0.5));
+		float hearing_dist = distance(uv, hearing_origin);
 		
 		if (hearing_dist < draw_range && deadzone_dist > deadzone_range) {
 			draw_color = hearing_color;
-			draw_alpha = 1.0;
+			draw_alpha = wave_effect(uv, hearing_origin, 0.1, 128.0, 3.0) * 0.5 + 0.5;
 		}
 	}
 	

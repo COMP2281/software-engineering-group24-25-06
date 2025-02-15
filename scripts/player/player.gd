@@ -1,4 +1,4 @@
-extends CharacterBody3D
+class_name Player extends CharacterBody3D
 
 @export_group("Modifiable Parameters")
 ## Player move speed
@@ -8,6 +8,8 @@ extends CharacterBody3D
 ## The range enemies can hear player movement from
 @export var player_movement_range: float = 5.0
 
+const SNEAKING_SCALE: float = 0.75
+
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @onready var spring_arm := $SpringArm3D
@@ -16,12 +18,11 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 func _process(_delta: float) -> void:
-	# TODO: use player group instead
 	StealthManager.player_position = global_position
 	
 	# Advanced sneaking model
 	if Input.is_action_pressed("sneak"):
-		scale.y = 0.75
+		scale.y = SNEAKING_SCALE
 	else:
 		scale.y = 1.0
 	

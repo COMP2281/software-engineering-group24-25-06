@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" path="res://scripts/enemy/enemy.gd" id="1_twq01"]
 [ext_resource type="Resource" uid="uid://hcf8g06prayd" path="res://settings/viewzones/standard_enemy_viewzone.tres" id="2_fo45g"]
-[ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://scenes/prefabs/view_zone.tscn" id="3_44apx"]
+[ext_resource type="PackedScene" uid="uid://bwdwd8kfjqocc" path="res://scenes/prefabs/security.tscn" id="3_44apx"]
 [ext_resource type="Script" path="res://scripts/utility/state_machine.gd" id="4_irt23"]
-[ext_resource type="Script" path="res://scripts/enemy/state/patrol.gd" id="5_huxov"]
-[ext_resource type="Script" path="res://scripts/enemy/state/investigate.gd" id="6_rvoe7"]
-[ext_resource type="Script" path="res://scripts/enemy/state/hunting.gd" id="7_b1fwn"]
+[ext_resource type="Script" path="res://scripts/enemy/states/patrol.gd" id="5_huxov"]
+[ext_resource type="Script" path="res://scripts/enemy/states/investigate.gd" id="6_rvoe7"]
+[ext_resource type="Script" path="res://scripts/enemy/states/hunting.gd" id="7_b1fwn"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6jdm4"]
 albedo_color = Color(0, 0.851473, 0.851473, 1)
@@ -35,7 +35,7 @@ shape = SubResource("CapsuleShape3D_eg2rf")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.58867)
 size = Vector3(0.2, 0.2, 1)
 
-[node name="ViewZone" parent="." instance=ExtResource("3_44apx")]
+[node name="Security" parent="." instance=ExtResource("3_44apx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]

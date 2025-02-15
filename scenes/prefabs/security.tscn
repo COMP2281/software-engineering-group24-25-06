@@ -1,20 +1,20 @@
 [gd_scene load_steps=5 format=3 uid="uid://bwdwd8kfjqocc"]
 
-[ext_resource type="Script" path="res://scripts/security/view_zone.gd" id="1_7xskj"]
-[ext_resource type="Shader" path="res://shaders/view_zone.gdshader" id="2_7jnlv"]
+[ext_resource type="Script" path="res://scripts/security/security.gd" id="1_f8qnf"]
+[ext_resource type="Shader" path="res://shaders/view_zone.gdshader" id="2_25wtn"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_br0jy"]
 resource_local_to_scene = true
 render_priority = 0
-shader = ExtResource("2_7jnlv")
+shader = ExtResource("2_25wtn")
 
 [sub_resource type="QuadMesh" id="QuadMesh_i5wa5"]
 resource_local_to_scene = true
 material = SubResource("ShaderMaterial_br0jy")
 orientation = 1
 
-[node name="ViewZone" type="Node3D" groups=["security"]]
-script = ExtResource("1_7xskj")
+[node name="Security" type="Node3D" groups=["security"]]
+script = ExtResource("1_f8qnf")
 
 [node name="VisualMesh3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)

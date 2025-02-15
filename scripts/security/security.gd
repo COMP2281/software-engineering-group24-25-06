@@ -1,15 +1,10 @@
-# TODO: ViewZone has grown way too large
-#	properly just rename to something more generic
-#	or split up the scene to separate rendering
-#	and suspicion calculations
-class_name ViewZone extends Node3D
+class_name Security extends Node3D
 
 const OBSERVATION_EXPIRY: float = 1.0
 const OMNIPOTENCE_DURATION: float = 0.5
 
 var viewzone_resource: ViewzoneResource = null
 
-var view_direction: float = 0.0
 var eye_level_position: Vector3
 
 var view_radius: float = INF
@@ -44,25 +39,23 @@ func update_properties(stealth_modifier: float):
 	$VisualMesh3D.set_instance_shader_parameter("quad_size", $VisualMesh3D.mesh.size.x)
 	
 func _ready() -> void:
+	await get_parent().ready
+	update_properties(1.0)
 	StealthManager.change_stealth_level.connect(update_properties)
 
 func _process(delta: float) -> void:
-	# TODO: better way to do this? _ready seems to be running in a different order
-	#	manually update properties
-	if viewzone_resource == null: return
-	
-	if view_radius == INF:
-		update_properties(1.0)
-	
 	# Set the view direction each frame since it likely changes every frame
-	$VisualMesh3D.set_instance_shader_parameter("view_direction", view_direction)
+	$VisualMesh3D.set_instance_shader_parameter("view_direction", global_rotation.y)
 	
 	var detection_manifold: DetectionManifold = in_detection_range(StealthManager.player_position)
+	var old_suspicion: float = suspicion_level;
 	
 	currently_seeing_player = detection_manifold.being_seen
 	
 	if detection_manifold.being_seen:
 		suspicion_level += 1.0 / detection_speed * delta
+		# NOTE: seems a bit dumb, but there is reason to believe we might want to observe the player
+		#	but not exactly at their location? (im not bothered to change it)
 		StealthManager.observe_player(StealthManager.player_position, global_position)
 		time_since_seen_player = 0.0
 	else:
@@ -76,8 +69,8 @@ func _process(delta: float) -> void:
 	if heard_sound_elapsed > 1.0:
 		heard_sound_vector = Vector2.ZERO
 	
-	# TODO: emit event only on change
-	new_suspicion_level.emit(suspicion_level, detection_manifold.being_seen)
+	if suspicion_level != old_suspicion:
+		new_suspicion_level.emit(suspicion_level, detection_manifold.being_seen)
 
 func in_detection_range(player_position: Vector3) -> DetectionManifold:
 	var manifold: DetectionManifold = DetectionManifold.new()
@@ -95,8 +88,7 @@ func in_detection_range(player_position: Vector3) -> DetectionManifold:
 	# Calculate angle relative to the centerline of the view cone
 	var origin_angle: float = -0.5 * PI
 	var angle: float = -(atan2(player_position.z - global_position.z, player_position.x - global_position.x) - origin_angle)
-	# TODO: better comparison?
-	var relative_direction_angle: float = PI - abs(fmod(abs(angle - view_direction), 2.0 * PI) - PI)
+	var relative_direction_angle: float = angle_difference(angle, global_rotation.y)
 	
 	# If they're not within our FOV or our view radius, early return
 	if relative_direction_angle > view_fov or manifold.distance > view_radius:

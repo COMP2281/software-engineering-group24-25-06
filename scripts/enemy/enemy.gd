@@ -5,6 +5,8 @@ class_name Enemy extends CharacterBody3D
 @export var viewzone_resource: ViewzoneResource
 
 @export_group("Behaviour Properties")
+@export var battle_begin_proximity: float = 2.0
+
 @export_subgroup("Movement")
 @export var move_speed: float = 5.0
 @export var hunt_speed: float = 7.5
@@ -48,13 +50,13 @@ var player_position_guess: Vector3 = Vector3.INF
 func _ready() -> void:
 	target_angle = global_rotation.y
 	current_speed = move_speed
-	$ViewZone.viewzone_resource = viewzone_resource
-	$ViewZone.new_distraction.connect(process_distraction)
+	$Security.viewzone_resource = viewzone_resource
+	$Security.new_distraction.connect(update_distraction_point)
 	# NOTE: we want the suspicion level from our view zone,
 	#	not the global suspicion level from the stealth manager
-	$ViewZone.new_suspicion_level.connect(update_suspicion_level)
+	$Security.new_suspicion_level.connect(update_suspicion_level)
 
-func process_distraction(location: Vector3) -> void:
+func update_distraction_point(location: Vector3) -> void:
 	new_investigation_point = location
 	
 func update_suspicion_level(new_suspicion: float, seeing_player: bool) -> void:
@@ -76,16 +78,26 @@ func set_destination(destination: Vector3) -> void:
 	navigation_agent_3d.set_target_position(closest_point)
 
 func _process(delta: float) -> void:
-	$ViewZone.view_direction = global_rotation.y
-	$ViewZone.eye_level_position = $EyeLevel.global_position
+	$Security.eye_level_position = $EyeLevel.global_position
 	
 	var max_change: float = max_rotation_speed * delta
-	var angle_diff: float = wrapf(target_angle - global_rotation.y, -1.0 * PI, 1.0 * PI)
+	var angle_diff: float = angle_difference(global_rotation.y, target_angle)
 	var direction: float = sign(angle_diff)
 	
 	global_rotation.y += direction * min(max_change, abs(angle_diff))
 	
-	player_position_guess = $ViewZone.guess_player_position()
+	player_position_guess = $Security.guess_player_position()
+	
+	# Check if we should begin battle
+	var player_distance: float = (StealthManager.player_position - global_position).length()
+	
+	if currently_seeing_player and player_distance < battle_begin_proximity and suspicion_level == 1.0:
+		# TODO: pass whatever additional data required
+		#	what enemy took us to combat, etc.
+		# TODO: very temporary, just make it so we can transition back to this scene
+		#	without instantly being thrown into another encounter
+		$Security.new_suspicion_level.emit(0.0, false)
+		SceneCoordinator.change_scene.emit("Encounter", null)
 	
 func _physics_process(delta: float) -> void:
 	var destination: Vector3 = navigation_agent_3d.get_next_path_position()

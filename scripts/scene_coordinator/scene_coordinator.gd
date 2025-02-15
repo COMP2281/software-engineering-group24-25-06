@@ -6,9 +6,9 @@ var current_scene: String
 func is_enabled(scene_name: String) -> bool:
 	return scene_name == current_scene
 
-signal change_scene(scene: String)
+signal change_scene(scene: String, metadata)
 
-func _change_scene(scene: String):
+func _change_scene(scene: String, _metadata) -> void:
 	current_scene = scene
 
 func _ready() -> void:
@@ -17,6 +17,6 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("change_battle"):
-		change_scene.emit("Encounter")
+		change_scene.emit("Encounter", null)
 	if Input.is_action_just_pressed("change_mission"):
-		change_scene.emit("Mission")
+		change_scene.emit("Mission", null)
