@@ -1,73 +1,66 @@
 extends Control
 
-@onready var success_label = $Successrate
+@onready var player_health = $Playerhealth
+@onready var enemy_health = $Enemyhealth
+@onready var player_health_label = $Playerhealth/Healthlabel
+@onready var enemy_health_label = $Enemyhealth/Healthlabel
 
 func _ready():
-	anchors_preset = Control.PRESET_FULL_RECT
+	style_health_bar()
+	update_health_displays()
+
+func style_health_bar():
 	
-	style_health_bar($Playerhealth, true)
+	player_health.max_value = 80
+	player_health.value = 80
+	player_health.custom_minimum_size = Vector2(120, 30)
+	player_health.position = Vector2(50, get_viewport().size.y - 100)
 	
-	style_health_bar($Enemyhealth, false)
+	var player_style = StyleBoxFlat.new()
+	player_style.bg_color = Color(0, 0, 0, 1)  # Black background
+	player_style.border_color = Color(1, 1, 1)  # White border
+	player_style.skew = Vector2(-0.2, 0)  # Persona 5 slant
+	player_style.corner_radius_top_left = 8
+	player_style.corner_radius_bottom_right = 8
 	
-	get_viewport().size_changed.connect(_on_viewport_size_changed)
-	_update_health_bar_positions()
-	setup_success_label()
-	get_node("../..").success_rate_change.connect(_on_success_rate_changed)
-
-
-func style_health_bar(bar, is_player):
-	var style = StyleBoxFlat.new()
-	var bg_style = StyleBoxFlat.new()
+	var player_bg_style = StyleBoxFlat.new()
+	player_bg_style.bg_color = Color(0.2, 0.2, 0.2, 1)  # Dark gray background
+	player_bg_style.skew = Vector2(-0.2, 0)
+	player_bg_style.corner_radius_top_left = 8
+	player_bg_style.corner_radius_bottom_right = 8
 	
-	if is_player:
-		style.bg_color = Color("#3498DB")  
-		style.border_color = Color("#2980B9")
-		bg_style.bg_color = Color("#2980B9").darkened(0.5)
-	else:
-		style.bg_color = Color("#E74C3C") 
-		style.border_color = Color("#C0392B")
-		bg_style.bg_color = Color("#C0392B").darkened(0.5)
+	player_health.add_theme_stylebox_override("fill", player_style)
+	player_health.add_theme_stylebox_override("background", player_bg_style)
 	
-	style.border_width_left = 2
-	style.border_width_right = 2
-	style.border_width_top = 2
-	style.border_width_bottom = 2
-
-	style.corner_radius_top_left = 5
-	style.corner_radius_top_right = 5
-	style.corner_radius_bottom_left = 5
-	style.corner_radius_bottom_right = 5
+	player_health_label.add_theme_color_override("font_color", Color.WHITE)
+	player_health_label.position = Vector2(30, -25)  # Position above health bar
+ 
+	enemy_health.max_value = 80
+	enemy_health.value = 80
+	enemy_health.custom_minimum_size = Vector2(120, 30)
+	enemy_health.position = Vector2(get_viewport().size.x - 170, get_viewport().size.y - 100)
 	
-	bg_style.corner_radius_bottom_left = 5
-	bg_style.corner_radius_bottom_right = 5
-	bg_style.corner_radius_top_left = 5
-	bg_style.corner_radius_top_right = 5
+	var enemy_style = player_style.duplicate()
+	var enemy_bg_style = player_bg_style.duplicate()
 	
-	bar.add_theme_stylebox_override("fill", style)
-	bar.add_theme_stylebox_override("background", bg_style)
+	enemy_health.add_theme_stylebox_override("fill", enemy_style)
+	enemy_health.add_theme_stylebox_override("background", enemy_bg_style)
+	
+	enemy_health_label.add_theme_color_override("font_color", Color.WHITE)
+	enemy_health_label.position = Vector2(30, -25)
 
-func _update_health_bar_positions():
-	var screen_width = get_viewport().size.x
-	$Enemyhealth.position.x = screen_width - 220
+func update_health_displays():
+	if player_health_label:
+		player_health_label.text = str(player_health.value) + "/" + str(player_health.max_value)
+	if enemy_health_label:
+		enemy_health_label.text = str(player_health.value) + "/" + str(enemy_health.max_value)
+	
+func update_player_health(new_value:int):
+	player_health.value = new_value
+	update_health_displays()
 
-func _on_viewport_size_changed():
-	_update_health_bar_positions()
-
-func setup_success_label():
-	success_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	success_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	success_label.position.x = (get_viewport().size.x - success_label.size.x) / 2
-	success_label.position.y = 20
-	update_success_label(75)  # Initial value
-
-func _on_success_rate_changed(percentage):
-	update_success_label(percentage)
-
-func update_success_label(percentage):
-	success_label.text = "Success Rate: %d%%" % percentage
-	if percentage >= 75:
-		success_label.modulate = Color("27ae60") 
-	elif percentage >= 50:
-		success_label.modulate = Color("f1c40f") 
-	else:
-		success_label.modulate = Color("e74c3c")  
+func update_enemy_health(new_value:int):
+	enemy_health.value = new_value
+	update_health_displays()
+	
+	

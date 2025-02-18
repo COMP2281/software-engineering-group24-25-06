@@ -1,17 +1,18 @@
-[gd_scene load_steps=8 format=3 uid="uid://c7f4ajlxoh1vx"]
+[gd_scene load_steps=10 format=3 uid="uid://c7f4ajlxoh1vx"]
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_w45sv"]
 [ext_resource type="Script" path="res://scripts/camera.gd" id="2_3jjtx"]
 [ext_resource type="Script" path="res://scripts/ui.gd" id="3_wuvo2"]
+[ext_resource type="Script" path="res://scripts/questionpanel.gd" id="4_1c0xn"]
 [ext_resource type="PackedScene" uid="uid://btwm2jtg8xwdv" path="res://scenes/battle/enemy.tscn" id="4_3c4ox"]
+[ext_resource type="Script" path="res://scripts/battlemenu.gd" id="4_s4v5x"]
 [ext_resource type="PackedScene" uid="uid://bh3bddjjqpymk" path="res://scenes/battle/player.tscn" id="5_pkckq"]
+[ext_resource type="Script" path="res://scripts/questions.gd" id="6_t8dbo"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b5i7k"]
 albedo_color = Color(0.172549, 0.243137, 0.313726, 1)
 metallic = 0.3
 roughness = 0.7
-
-[sub_resource type="LabelSettings" id="LabelSettings_yfy37"]
 
 [node name="Battle" type="Node3D"]
 script = ExtResource("1_w45sv")
@@ -47,6 +48,11 @@ offset_top = 20.0
 offset_right = 220.0
 offset_bottom = 50.0
 
+[node name="Healthlabel" type="Label" parent="CanvasLayer/UI/Playerhealth"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
 [node name="Enemyhealth" type="ProgressBar" parent="CanvasLayer/UI"]
 layout_mode = 0
 offset_left = 932.0
@@ -54,13 +60,60 @@ offset_top = 20.0
 offset_right = 1132.0
 offset_bottom = 50.0
 
-[node name="Successrate" type="Label" parent="CanvasLayer/UI"]
+[node name="Healthlabel" type="Label" parent="CanvasLayer/UI/Enemyhealth"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
-label_settings = SubResource("LabelSettings_yfy37")
-horizontal_alignment = 1
+
+[node name="Questionpanel" type="Panel" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_left = 256.0
+offset_top = 128.0
+offset_right = 856.0
+offset_bottom = 428.0
+script = ExtResource("4_1c0xn")
+
+[node name="Questionlabel" type="Label" parent="CanvasLayer/UI/Questionpanel"]
+layout_mode = 0
+offset_top = 20.0
+offset_right = 40.0
+offset_bottom = 43.0
+
+[node name="Optionscontainer" type="VBoxContainer" parent="CanvasLayer/UI/Questionpanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+alignment = 1
+
+[node name="Battlemenu" type="Control" parent="CanvasLayer/UI"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("4_s4v5x")
+
+[node name="Wheelcontainer" type="Control" parent="CanvasLayer/UI/Battlemenu"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Gameoverpanel" type="Panel" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Resultlabel" type="Label" parent="CanvasLayer/UI/Gameoverpanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Exitbutton" type="Button" parent="CanvasLayer/UI/Gameoverpanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
 
 [node name="enemy" parent="." instance=ExtResource("4_3c4ox")]
 
 [node name="player" parent="." instance=ExtResource("5_pkckq")]
+
+[node name="Questionmanager" type="Node" parent="."]
+script = ExtResource("6_t8dbo")

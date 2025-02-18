@@ -1,0 +1,7 @@
+res://scenes/battle/battle.tscn
+res://questions.json
+res://scripts/questions.gd
+res://scripts/ui.gd
+res://scripts/battle.gd
+res://scripts/battlemenu.gd
+res://scripts/questionpanel.gd
