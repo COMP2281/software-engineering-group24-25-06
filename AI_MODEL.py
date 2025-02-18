@@ -26,15 +26,12 @@ from typing_extensions import Literal
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url": "...",
-    "apikey": "...",
+    "url": "https://us-south.ml.cloud.ibm.com",
+    "apikey": os.getenv("WATSONX_APIKEY"),
 }
 
-project_id = "..."
+project_id = os.getenv("WATSONX_PROJECT_ID")
 model_id = "granite3.1-dense"
-
-#Alex - granite3.1-dense:2b
-
 
 #--------------------------------------------------------
 #-------------------MIssion Stuff------------------------
@@ -71,10 +68,6 @@ missions = {
 
 selected_mission = "Silent Strike"
 mission_data = missions[selected_mission]
-
-
-#--------------------------------------------------------
-#--------------------------------------------------------
 
 # Initialize Model
 model = OllamaLLM(model=model_id)
