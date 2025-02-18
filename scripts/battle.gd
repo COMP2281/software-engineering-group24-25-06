@@ -142,7 +142,7 @@ func game_over(player_won: bool):
 	result_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER   
 	game_over_panel.show() 
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(1.0).timeout
 	get_tree().quit()
 
 func _on_player_health_changed(new_health):
