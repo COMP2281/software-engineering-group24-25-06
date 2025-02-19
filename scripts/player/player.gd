@@ -14,6 +14,20 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @onready var spring_arm := $SpringArm3D
 
+# TODO: rename
+# TODO: should pass in camera from scene probably
+func hide_ui():
+	$SuspicionView.hide()
+	$AlertIndicator.hide()
+	
+	if $SpringArm3D/Camera3D.current:
+		$SpringArm3D/Camera3D.clear_current(true)
+	
+func show_ui():
+	$SuspicionView.show()
+	$AlertIndicator.show()
+	$SpringArm3D/Camera3D.make_current()
+
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	

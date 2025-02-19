@@ -24,8 +24,6 @@ SceneCoordinator="*res://scripts/scene_coordinator/scene_coordinator.gd"
 
 player=""
 security=""
-battle_scene_group=""
-mission_scene_group=""
 
 [input]
 

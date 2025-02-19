@@ -10,6 +10,7 @@ signal change_scene(scene: String, metadata)
 
 func _change_scene(scene: String, _metadata) -> void:
 	current_scene = scene
+	print("Changed scene to ", scene)
 
 func _ready() -> void:
 	current_scene = "Mission"

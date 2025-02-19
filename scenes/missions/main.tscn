@@ -1,17 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://dipbvseepvdun"]
+[gd_scene load_steps=7 format=3 uid="uid://dipbvseepvdun"]
 
 [ext_resource type="PackedScene" uid="uid://bbhvgdj8cy05u" path="res://scenes/missions/enemy_hunt_scene.tscn" id="1_t8uv5"]
-[ext_resource type="PackedScene" uid="uid://c65y6vjf2c7jf" path="res://scenes/missions/battle_scene.tscn" id="2_wsxg2"]
+[ext_resource type="PackedScene" uid="uid://c7f4ajlxoh1vx" path="res://scenes/battle.tscn" id="2_wst5l"]
 [ext_resource type="Script" path="res://scripts/utility/state_machine.gd" id="3_1sp55"]
+[ext_resource type="Script" path="res://scripts/mission/enemy_hunt_scene.gd" id="4_1r8n8"]
 [ext_resource type="Script" path="res://scripts/scene_coordinator/states/mission_state.gd" id="4_2jaig"]
 [ext_resource type="Script" path="res://scripts/scene_coordinator/states/encounter_state.gd" id="5_oicvy"]
 
 [node name="MainSceneNode" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 0)
 
-[node name="EnemyHuntScene" parent="." groups=["mission_scene_group"] instance=ExtResource("1_t8uv5")]
+[node name="Mission" parent="." groups=["mission_group"] instance=ExtResource("1_t8uv5")]
+script = ExtResource("4_1r8n8")
 
-[node name="BattleScene" parent="." groups=["battle_scene_group"] instance=ExtResource("2_wsxg2")]
+[node name="Encounter" parent="." groups=["encounter_group"] instance=ExtResource("2_wst5l")]
 process_mode = 4
 visible = false
 
