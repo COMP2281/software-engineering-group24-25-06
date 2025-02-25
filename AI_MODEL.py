@@ -412,7 +412,7 @@ graph_builder.add_conditional_edges(
 
 graph_builder.add_edge("chatbot", END)
 graph_builder.add_edge("database", END)
-graph_builder.add_edge("answer_checker", END)
+graph_builder.add_edge("answer_checker", END) #yo
 
 # Compile the graph
 memory = MemorySaver()
