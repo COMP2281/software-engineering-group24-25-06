@@ -59,7 +59,24 @@ func show_question(question_data):
 		
 		button.connect("pressed", _on_answer_selected.bind(i + 1))
 		$Optionscontainer.add_child(button)
-		
+	
+	# TODO: terrible magic button	
+	var magic_button = Button.new()
+	magic_button.text = "Magic button"
+	
+	var btn_style = StyleBoxFlat.new()
+	btn_style.bg_color = Color(0, 0, 0, 0.8)
+	btn_style.border_color = Color(1, 0, 0)
+	btn_style.corner_radius_top_left = 10
+	btn_style.corner_radius_bottom_right = 10
+	
+	magic_button.custom_minimum_size = Vector2(560, 60)
+	magic_button.add_theme_stylebox_override("normal", btn_style)
+	magic_button.add_theme_color_override("font_style", Color.WHITE)
+	magic_button.add_theme_font_size_override("font_size", 16)
+	
+	magic_button.connect("pressed", _on_answer_selected.bind(-1))
+	$Optionscontainer.add_child(magic_button)
 
 func _on_answer_selected(answer):
 	emit_signal("answer_selected", answer)

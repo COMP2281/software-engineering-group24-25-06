@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/battle/battle.gd" id="1_w45sv"]
 [ext_resource type="Script" path="res://scripts/battle/camera.gd" id="2_3jjtx"]
-[ext_resource type="Script" path="res://scripts/battle/ui.gd" id="3_wuvo2"]
+[ext_resource type="Script" path="res://scripts/enemy/ui.gd" id="3_wuvo2"]
 [ext_resource type="Script" path="res://scripts/battle/questionpanel.gd" id="4_1c0xn"]
 [ext_resource type="PackedScene" uid="uid://btwm2jtg8xwdv" path="res://scenes/enemy.tscn" id="4_3c4ox"]
 [ext_resource type="Script" path="res://scripts/battle/battlemenu.gd" id="4_s4v5x"]

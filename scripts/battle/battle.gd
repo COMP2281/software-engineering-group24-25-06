@@ -1,7 +1,7 @@
 class_name EncounterNode extends Node3D
 
-@onready var player = $player
-@onready var enemy = $enemy
+@onready var player: PlayerBattle = $player
+@onready var enemy: EnemyBattle = $enemy
 @onready var player_health = $CanvasLayer/UI/Playerhealth
 @onready var enemy_health = $CanvasLayer/UI/Enemyhealth
 @onready var battle_menu = $CanvasLayer/UI/Battlemenu
@@ -9,41 +9,57 @@ class_name EncounterNode extends Node3D
 @onready var question_manager = $Questionmanager
 @onready var ui = $CanvasLayer/UI
 
-var player_max_health = 80
-var enemy_max_health = 80
-var player_defense = false
-var current_turn = "player"
-var current_credential = "Getting Started with Artificial Intelligence"
+var player_health_value: float = 0.0
+var enemy_health_value: float = 0.0
+var enemy_max_health: float = 0.0
+# If the player is defending
+var player_defense: bool = false
+var current_turn: String = "player"
+var current_credential: String = "Getting Started with Artificial Intelligence"
 
-func prepare_enter() -> void:
+var enemy_being_fought: Enemy = null
+
+func prepare_enter(fighting_enemy: Enemy) -> void:
+	enemy_being_fought = fighting_enemy
+	enemy.enemy_resource = enemy_being_fought.enemy_resource
+	enemy_max_health = enemy.enemy_resource.health
+	enemy_health_value = enemy_max_health
+	player_health_value = player.max_health
+	
+	ui.set_enemy(enemy.enemy_resource)
+	
 	$CanvasLayer.show()
 	$Camera3D.make_current()
+	
+	var game_over_panel = $CanvasLayer/UI/Gameoverpanel
+	var result_label = $CanvasLayer/UI/Gameoverpanel/Resultlabel
+	
+	game_over_panel.hide()
+	result_label.hide()
 	
 func prepare_exit() -> void:
 	$CanvasLayer.hide()
 	if $Camera3D.current:
 		$Camera3D.clear_current(true)
 
-func _ready():
+func _ready() -> void:
 	# Call it on the ready function, because we start on the mission scene
 	setup_battle()
 	battle_menu.connect("option_selected", _on_option_selected)
 	question_panel.connect("answer_selected", _on_answer_selected)
 	start_turn()
+	# TODO: waiting for 1 process frame? not sure what its doing/if necessary
 	await get_tree().process_frame
+	
 	if player and enemy:
 		player.health_change.connect(_on_player_health_changed)
 		enemy.health_change.connect(_on_enemy_health_changed)
-	player_health.max_value = player_max_health
-	player_health.value = player_max_health
-	enemy_health.max_value = enemy_max_health
-	enemy_health.value = enemy_max_health
 
-func setup_battle():
+func setup_battle() -> void:
 	question_panel.hide()
 	battle_menu.hide_menu()
 	
-func start_turn():
+func start_turn() -> void:
 	print("Starting turn...")
 	var question = question_manager.get_question(current_credential)
 	if question:
@@ -51,14 +67,17 @@ func start_turn():
 		question_panel.show_question(question)
 	else:
 		print("No question found!")
-func _on_answer_selected(answer):
-	var correct = question_manager.check_answer(answer)
+
+## Given an answer index 0-3, check if answer is correct
+func _on_answer_selected(answer: int) -> void:
+	var correct: bool = question_manager.check_answer(answer)
 	if correct:
 		battle_menu.show_menu()
 	else:
 		start_enemy_turn()
 
-func _on_option_selected(option):
+# TODO(minor): should be enum
+func _on_option_selected(option: String) -> void:
 	match option:
 		"ATTACK":
 			execute_attack()
@@ -70,33 +89,34 @@ func _on_option_selected(option):
 			reveal_weakness()
 			
 
-func execute_attack():
-	var damage = 15
+func execute_attack() -> void:
+	# TODO: should read out value from move settings/list
+	var damage: float = 15.0
 	apply_damage_to_enemy(damage)
 	battle_menu.hide_menu()
 	start_enemy_turn()
 	
-func execute_guard():
+func execute_guard() -> void:
 	player_defense = true
 	battle_menu.hide_menu()
 	start_enemy_turn()
 	
-func show_items():
+func show_items() -> void:
 	#ITEM LOGIC
 	battle_menu.hide_menu()
 	start_enemy_turn()
 	
-func reveal_weakness():
+func reveal_weakness() -> void:
 	#DISPLAY WEAKNESS
 	battle_menu.hide_menu()
 	start_enemy_turn()
 
-func start_enemy_turn():
+func start_enemy_turn() -> void:
 	await get_tree().create_timer(1.0).timeout
 	execute_enemy_attack()
 	
-func execute_enemy_attack():
-	var enemy_damage = 10
+func execute_enemy_attack() -> void:
+	var enemy_damage: float = 10.0
 	
 	if player_defense:
 		enemy_damage = enemy_damage / 2
@@ -106,22 +126,23 @@ func execute_enemy_attack():
 	await get_tree().create_timer(1.0).timeout
 	start_turn()
 	
-func apply_damage_to_player(damage):
-	var new_health = max(0, player_health.value - damage)
-	_on_player_health_changed(new_health)
+func apply_damage_to_player(damage: float) -> void:
+	player_health_value -= damage
+	player_health_value = clamp(player_health_value, 0.0, player.max_health)
+	player.health_change.emit(player_health_value)
 	
-	if new_health <= 0:
+	if player_health_value == 0.0:
 		game_over(false)
 
-func apply_damage_to_enemy(damage):
-	var new_health = max(0, enemy_health.value - damage)
-	_on_enemy_health_changed(new_health)
+func apply_damage_to_enemy(damage: float) -> void:
+	enemy_health_value -= damage
+	enemy_health_value = clamp(enemy_health_value, 0.0, enemy_max_health)
+	enemy.health_change.emit(enemy_health_value)
 	
-	if new_health <= 0:
+	if enemy_health_value <= 0:
 		game_over(true)
-		
 
-func game_over(player_won: bool):
+func game_over(player_won: bool) -> void:
 	battle_menu.hide_menu()
 	question_panel.hide()
 	
@@ -149,15 +170,19 @@ func game_over(player_won: bool):
 	result_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER   
 	game_over_panel.show() 
+	result_label.show()
+	
+	# TODO: Timer after victory (probably should be some animation that plays that we await?)
 	await get_tree().create_timer(1.0).timeout
-	get_tree().quit()
+	
+	SceneCoordinator.change_scene.emit("Mission", { "enemy_defeated": enemy_being_fought })
 
-func _on_player_health_changed(new_health):
+func _on_player_health_changed(new_health: float):
 	player_health.value = new_health
 	if $CanvasLayer/UI/Playerhealth/Healthlabel:
-		$CanvasLayer/UI/Playerhealth/Healthlabel.text = str(new_health) + "/" + str(player_max_health)
+		$CanvasLayer/UI/Playerhealth/Healthlabel.text = str(new_health) + "/" + str(player.max_health)
 	
-func _on_enemy_health_changed(new_health):
+func _on_enemy_health_changed(new_health: float):
 	enemy_health.value = new_health
 	if $CanvasLayer/UI/Enemyhealth/Healthlabel:
 		$CanvasLayer/UI/Enemyhealth/Healthlabel.text = str(new_health) + "/" + str(enemy_max_health)

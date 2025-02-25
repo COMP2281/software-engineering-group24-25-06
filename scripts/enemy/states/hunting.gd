@@ -1,14 +1,14 @@
 extends EnemyState
 
 func enter(_previous_state_path: String, _data := {}) -> void:
-	enemy.current_speed = enemy.hunt_speed
+	enemy.current_speed = enemy.enemy_resource.hunt_speed
 	
-func exit() -> void:
-	enemy.current_speed = enemy.move_speed
+func exit(_data := {}) -> void:
+	enemy.current_speed = enemy.enemy_resource.move_speed
 
 func physics_update(_delta: float) -> void:
 	# Go back to patrol
-	if enemy.suspicion_level < enemy.hunting_end_threshold:
+	if enemy.suspicion_level < enemy.enemy_resource.hunting_end_threshold:
 		finished.emit(PATROL)
 		return
 		

@@ -1,18 +1,21 @@
 extends GameSceneState
 
-func _ready() -> void:
-	SceneCoordinator.change_scene.connect(func(state: String, _metadata): finished.emit(state))
+var child_scene: MissionNode = null
 
-func enter(_previous_state_path: String, _data := {}) -> void:
-	var enemy_hunt_scene: MissionNode = get_tree().get_first_node_in_group("mission_group")
-	enemy_hunt_scene.prepare_enter()
-	# Disable process mode and hide
-	enemy_hunt_scene.process_mode = Node.PROCESS_MODE_INHERIT
-	enemy_hunt_scene.show()
+func _ready() -> void:
+	SceneCoordinator.change_scene.connect(func(state: String, metadata: Dictionary): finished.emit(state, metadata); print("Hello"))
+	child_scene = get_tree().get_first_node_in_group("mission_group")
+
+func enter(previous_state_path: String, data := {}) -> void:
+	# We expect the data passed to contain the "enemy_defeated field"
+	# TODO: maybe dedicated structus for EncounterToMission (etc.)
+	if previous_state_path == "Encounter":
+		child_scene.entered_from_encounter(data)
 	
-func exit() -> void:
-	var enemy_hunt_scene: MissionNode = get_tree().get_first_node_in_group("mission_group")
-	enemy_hunt_scene.prepare_exit()
-	# Disable process mode and hide
-	enemy_hunt_scene.process_mode = Node.PROCESS_MODE_DISABLED
-	enemy_hunt_scene.hide()
+	child_scene.prepare_enter()
+	_enable_processing(child_scene)
+	
+func exit(data := {}) -> void:
+	child_scene.prepare_exit()
+	_disable_processing(child_scene)
+	

@@ -24,5 +24,5 @@ func enter(_previous_state_path: String, _data := {}) -> void:
 
 ## Called by the state machine before changing the active state. Use this function
 ## to clean up the state.
-func exit() -> void:
+func exit(_data := {}) -> void:
 	pass

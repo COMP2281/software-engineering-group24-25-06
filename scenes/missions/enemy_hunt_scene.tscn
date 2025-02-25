@@ -2,35 +2,15 @@
 
 [ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/prefabs/player.tscn" id="1_h4kwu"]
 [ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://scenes/prefabs/enemy.tscn" id="2_8uedt"]
+[ext_resource type="Resource" uid="uid://yyhs0mh4wm4e" path="res://settings/enemy/sniper_enemy.tres" id="3_4lweo"]
 [ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="3_qvbrg"]
 [ext_resource type="Script" path="res://scripts/enemy/path_follow_3d.gd" id="4_0lnke"]
 [ext_resource type="PackedScene" uid="uid://bp2kqx6gewi8t" path="res://scenes/prefabs/security_cam.tscn" id="4_entd0"]
+[ext_resource type="Resource" uid="uid://ddd5ikv3i5tcn" path="res://settings/enemy/standard_enemy.tres" id="4_l00ai"]
 
 [sub_resource type="Environment" id="Environment_3sjj3"]
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_t51aw"]
-
-[sub_resource type="Resource" id="Resource_a4nis"]
-resource_local_to_scene = true
-script = ExtResource("3_qvbrg")
-detection_speed = 0.5
-fov = 0.523599
-close_radius = 1.0
-view_radius = 10.0
-decay_rate = 0.1
-communication_range = 20.0
-hearing_modifier = 1.0
-
-[sub_resource type="Resource" id="Resource_wmyiq"]
-resource_local_to_scene = true
-script = ExtResource("3_qvbrg")
-detection_speed = 1.0
-fov = 1.0472
-close_radius = 1.0
-view_radius = 8.0
-decay_rate = 0.1
-communication_range = 20.0
-hearing_modifier = 1.0
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_pauip"]
 vertices = PackedVector3Array(-15, -0.5, -28, -13, -0.5, -28, -13, -0.5, -49, -15.75, -0.5, -27.25, -49, -0.5, -49, -49, -0.5, -26, -15.75, -0.5, -25.75, -5.25, -0.5, -28, -5.25, -0.5, -49, 7, -0.5, -18.25, 11.75, -0.5, -18.25, 11.75, -0.5, -19.75, 7, -0.5, -23, 12.5, -0.5, -20.5, -3.25, -0.5, -28, -2.5, -0.5, -27.25, 4.75, -0.5, -23.75, 6.25, -0.5, -23.75, 13.25, -0.5, -49, 13.25, -0.5, -20.5, -2.5, -0.5, -25.75, 15.25, -0.5, -20.5, 16, -0.5, -19.75, 49, -0.5, -18.25, 49, -0.5, -49, 16, -0.5, -18.25, -49, -0.5, -17.75, -15.75, -0.5, -18, -12.5, -0.5, -20.75, -12, -0.5, -20.75, -12, -0.5, -22.25, -12.5, -0.5, -24.75, -3.25, -0.5, -24.75, -8.5, -0.5, -23, -7.75, -0.5, -22.25, -11.25, -0.5, -23, -9, -0.5, -18.75, -6.25, -0.5, -13.75, -5.5, -0.5, -14.75, -7.75, -0.5, -19.75, 3.75, -0.5, -23, 3.75, -0.5, -14.75, -12, -0.5, -19.5, -12.5, -0.5, -16.5, -15.75, -0.5, -16.5, -11.25, -0.5, -18.75, -13.25, -0.5, -15.75, -6.25, -0.5, -12.25, -15, -0.5, -15.75, -5.5, -0.5, -11.5, -49, -0.5, 49, -3.5, -0.5, 49, -3.5, -0.5, -11.5, 11.75, -0.5, -17, 12.5, -0.5, -16.25, 7, -0.5, -12.25, 15.25, -0.5, -16.25, 6.25, -0.5, -11.5, 4.25, -0.5, 49, 49, -0.5, 49, 4.25, -0.5, -11.5, 16, -0.5, -17)
@@ -95,11 +75,11 @@ camera_attributes = SubResource("CameraAttributesPractical_t51aw")
 
 [node name="SniperEnemy" parent="." instance=ExtResource("2_8uedt")]
 transform = Transform3D(0.0574246, 0, -0.99835, 0, 1, 0, 0.99835, 0, 0.0574246, 4.82541, 0, 25.2603)
-viewzone_resource = SubResource("Resource_a4nis")
+enemy_resource = ExtResource("3_4lweo")
 
 [node name="StandardEnemy" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("2_8uedt")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.82541, 0, -5.04964)
-viewzone_resource = SubResource("Resource_wmyiq")
+enemy_resource = ExtResource("4_l00ai")
 patrol_path = NodePath("../Path3D")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
