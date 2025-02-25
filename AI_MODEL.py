@@ -1,27 +1,16 @@
 import os
+import re
 from langchain_ollama.llms import OllamaLLM
 from langchain_chroma import Chroma
 from langchain_ibm import WatsonxEmbeddings
 from ibm_watsonx_ai.foundation_models.utils.enums import EmbeddingTypes
 from langgraph.checkpoint.memory import MemorySaver
 from langchain.tools import tool
-from langchain.prompts import MessagesPlaceholder
-from langchain.prompts import ChatPromptTemplate
-from langchain.tools.render import render_text_description_and_args
-from langchain_core.runnables import RunnablePassthrough
-from langchain.agents.output_parsers import JSONAgentOutputParser
-from langchain.agents import AgentExecutor
-from langchain.agents.format_scratchpad import format_log_to_str
-import re
 from langgraph.graph import StateGraph, START, END
-from IPython.display import Image, display
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
-from typing import TypedDict, Annotated, Literal
-from IPython.display import Image, display
+from typing import TypedDict, Annotated
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
-from pydantic import BaseModel, Field
-from typing_extensions import Literal
 
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
@@ -45,7 +34,7 @@ missions = {
             "Retrieve the encryption keys.",
             "Evade enemy detection."
         ],
-        "keywords": ["Cyber Security", "Security", "Systems", "Cloud", "Encryption"]
+        "keywords": ["Cyber Security", "Security", "Encryption"]
     },
     "Cyber Heist": {
         "description": "Infiltrate the mainframe, extract classified documents, and escape unnoticed.",
@@ -136,7 +125,7 @@ def get_relevant_question_from_database(data: dict):
         choice1_match = re.search(r'choice1:\s(.*?)\schoice2:', doc.page_content)
         choice2_match = re.search(r'choice2:\s(.*?)\schoice3:', doc.page_content)
         choice3_match = re.search(r'choice3:\s(.*?)\schoice4:', doc.page_content)
-        choice4_match = re.search(r'choice4:\s(.*?)\s', doc.page_content)
+        choice4_match = re.search(r'choice4:\s(.*?)\scorrectChoices', doc.page_content)
         correct_answer_match = re.search(r'correctChoices:\s(\d)', doc.page_content)
 
         question = question_match.group(1) if question_match else "No question found"
@@ -282,7 +271,7 @@ def answer_checker(state: "State"):
 
     print("\nDEBUG: Extracted answer:", response)  # Debugging Line
 
-    if response not in ["A", "B", "C", "D"]:
+    if response not in ["a", "b", "c", "d"]:
         content = "I couldn't extract a clear answer from your response. Please try again."
         return {
             "messages": AIMessage(content)
@@ -291,7 +280,7 @@ def answer_checker(state: "State"):
     
     question = state["current_question"]
     choices = state.get("current_choices", [])
-    correct_answer = state.get("correct_answer", "").upper()  # Convert to uppercase
+    correct_answer = state.get("correct_answer", "")  # Convert to uppercase
 
     is_correct = response.lower() == correct_answer.lower()
 
@@ -462,14 +451,17 @@ def answering(user_input):
 
     for event in events:
         for val in event.values():
-            if isinstance(val, dict) and "messages" in val:  # ✅ Ensure val is a dictionary and contains "messages"
+            if isinstance(val, dict) and "messages" in val:
                 if isinstance(val["messages"], list) and val["messages"]:
                     assistant_response = val["messages"][-1].content
-                elif isinstance(val["messages"], AIMessage):  # ✅ Handle single message case
+                elif isinstance(val["messages"], AIMessage):
                     assistant_response = val["messages"].content
+
+    print('DEBUG : Current Question:', state.get("current_question", ""))
+    print('DEBUG : Current Choices:', state.get("current_choices", []))
+    print('DEBUG : Correct Answer:', state.get("correct_answer", ""))
     
     print('AI:', assistant_response)
-
 
 # png_data = graph.get_graph().draw_mermaid_png()
 
