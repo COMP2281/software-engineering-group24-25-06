@@ -15,8 +15,8 @@ from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url": "https://us-south.ml.cloud.ibm.com",
-    "apikey": os.getenv("WATSONX_APIKEY"),
+    "url": "https://eu-gb.ml.cloud.ibm.com",
+    "apikey": "...",
 }
 
 project_id = os.getenv("WATSONX_PROJECT_ID")
@@ -267,7 +267,7 @@ def answer_checker(state: "State"):
     User Input: {user_input}
     """
 
-    response = model.invoke(extraction_prompt).strip().lower()
+    response = model.invoke(extraction_prompt).strip()
 
     print("\nDEBUG: Extracted answer:", response)  # Debugging Line
 
