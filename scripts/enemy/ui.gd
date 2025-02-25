@@ -12,6 +12,7 @@ func _ready():
 func set_enemy(enemy_resource: EnemyResource):
 	enemy_health.max_value = enemy_resource.health
 	enemy_health.value = enemy_health.max_value
+	update_health_displays()
 
 func style_health_bar():
 	
@@ -39,8 +40,6 @@ func style_health_bar():
 	player_health_label.add_theme_color_override("font_color", Color.WHITE)
 	player_health_label.position = Vector2(30, -25)  # Position above health bar
  
-	enemy_health.max_value = 80
-	enemy_health.value = 80
 	enemy_health.custom_minimum_size = Vector2(120, 30)
 	enemy_health.position = Vector2(get_viewport().size.x - 170, get_viewport().size.y - 100)
 	

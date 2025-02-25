@@ -6,7 +6,6 @@ class_name EncounterNode extends Node3D
 @onready var enemy_health = $CanvasLayer/UI/Enemyhealth
 @onready var battle_menu = $CanvasLayer/UI/Battlemenu
 @onready var question_panel = $CanvasLayer/UI/Questionpanel
-@onready var question_manager = $Questionmanager
 @onready var ui = $CanvasLayer/UI
 
 var player_health_value: float = 0.0
@@ -18,6 +17,7 @@ var current_turn: String = "player"
 var current_credential: String = "Getting Started with Artificial Intelligence"
 
 var enemy_being_fought: Enemy = null
+var current_question: Question = null
 
 func prepare_enter(fighting_enemy: Enemy) -> void:
 	enemy_being_fought = fighting_enemy
@@ -61,16 +61,17 @@ func setup_battle() -> void:
 	
 func start_turn() -> void:
 	print("Starting turn...")
-	var question = question_manager.get_question(current_credential)
-	if question:
-		print("Question found:", question.question)
-		question_panel.show_question(question)
+	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_AI, 0.5)
+	if current_question:
+		print("Question found:", current_question.text)
+		question_panel.show_question(current_question)
 	else:
 		print("No question found!")
 
 ## Given an answer index 0-3, check if answer is correct
 func _on_answer_selected(answer: int) -> void:
-	var correct: bool = question_manager.check_answer(answer)
+	var correct: bool = QuestionSelector.markQuestion(current_question, [answer])
+	
 	if correct:
 		battle_menu.show_menu()
 	else:

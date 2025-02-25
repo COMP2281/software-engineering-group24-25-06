@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c7f4ajlxoh1vx"]
+[gd_scene load_steps=9 format=3 uid="uid://c7f4ajlxoh1vx"]
 
 [ext_resource type="Script" path="res://scripts/battle/battle.gd" id="1_w45sv"]
 [ext_resource type="Script" path="res://scripts/battle/camera.gd" id="2_3jjtx"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://btwm2jtg8xwdv" path="res://scenes/enemy.tscn" id="4_3c4ox"]
 [ext_resource type="Script" path="res://scripts/battle/battlemenu.gd" id="4_s4v5x"]
 [ext_resource type="PackedScene" uid="uid://bh3bddjjqpymk" path="res://scenes/player.tscn" id="5_pkckq"]
-[ext_resource type="Script" path="res://scripts/battle/questions.gd" id="6_t8dbo"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b5i7k"]
 albedo_color = Color(0.172549, 0.243137, 0.313726, 1)
@@ -115,6 +114,3 @@ offset_bottom = 8.0
 [node name="enemy" parent="." instance=ExtResource("4_3c4ox")]
 
 [node name="player" parent="." instance=ExtResource("5_pkckq")]
-
-[node name="Questionmanager" type="Node" parent="."]
-script = ExtResource("6_t8dbo")

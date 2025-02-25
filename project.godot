@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 StealthManager="*res://scripts/security/stealth_manager.gd"
 SceneCoordinator="*res://scripts/scene_coordinator/scene_coordinator.gd"
+QuestionSelector="*res://scripts/question/question_select.gd"
 
 [global_group]
 

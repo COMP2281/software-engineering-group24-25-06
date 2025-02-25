@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://cfvn7twtgygp5"
+
+[deps]
+
+files=["res://questions/SkillsBuildQs.question.translation", "res://questions/SkillsBuildQs.choice1.translation", "res://questions/SkillsBuildQs.choice2.translation", "res://questions/SkillsBuildQs.choice3.translation", "res://questions/SkillsBuildQs.choice4.translation", "res://questions/SkillsBuildQs.correctChoices.translation", "res://questions/SkillsBuildQs.module.translation", "res://questions/SkillsBuildQs.course.translation", "res://questions/SkillsBuildQs.credential.translation", "res://questions/SkillsBuildQs.topicID.translation", "res://questions/SkillsBuildQs.educationLevel.translation", "res://questions/SkillsBuildQs.difficultyUnnormalised.translation", "res://questions/SkillsBuildQs.relevantInfoID.translation"]
+
+source_file="res://questions/SkillsBuildQs.csv"
+dest_files=["res://questions/SkillsBuildQs.question.translation", "res://questions/SkillsBuildQs.choice1.translation", "res://questions/SkillsBuildQs.choice2.translation", "res://questions/SkillsBuildQs.choice3.translation", "res://questions/SkillsBuildQs.choice4.translation", "res://questions/SkillsBuildQs.correctChoices.translation", "res://questions/SkillsBuildQs.module.translation", "res://questions/SkillsBuildQs.course.translation", "res://questions/SkillsBuildQs.credential.translation", "res://questions/SkillsBuildQs.topicID.translation", "res://questions/SkillsBuildQs.educationLevel.translation", "res://questions/SkillsBuildQs.difficultyUnnormalised.translation", "res://questions/SkillsBuildQs.relevantInfoID.translation"]
+
+[params]
+
+compress=true
+delimiter=0

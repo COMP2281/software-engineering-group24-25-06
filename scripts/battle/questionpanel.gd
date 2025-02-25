@@ -32,19 +32,19 @@ func style_panel():
 	$Optionscontainer.position = Vector2(10, 20)
 	$Optionscontainer.add_theme_constant_override("seperation", 20)
 	
-func show_question(question_data):
+func show_question(question: Question):
 	
 	show()
-	print("Showing question in question_panel:", question_data.question)
-	$Questionlabel.text = question_data.question
+	print("Showing question in question_panel:", question.text)
+	$Questionlabel.text = question.text
 	print("Label text set to: ", $Questionlabel.text)
 	
 	for child in $Optionscontainer.get_children():
 		child.queue_free()
 		
-	for i in range(question_data.options.size()):
+	for i in range(question.choices.size()):
 		var button = Button.new()
-		button.text = str(question_data.options[i])
+		button.text = str(question.choices[i])
 		
 		var btn_style = StyleBoxFlat.new()
 		btn_style.bg_color = Color(0, 0, 0, 0.8)
