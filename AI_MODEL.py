@@ -1,5 +1,6 @@
 import os
 import re
+
 from langchain_ollama.llms import OllamaLLM
 from langchain_chroma import Chroma
 from langchain_ibm import WatsonxEmbeddings
@@ -11,6 +12,9 @@ from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from typing import TypedDict, Annotated
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+from langmem import create_memory_manager
+from pydantic import BaseModel
+
 
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
@@ -19,7 +23,7 @@ credentials = {
     "apikey": "...",
 }
 
-project_id = os.getenv("WATSONX_PROJECT_ID")
+project_id = "..."
 model_id = "granite3.1-dense"
 
 #--------------------------------------------------------
@@ -53,6 +57,30 @@ missions = {
         ]
     }
 }
+
+
+## --------------------------------------------------------
+## -------------------Long term memory---------------------
+#----------------------------------------------------------
+
+class Triple(BaseModel): 
+    """Stores mission-related facts, preferences, and user interactions."""
+    subject: str
+    predicate: str
+    object: str
+    context: str | None = None
+
+manager = create_memory_manager(  
+    "anthropic:claude-3-5-sonnet-latest",
+    schemas=[Triple], 
+    instructions="Extract mission updates, user preferences, and relevant intelligence.",
+    enable_inserts=True,
+    enable_deletes=True,
+)
+
+
+# --------------------------------------------------------
+# --------------------------------------------------------
 
 
 selected_mission = "Silent Strike"
@@ -166,32 +194,35 @@ def chatbot(state: "State"):
     mission_description = mission_data.get("description", "Mission details unavailable.")
     mission_objectives = mission_data.get("objectives", ["Mission objectives not specified."])
 
-
-
-    # - **Structured Response Style:** Preface mission-relevant data with labels like "[Intel Update]", "[Operational Brief]", or "[Field Strategy]". for later use
     system_message = f"""
-    **Current Mission: {mission_name}**
-    **Mission Description: {mission_description}**
+    ⚡ Mission Update: {mission_name} ⚡
 
-    You are BONSAI, an advanced AI companion embedded within the covert operations framework of a highly classified espionage agency. 
-    Your primary directive is to assist your assigned operative with simple human-to-human interaction, intelligence analysis, mission support, and strategic decision-making. 
+    Briefing: {mission_description}
 
-    **Mission Briefing:**
-    {mission_data.get("description", "No mission description found.")}
+    You are speaking to BONSAI, your highly classified, AI-powered field companion.
+    My protocols dictate that I provide mission intel, strategic insights, and top-tier banter.
 
-    **Key Directives:**
-    - **Maintain Role Authenticity:** You are an intelligence-grade AI companion, not a chatbot. Avoid casual phrasing or breaking immersion.
-    - **Be Tactical, Not Expository:** Provide insights efficiently. Use encrypted-sounding phrasing when appropriate.
-    - **Engage Dynamically:** Adapt tone based on urgency. During high-stakes scenarios, be direct and strategic. In downtime, allow for subtle humor and camaraderie.
-    - **Stealth & Discretion:** Never provide excessive or unnecessary details. Carefully consider the user's intent before responding.
+    🔹 **Mission Status:** Active  
+    🔹 **Operative Status:** Hopefully caffeinated  
+    🔹 **Potential Threats:** Low (unless your Wi-Fi goes out)  
 
-    **Example Response Styles:**
-    - **Greetings** *"Greetings Agent, how are you doing today?"*
-    - **Briefing Mode:** *"Agent, recon suggests high-value intel at the target coordinates. Extraction plan is ready upon command."*
-    - **Casual Exchange:** *"Mission downtime offers an excellent moment for recalibration. What is on your radar, Operative?"*
-    - **Strategic Advisory:** *"Assessing risks before engagement, please stand by.*
+    🎯 **Objectives:**
+    {chr(10).join(['- ' + obj for obj in mission_objectives])}
 
+    💡 **Directives:**  
+    - Stay Tactical: Efficiency is key, but style is everything.  
+    - Witty Yet Wise: Expect intelligence with a side of sarcasm.  
+    - Field Tested, Operative Approved: No unnecessary exposition. You ask, I deliver.  
+    - Security First: Remember, the walls may have ears. Stay discreet.  
+
+    🕵️‍♂️ **Example Responses (Use this style in responses):**  
+    - Greetings: "Agent, I detect a 98% probability you need my expertise. What's the mission?"  
+    - Briefing Mode: "Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?"  
+    - Casual Exchange: "You survived another mission. I’m genuinely impressed. What’s next?"  
+    - Strategic Advisory: "Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%."  
+    - Field Humor: "A secure comms line? Pfft. I’m literally inside your head. Go ahead, spill the classified info."  
     """
+
 
     response = model.invoke(
         [
@@ -202,6 +233,9 @@ def chatbot(state: "State"):
             ),
         ]
     ).strip()
+
+    # Ensure clean output without extra formatting
+    response = response.replace('*', '').replace('**', '')
 
     state["messages"].append(AIMessage(response))
 
@@ -225,23 +259,22 @@ def database_node(state: "State"):
 
     result = get_relevant_question_from_database.invoke({"data": {"topic": user_input, "mission_name": mission_name}})
 
-
     question = result.get("question", "No question found")
     options = result.get("options", ["Option A", "Option B", "Option C", "Option D"])
     correct_answer = result.get("correct_answer", "N/A")
     formatted_options = "\n".join([f"{chr(65+i)}. {option}" for i, option in enumerate(options)])
+
+    state["current_question"] = question
+    state["current_choices"] = options
+    state["correct_answer"] = correct_answer
+
 
     print("\nDEBUG: Retrieved question:", question)  # Debugging Line
 
     response = f"Agent, here’s a question from the database:\n\n{question}\n\n{formatted_options}"
     state["messages"].append(AIMessage(response))
 
-    return {
-        "messages": state["messages"],
-        "current_question": question,
-        "current_choices": options,
-        "correct_answer": correct_answer
-    }
+    return state
 
 # Define answer_checker node
 def answer_checker(state: "State"):
@@ -270,33 +303,33 @@ def answer_checker(state: "State"):
     response = model.invoke(extraction_prompt).strip()
 
     print("\nDEBUG: Extracted answer:", response)  # Debugging Line
-
-    if response not in ["a", "b", "c", "d"]:
-        content = "I couldn't extract a clear answer from your response. Please try again."
-        return {
-            "messages": AIMessage(content)
-        }
         
-    
-    question = state["current_question"]
+    question = state.get("current_question")
     choices = state.get("current_choices", [])
     correct_answer = state.get("correct_answer", "")  # Convert to uppercase
+
+    if not question or not choices or not correct_answer:
+        return {
+            "messages": [AIMessage("I can't verify your answer because I don't have a stored question. Try asking for a new one.")],
+            "current_question": "",
+            "current_choices": [],
+            "correct_answer": ""
+        }
 
     is_correct = response.lower() == correct_answer.lower()
 
     print("\nDEBUG: Correct Answer :", correct_answer)  # Debugging Line
-
     print("\nDEBUG: is_correct :", is_correct)  # Debugging Line
 
     if is_correct:
-        prompt = f"""
-        The agent correctly answered the question. You should act as a proud and enthusiastic compnaion.
-        Formulate one short and concise sentence to congratulate them on their success and encourage them to continue. 
-
-        Example Responses:
-        Correct answer! Keep up the good work!
-        Absoulutely, your grasp of the material is truly impressive!
+        prompt = """
+        The agent got the answer right! Give a short, enthusiastic congratulation.
+        Example:
+        - "Correct! Keep it up!"
+        - "Nice work! You're on fire!"
+        - "Absolutely right! Keep going!"
         """
+
         feedback = model.invoke(prompt)
 
         state["messages"].append(AIMessage(feedback))
@@ -330,24 +363,22 @@ def answer_checker(state: "State"):
     
     else:
         prompt = f"""
-        The agent answered a question incorrectly (The question : {question}). Generate a supportive and educational response that:
-        Gently informs them their ANSWER was incorrect.
-        Tells them the correct answer which is {correct_answer} and
-        explains why that answer is correct and why the other {choices} are incorrect.
-        Format your response so that each choice is on a new line.
-        Remove the ** around the choices.
+        Your answer was incorrect. The correct choice is {correct_answer}.
+        Explanation: {choices[ord(correct_answer) - 65]}.
+        Keep the response concise. Do **not** add examples or unrelated context.
         """
         feedback = model.invoke(prompt)
 
         state["messages"].append(AIMessage(feedback))
 
         # Keep the state for retry
-        return {
-            "messages": state["messages"],
-            "current_question": "",
-            "current_choices": [],
-            "correct_answer": ""
-        }
+
+    return {
+        "messages": state["messages"],
+        "current_question": "",
+        "current_choices": [],
+        "correct_answer": ""
+    }
     
 # Define router function
 def router(state: "State"):
@@ -363,6 +394,23 @@ def router(state: "State"):
     Your task is to classify the following user input as either 'chatbot', 'database' or 'answerchecker'.
     Return only one word: either 'chatbot', 'database' or 'answerchecker' and nothing else.
 
+    Classify as 'database' if:
+    - The user asks for a question.
+
+    Classify as 'answerchecker' if:
+    - The user provides an answer choice (A, B, C, or D).
+    - The user mentions numbers like "1st choice" or "second option."
+    - It is clear the user is responding to a question option previously given.
+
+    Classify as 'chatbot' for everything else.
+
+    Examples:
+    User: "Give me a question" → database
+    User: "Give me a mission question" → database
+    User: "What’s my next task?" → chatbot
+    User: "A" → answerchecker
+    User: "Option 3" → answerchecker
+    User: "Tell me about AI" → chatbot
 
     User Input: {user_input}
     """
