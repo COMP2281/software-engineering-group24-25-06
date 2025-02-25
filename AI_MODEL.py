@@ -12,8 +12,8 @@ from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from typing import TypedDict, Annotated
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
-# from langmem import MemoryStore, Memory
-
+from langmem import create_memory_manager
+from pydantic import BaseModel
 
 
 #EU = "https://eu-gb.ml.cloud.ibm.com"
@@ -63,17 +63,20 @@ missions = {
 ## -------------------Long term memory---------------------
 #----------------------------------------------------------
 
-# memory_store = MemoryStore()
-# USER_NAMESPACE = "user_123"  # Replace dynamically per user session
+class Triple(BaseModel): 
+    """Stores mission-related facts, preferences, and user interactions."""
+    subject: str
+    predicate: str
+    object: str
+    context: str | None = None
 
-# def store_user_memory(user_id, key, value):
-#     """Stores user-specific memory in LangMem"""
-#     namespace = f"user_{user_id}"  # Unique namespace per user
-#     memory_store.save(
-#         namespace=namespace,
-#         memory=Memory(content={key: value})
-#     )
-
+manager = create_memory_manager(  
+    "anthropic:claude-3-5-sonnet-latest",
+    schemas=[Triple], 
+    instructions="Extract mission updates, user preferences, and relevant intelligence.",
+    enable_inserts=True,
+    enable_deletes=True,
+)
 
 
 # --------------------------------------------------------
