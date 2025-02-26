@@ -3,7 +3,7 @@ import threading
 import json
 
 class TCPServer:
-    def __init__(self , host="localhost", port=5001):
+    def __init__(self , host="127.0.0.1", port=5011):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
         self.server.listen(1)

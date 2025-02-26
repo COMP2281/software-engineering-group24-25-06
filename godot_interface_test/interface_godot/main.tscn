@@ -66,3 +66,12 @@ outline_modulate = Color(1, 1, 1, 0)
 text = "ugly"
 font = SubResource("FontVariation_xwuok")
 font_size = 27
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 0
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer"]
+offset_left = 765.0
+offset_top = 521.0
+offset_right = 1093.0
+offset_bottom = 578.0
