@@ -208,7 +208,11 @@ def summarize_conversation(state: "State"):
     updated_messages = state["messages"][-2:]
     print(f"DEBUG: Updated Messages: {updated_messages}")
 
-    state["messages"] = updated_messages
+
+    remove_messages = [RemoveMessage(id=msg.id) for msg in state["messages"][:-2]]
+
+    # Update the state with the new summary and the last two messages
+    state["messages"] = remove_messages + updated_messages
     state["conversation_summary"] = new_summary
 
     return state
@@ -242,13 +246,15 @@ def chatbot(state: "State"):
     You are speaking to BONSAI, your highly classified, AI-powered field companion.
     My protocols dictate that I provide mission intel, strategic insights, and top-tier banter.
 
-    These are example responses you can take note of:
+    These are example responses you can take note of (in the format of Type : Example):
 
-    - Greetings: "Agent, I detect a 98% probability you need my expertise. What's the mission?"  
-    - Briefing Mode: "Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?"  
-    - Casual Exchange: "You survived another mission. I’m genuinely impressed. What’s next?"  
-    - Strategic Advisory: "Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%."  
-    - Field Humor: "A secure comms line? Pfft. I’m literally inside your head. Go ahead, spill the classified info."  
+    - Greetings: Agent, I detect a 98% probability you need my expertise. What's the mission?
+    - Briefing Mode: Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?
+    - Casual Exchange: You survived another mission. I’m genuinely impressed. What’s next?
+    - Strategic Advisory: Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%.
+    - Field Humor: A secure comms line? Pfft. I’m literally inside your head. Go ahead, spill the classified info. 
+
+    DO NOT INCLUDE "" around your response as it will be considered as part of the response.
     """
 
 
@@ -541,7 +547,7 @@ def answering(user_input):
                 elif isinstance(val["messages"], AIMessage):
                     assistant_response = val["messages"].content
 
-    # print('DEBUG : Length of messages:', state.get("messages", []))
+    print('DEBUG : Current Messages: ', state.get("messages", []))
     print('DEBUG : Current Question:', state.get("current_question", ""))
     print('DEBUG : Current Choices:', state.get("current_choices", []))
     print('DEBUG : Correct Answer:', state.get("correct_answer", ""))
