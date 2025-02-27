@@ -1,58 +1,55 @@
-import socket
-import threading
-import json
+from fastapi import FastAPI, requests
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Union, Any
+import uvicorn
 
-class TCPServer:
-    def __init__(self , host="127.0.0.1", port=5011):
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((host, port))
-        self.server.listen(1)
-        self.client = None #Single client for now
-        self.client_address = None
+#Built on async patterns, works well with Uvicron to serve 😩 (ASGI server)
+#Dont have to manually jsonify the response, FastAPI automaticaally handles the conversion of Python dictionaries to JSON responses.
+#When you return a dict -> convert to JSON -> sets content type to application/json -> returns proper HTTP response
+#Automatic documentation too
+app = FastAPI()
 
-    def start(self):
-        print("Server started")
-        self.client, self.client_address = self.server.accept()
-        print(f"Client: {self.client}")
-        print(f"Client connected from: {self.client_address}")
-        
-        receive_thread = threading.Thread(target=self.receive_messages)
-        receive_thread.daemon = True #Ensures that the thread will not prevent the program from exiting if main thread finishes execution.
-        receive_thread.start()
+#Cross-Origin Resource Sharing (CORS) is a security feature that prevents websites from making requests to domain different from the one that served the website.
+#This is here just for an extra layer that processes the requests and responses before route handlers are called. 
+# (* menas all so basically means "OK for any website to make requests to this server")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
-        self.handle_input()
+counter = 0
 
-    def receive_messages(self):
-        while True:
-            try:
-                message = self.client.recv(1024).decode()
-                if message:
-                    print(f"Received message from Godot: {message}")
-            except Exception as e:
-                print(f"Error: {e}")
-                break
+#(Automatic) Defining the datamodel with validation. POST req comes -> parse into model -> validate (i.e. has content field which can be string or any other value)
+class MessageData(BaseModel):
+    content: Union[str, Any]
+
+#Route handles, one for GET and one for POST
+@app.get("/")
+async def get_counter():
+    """Handle GET requests by incrementing and returning the counter"""
+    global counter 
+    counter += 1
+
+    response = { 
+        "message": f"Hello your new number is {counter}"
+    }
+
+    print(f"Sent response: {response}")
+    return response
+
+@app.post("/")
+async def receive_message(data: MessageData):
+    """Handle POST requests by echoing the message"""
     
-    def handle_input(self):
-        while True:
-            try:
-                message = input("Enter message to send to Godot (!quit to exit): ")
+    print(f"Received message: {data.content}")
+    content = data.content
 
-                if message.lower() == "!quit":
-                    print("Quitting server")
-                    break
-
-                if self.client:
-                    json_data = json.dumps(message) #JSON formatted string (adds double quotes and escaping any special chars in string).
-                    print(f"Sending JSON: {json_data}")
-                    bytes_sent = self.client.send(json_data.encode())
-                    print(f"Bytes sent: {bytes_sent}")
-                else:
-                    print("No client connected")
-
-            except Exception as e:
-                print(f"Error: {e}")
-                break
+    return { "status": "success", "received": content }
 
 if __name__ == "__main__":
-    server = TCPServer()
-    server.start()
+    print("Starting server")
+    uvicorn.run(app, host="127.0.0.1", port=8000)

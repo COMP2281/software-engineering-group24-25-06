@@ -75,3 +75,12 @@ offset_left = 765.0
 offset_top = 521.0
 offset_right = 1093.0
 offset_bottom = 578.0
+
+[node name="Button" type="Button" parent="CanvasLayer"]
+offset_left = 56.0
+offset_top = 550.0
+offset_right = 197.0
+offset_bottom = 582.0
+text = "CLICK ME !!!!!"
+
+[connection signal="pressed" from="CanvasLayer/Button" to="." method="_on_button_pressed"]
