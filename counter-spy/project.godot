@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="Counter Spy"
+run/main_scene="res://Scenes/Levels/Hub/hub-2.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[global_group]
+
+Player=""
 
 [input]
 

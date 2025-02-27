@@ -66,17 +66,17 @@ func _process(_delta):
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body.name == "ProtoController":  # Ensure it's the player
-		print("Player entered the area.")
+		#print("Player entered the area.")
 		is_in_area = true
 		if tooltip:
-			tooltip.visible = true  # Show tooltip
+			tooltip.show()  # Show tooltip
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body.name == "ProtoController":  # Ensure it's the player
-		print("Player exited the area.")
+		#print("Player exited the area.")
 		is_in_area = false
 		if tooltip:
-			tooltip.visible = false  # Hide tooltip
+			tooltip.hide()  # Hide tooltip
 
 ## ---------------------------
 ## Helper functions
