@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://2vcswfkcqgta"]
+[gd_scene load_steps=6 format=3 uid="uid://2vcswfkcqgta"]
 
 [ext_resource type="PackedScene" uid="uid://tl8vean5e8tn" path="res://scenes/lvl1graybox.tscn" id="1_osymi"]
 [ext_resource type="Script" path="res://scripts/level_1.gd" id="1_qlc8u"]
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="2_4q1tt"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_wkyt1"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8ofmw"]
 
 [node name="Level1" type="Node3D"]
 script = ExtResource("1_qlc8u")
@@ -20,3 +22,17 @@ input_jump = "jump"
 input_freefly = "fly"
 
 [node name="TransitionScreen" parent="." instance=ExtResource("4_wkyt1")]
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.6856, 3.73204, -29.1146)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 20.8951, 0, 0, 0)
+shape = SubResource("BoxShape3D_8ofmw")
+
+[node name="LevelCompleteLabel" type="Label3D" parent="Area3D"]
+transform = Transform3D(-6.55671e-08, 0, -1, 0, 1.6, 0, 1.5, 0, -4.37114e-08, 0.546785, 0.401357, 0.778271)
+text = "[E] to escape"
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]

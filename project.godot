@@ -14,6 +14,10 @@ config/name="CounterTime"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Global="*res://scripts/Global.gd"
+
 [input]
 
 move_left={

@@ -49,12 +49,12 @@ func _on_back_btn_pressed() -> void:
 	close_levels()
 
 func _on_level_1_pressed() -> void:
-	var transition_screen = get_node("/root/Hub/CanvasLayer/TransitionScreen")
+	var transition_screen = get_node("/root/Hub/TransitionScreen")
 	
 	transition_screen.visible = true
 	print("Starting transition animation...")
 	# Play the fade-out animation
-	$"../CanvasLayer/TransitionScreen/AnimationPlayer".play("fade_in_to_loading_screen")
+	$"../TransitionScreen/AnimationPlayer".play("fade_in_to_loading_screen")
 	# Wait for the animation to finish before changing the scene
 	await get_tree().create_timer(2).timeout
 	print("Transition complete. Loading level 1...")
