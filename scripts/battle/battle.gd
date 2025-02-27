@@ -14,7 +14,6 @@ var enemy_max_health: float = 0.0
 # If the player is defending
 var player_defense: bool = false
 var current_turn: String = "player"
-var current_credential: String = "Getting Started with Artificial Intelligence"
 
 var enemy_being_fought: Enemy = null
 var current_question: Question = null
