@@ -1,0 +1,65 @@
+[gd_scene load_steps=9 format=3 uid="uid://s3tlavdof7ey"]
+
+[ext_resource type="Script" path="res://Scripts/Player/proto_controller.gd" id="1_x0abh"]
+[ext_resource type="Script" path="res://Scripts/Player/camera_controller.gd" id="2_gl6vu"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
+albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ucva2"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_38mre"]
+specular_mode = 1
+albedo_color = Color(0.0397879, 0.353417, 0.466401, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_asvcc"]
+size = Vector3(0.4, 0.1, 0.1)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iof21"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_584ar"]
+radius = 0.07
+
+[node name="ProtoController3P" type="CharacterBody3D"]
+script = ExtResource("1_x0abh")
+input_left = "move_left"
+input_right = "move_right"
+input_forward = "move_forward"
+input_back = "move_backward"
+input_jump = "move_jump"
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+material_override = SubResource("StandardMaterial3D_iof21")
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_ucva2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.485712, -0.386314)
+material_override = SubResource("StandardMaterial3D_38mre")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_asvcc")
+skeleton = NodePath("../..")
+
+[node name="Collider" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_iof21")
+
+[node name="Head" type="Node3D" parent="." node_paths=PackedStringArray("player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+script = ExtResource("2_gl6vu")
+player = NodePath("..")
+
+[node name="CamYaw" type="Node3D" parent="Head"]
+
+[node name="CamPitch" type="Node3D" parent="Head/CamYaw"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Head/CamYaw/CamPitch"]
+shape = SubResource("SphereShape3D_584ar")
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="Head/CamYaw/CamPitch/SpringArm3D"]
