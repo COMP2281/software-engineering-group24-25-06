@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://cwj82duxudtse"]
 
-[ext_resource type="PackedScene" uid="uid://13xrbcp83u58" path="res://scenes/Levels/Hub/building.tscn" id="1_qkjko"]
+[ext_resource type="PackedScene" uid="uid://13xrbcp83u58" path="res://Scenes/Levels/Hub/building.tscn" id="1_qkjko"]
 [ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://Scenes/Prefabs/Player/proto_controller_3p.tscn" id="2_hjkv8"]
 [ext_resource type="PackedScene" uid="uid://b1xb7mbig4isg" path="res://Scenes/Levels/Hub/level_select.tscn" id="3_7xwqd"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://Scenes/Levels/Hub/transition_screen.tscn" id="4_ahie3"]
@@ -33,8 +33,6 @@ shadow_enabled = true
 
 [node name="ProtoController" parent="." instance=ExtResource("2_hjkv8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.81899, -0.00637197, -0.00668335)
-input_jump = "jump"
-input_freefly = "fly"
 
 [node name="building" parent="." instance=ExtResource("1_qkjko")]
 

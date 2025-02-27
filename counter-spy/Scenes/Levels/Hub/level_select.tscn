@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://b1xb7mbig4isg"]
 
-[ext_resource type="Script" path="res://scripts/Hub/level_select.gd" id="1_udoeg"]
+[ext_resource type="Script" path="res://Scripts/Hub/level_select.gd" id="1_ytn2x"]
 
 [sub_resource type="Animation" id="Animation_tcb3k"]
 length = 0.001
@@ -47,7 +47,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_udoeg")
+script = ExtResource("1_ytn2x")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 modulate = Color(1, 1, 1, 0)

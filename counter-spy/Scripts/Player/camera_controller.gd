@@ -1,6 +1,5 @@
 extends Node3D
 
-signal set_cam_rotation(_cam_rotation : float)
 @export var player : ProtoController
 @onready var yaw_node = $CamYaw
 @onready var pitch_node = $CamYaw/CamPitch
@@ -44,5 +43,3 @@ func _physics_process(delta):
 	yaw_node.rotation_degrees.y = yaw
 	player.rotation_degrees.y = yaw
 	pitch_node.rotation_degrees.x = pitch
-	
-	#set_cam_rotation.emit(yaw_node.rotation.y)

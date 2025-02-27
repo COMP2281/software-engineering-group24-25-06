@@ -13,8 +13,3 @@ func _ready() -> void:
 	await $TransitionScreen/AnimationPlayer.animation_finished
 	
 	transition_screen.visible = false
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass

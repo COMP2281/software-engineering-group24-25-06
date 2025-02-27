@@ -1,22 +1,16 @@
 [gd_scene load_steps=5 format=3 uid="uid://2vcswfkcqgta"]
 
-[ext_resource type="PackedScene" uid="uid://tl8vean5e8tn" path="res://scenes/lvl1graybox.tscn" id="1_osymi"]
-[ext_resource type="Script" path="res://scripts/level_1.gd" id="1_qlc8u"]
-[ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="2_4q1tt"]
-[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_wkyt1"]
+[ext_resource type="Script" path="res://Scripts/Level/level_1.gd" id="1_3sgl5"]
+[ext_resource type="PackedScene" uid="uid://tl8vean5e8tn" path="res://Scenes/Levels/Mission1/lvl1graybox.tscn" id="1_osymi"]
+[ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://Scenes/Prefabs/Player/proto_controller_3p.tscn" id="2_4q1tt"]
+[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://Scenes/Levels/Hub/transition_screen.tscn" id="4_wkyt1"]
 
 [node name="Level1" type="Node3D"]
-script = ExtResource("1_qlc8u")
+script = ExtResource("1_3sgl5")
 
 [node name="Level1" parent="." instance=ExtResource("1_osymi")]
 
 [node name="ProtoController" parent="." instance=ExtResource("2_4q1tt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.22161, 3.0646, 10.6769)
-input_left = "move_left"
-input_right = "move_right"
-input_forward = "move_forward"
-input_back = "move_backward"
-input_jump = "jump"
-input_freefly = "fly"
 
 [node name="TransitionScreen" parent="." instance=ExtResource("4_wkyt1")]

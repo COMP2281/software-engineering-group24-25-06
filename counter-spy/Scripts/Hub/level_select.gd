@@ -61,7 +61,7 @@ func _on_level_1_pressed() -> void:
 	get_tree().change_scene_to_packed(lvl1)
 	#transition_screen.visible = false
 
-func _process(delta):
+func _process(_delta):
 	on_interact()
 
 func _on_area_3d_body_entered(body: Node3D) -> void:

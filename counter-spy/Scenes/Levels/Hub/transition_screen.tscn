@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://b1ajpn8hqx5vh"]
 
-[ext_resource type="Script" path="res://scripts/Hub/transition_screen.gd" id="1_5t0ky"]
+[ext_resource type="Script" path="res://Scripts/Hub/transition_screen.gd" id="1_kemen"]
 
 [sub_resource type="Animation" id="Animation_rf256"]
 length = 0.001
@@ -100,7 +100,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("1_5t0ky")
+script = ExtResource("1_kemen")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 modulate = Color(1, 1, 1, 0)
