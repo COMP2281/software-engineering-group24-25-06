@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://c8lj4bah1i8a0"]
 
-[ext_resource type="Script" path="res://Scripts/cybersecurity.gd" id="1_nk4c3"]
+[ext_resource type="Script" path="res://scripts/cybersecurity.gd" id="1_vqflq"]
 [ext_resource type="Texture2D" uid="uid://iv1ph4q46hlf" path="res://resources/tick.png" id="2_cwxqi"]
 [ext_resource type="Texture2D" uid="uid://egd1l82rgyk0" path="res://resources/trophy.webp" id="3_1b5o4"]
 
@@ -50,7 +50,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_nk4c3")
+script = ExtResource("1_vqflq")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1

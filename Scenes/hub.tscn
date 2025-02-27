@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://cwj82duxudtse"]
+[gd_scene load_steps=16 format=3 uid="uid://cwj82duxudtse"]
 
 [ext_resource type="PackedScene" uid="uid://13xrbcp83u58" path="res://scenes/building.tscn" id="1_qkjko"]
-[ext_resource type="Script" path="res://scenes/hub.gd" id="1_tlc0s"]
+[ext_resource type="Script" path="res://scripts/hub.gd" id="1_tlc0s"]
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="2_hjkv8"]
 [ext_resource type="PackedScene" uid="uid://b1xb7mbig4isg" path="res://scenes/level_select.tscn" id="3_7xwqd"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_ahie3"]
+[ext_resource type="PackedScene" uid="uid://sxwm712fxj0e" path="res://scenes/world_select.tscn" id="6_04h6j"]
+[ext_resource type="PackedScene" uid="uid://c8lj4bah1i8a0" path="res://scenes/cyber_security.tscn" id="7_uq2mt"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_k8blq"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -27,6 +29,9 @@ glow_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s5o4l"]
 albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dejmd"]
+size = Vector3(1, 1, 3.33228)
 
 [node name="Hub" type="Node3D"]
 script = ExtResource("1_tlc0s")
@@ -76,4 +81,20 @@ shape = SubResource("BoxShape3D_l2gmx")
 mesh = SubResource("BoxMesh_r5oxx")
 material = SubResource("StandardMaterial3D_s5o4l")
 
+[node name="WorldCompletionsArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.14511, 0.903405, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WorldCompletionsArea"]
+shape = SubResource("BoxShape3D_dejmd")
+
+[node name="Label3D" type="Label3D" parent="WorldCompletionsArea"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0.877578, 0)
+text = "[E] World Completions"
+
+[node name="WorldSelect" parent="." instance=ExtResource("6_04h6j")]
+
+[node name="CyberSecurity" parent="." instance=ExtResource("7_uq2mt")]
+
 [connection signal="body_entered" from="LevelSelectionArea" to="LevelSelect" method="_on_level_selection_area_body_entered"]
+[connection signal="body_entered" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_entered"]
+[connection signal="body_exited" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_exited"]

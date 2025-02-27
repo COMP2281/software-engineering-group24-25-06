@@ -54,4 +54,8 @@ func update_progress_bar():
 	percentage_label.text = str(progress_percentage) + "%"  # Display percentage
 
 func _on_back_btn_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/world_select.tscn")
+	# Hide CyberSecurity
+	$".".visible = false  # Hide the CyberSecurity node
+
+	# Show WorldSelect
+	$"../WorldSelect".visible = true  # Show the WorldSelect node

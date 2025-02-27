@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://sxwm712fxj0e"]
+[gd_scene load_steps=13 format=3 uid="uid://sxwm712fxj0e"]
 
 [ext_resource type="Script" path="res://Scripts/world_select.gd" id="1_vvqx2"]
 [ext_resource type="PackedScene" uid="uid://c8lj4bah1i8a0" path="res://scenes/cyber_security.tscn" id="2_rxjkf"]
@@ -29,6 +29,43 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 anti_aliasing = false
 
+[sub_resource type="Animation" id="Animation_rw0nf"]
+resource_name = "fade_in"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PanelContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_6loav"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PanelContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1h6xb"]
+_data = {
+"RESET": SubResource("Animation_6loav"),
+"fade_in": SubResource("Animation_rw0nf")
+}
+
 [node name="WorldSelect" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -41,6 +78,7 @@ cyber_security_scene = ExtResource("2_rxjkf")
 main_menu_scene = ExtResource("3_ts5jq")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -133,6 +171,11 @@ show_percentage = false
 layout_mode = 2
 text = "50%"
 label_settings = SubResource("LabelSettings_70giw")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_1h6xb")
+}
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/TitleHContainer/BackBtn" to="." method="_on_back_btn_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/WorldHBox/AI" to="." method="_on_ai_pressed"]
