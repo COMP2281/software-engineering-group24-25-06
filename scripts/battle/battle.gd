@@ -18,7 +18,7 @@ var current_turn: String = "player"
 var enemy_being_fought: Enemy = null
 var current_question: Question = null
 
-func prepare_enter(fighting_enemy: Enemy) -> void:
+func entered_from_mission(fighting_enemy: Enemy) -> void:
 	enemy_being_fought = fighting_enemy
 	enemy.enemy_resource = enemy_being_fought.enemy_resource
 	enemy_max_health = enemy.enemy_resource.health
@@ -26,7 +26,8 @@ func prepare_enter(fighting_enemy: Enemy) -> void:
 	player_health_value = player.max_health
 	
 	ui.set_enemy(enemy.enemy_resource)
-	
+
+func prepare_enter() -> void:
 	$CanvasLayer.show()
 	$Camera3D.make_current()
 	
@@ -171,7 +172,7 @@ func game_over(player_won: bool) -> void:
 	# TODO: Timer after victory (probably should be some animation that plays that we await?)
 	await get_tree().create_timer(1.0).timeout
 	
-	SceneCoordinator.change_scene.emit("Mission", { "enemy_defeated": enemy_being_fought })
+	SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought })
 
 func _on_player_health_changed(new_health: float):
 	player_health.value = new_health

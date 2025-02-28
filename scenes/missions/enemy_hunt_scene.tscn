@@ -11,7 +11,7 @@
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_t51aw"]
 
-[sub_resource type="Resource" id="Resource_p3p7h"]
+[sub_resource type="Resource" id="Resource_qvg4j"]
 resource_local_to_scene = true
 script = ExtResource("3_qvbrg")
 detection_speed = 0.5
@@ -22,10 +22,10 @@ decay_rate = 0.2
 communication_range = 20.0
 hearing_modifier = 1.0
 
-[sub_resource type="Resource" id="Resource_hugwx"]
+[sub_resource type="Resource" id="Resource_dmxmq"]
 resource_local_to_scene = true
 script = ExtResource("3_q7o7o")
-viewzone_resource = SubResource("Resource_p3p7h")
+viewzone_resource = SubResource("Resource_qvg4j")
 enemy_name = "SnipeyMan"
 health = 80
 weakness = "fire"
@@ -40,7 +40,7 @@ scan_times = 1.5
 hunting_begin_threshold = 0.9
 hunting_end_threshold = 0.5
 
-[sub_resource type="Resource" id="Resource_ifb4s"]
+[sub_resource type="Resource" id="Resource_m6anf"]
 resource_local_to_scene = true
 script = ExtResource("3_qvbrg")
 detection_speed = 1.0
@@ -51,10 +51,10 @@ decay_rate = 0.2
 communication_range = 20.0
 hearing_modifier = 1.0
 
-[sub_resource type="Resource" id="Resource_5e3cg"]
+[sub_resource type="Resource" id="Resource_e60gh"]
 resource_local_to_scene = true
 script = ExtResource("3_q7o7o")
-viewzone_resource = SubResource("Resource_ifb4s")
+viewzone_resource = SubResource("Resource_m6anf")
 enemy_name = "Standard"
 health = 100
 weakness = "fire"
@@ -132,11 +132,11 @@ camera_attributes = SubResource("CameraAttributesPractical_t51aw")
 
 [node name="SniperEnemy" parent="." instance=ExtResource("2_8uedt")]
 transform = Transform3D(0.0574246, 0, -0.99835, 0, 1, 0, 0.99835, 0, 0.0574246, 4.82541, 0, 25.2603)
-enemy_resource = SubResource("Resource_hugwx")
+enemy_resource = SubResource("Resource_dmxmq")
 
 [node name="StandardEnemy" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("2_8uedt")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.82541, 0, -5.04964)
-enemy_resource = SubResource("Resource_5e3cg")
+enemy_resource = SubResource("Resource_e60gh")
 patrol_path = NodePath("../Path3D")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]

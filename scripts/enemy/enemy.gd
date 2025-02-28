@@ -72,7 +72,7 @@ func _process(delta: float) -> void:
 		# TODO: very temporary, just make it so we can transition back to this scene
 		#	without instantly being thrown into another encounter
 		$Security.new_suspicion_level.emit(0.0, false) # TODO: should be in enter
-		SceneCoordinator.change_scene.emit("Encounter", {"enemy_encountered": self})
+		SceneCoordinator.change_scene.emit(SceneType.Name.BATTLE, {"enemy_encountered": self})
 	
 func _physics_process(delta: float) -> void:
 	var destination: Vector3 = navigation_agent_3d.get_next_path_position()
