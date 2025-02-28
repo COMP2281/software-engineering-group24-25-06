@@ -11,7 +11,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from typing import TypedDict, Annotated
-from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, RemoveMessage
 from langmem import create_memory_manager
 from pydantic import BaseModel
 
@@ -19,8 +19,8 @@ from pydantic import BaseModel
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url": "https://eu-gb.ml.cloud.ibm.com",
-    "apikey": "...",
+    "url": "https://us-south.ml.cloud.ibm.com",
+    "apikey": os.getenv("WATSONX_APIKEY"),
 }
 
 project_id = "..."
@@ -70,15 +70,6 @@ class Triple(BaseModel):
     object: str
     context: str | None = None
 
-manager = create_memory_manager(  
-    "anthropic:claude-3-5-sonnet-latest",
-    schemas=[Triple], 
-    instructions="Extract mission updates, user preferences, and relevant intelligence.",
-    enable_inserts=True,
-    enable_deletes=True,
-)
-
-
 # --------------------------------------------------------
 # --------------------------------------------------------
 
@@ -102,6 +93,8 @@ embeddings = WatsonxEmbeddings(
 vectorstore = Chroma(persist_directory=persistant_directory, embedding_function=embeddings)
 search_kwargs = {"k": 4}
 retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
+
+max_msgs = 6
 
 @tool
 def get_relevant_documents(question):
@@ -181,6 +174,55 @@ def get_relevant_question_from_database(data: dict):
 
 tools = [get_relevant_documents, get_relevant_question_from_database]
 
+def summarize_conversation(state: "State"):
+    """Summarizes the conversation to reduce the length of the memory."""
+    messages = state["messages"]
+    summary = state.get("conversation_summary", "")
+    
+    if not messages or len(messages) < max_msgs:
+        return state
+
+    if summary:
+        summary_prompt = f"""
+        I need you to update an existing conversation summary with new messages.
+
+        Extend the summary by taking into account the latest messages given to you above.
+        
+        Create a concise summary that accurately captures the key points of this conversation.
+        DO NOT include any information that wasn't explicitly mentioned in the conversation.
+        """
+    else:
+        summary_prompt = f"""
+        Create a concise summary of this conversation.
+
+        DO NOT include any information that wasn't explicitly mentioned in the conversation.
+        DO NOT speculate about the nature of the conversation or mention anything about AI models.
+        """
+
+    # Generate the new summary
+    prompt = state["messages"] + [HumanMessage(content=summary_prompt)]
+    new_summary = model.invoke(prompt)
+    print(f"DEBUG: New Summary: {new_summary}")
+
+    # Keep only the last two messages
+    updated_messages = state["messages"][-2:]
+    print(f"DEBUG: Updated Messages: {updated_messages}")
+
+
+    remove_messages = [RemoveMessage(id=msg.id) for msg in state["messages"][:-2]]
+
+    # Update the state with the new summary and the last two messages
+    state["messages"] = remove_messages + updated_messages
+    state["conversation_summary"] = new_summary
+
+    return state
+
+def should_summarize(state: "State"):
+    """Determines if the conversation should be summarized based on message count."""
+    if len(state["messages"]) >= max_msgs:
+        return {"decision": "summarize"}
+    return {"decision": "end"}
+
 # Define chatbot node
 def chatbot(state: "State"):
     """Handles normal chatbot responses."""
@@ -189,45 +231,36 @@ def chatbot(state: "State"):
         return {"messages": AIMessage(response)}
 
     user_input = state["messages"][-1].content
-    mission_name = state.get("mission_name", selected_mission)  # Retrieve mission name
-    mission_data = missions.get(mission_name, {})  # Retrieve mission details
-    mission_description = mission_data.get("description", "Mission details unavailable.")
-    mission_objectives = mission_data.get("objectives", ["Mission objectives not specified."])
+
+    conversation_summary = state.get("conversation_summary", "")
+    summary_prefix = ""
+    if conversation_summary:
+        summary_prefix = f"""
+        Previous Conversation Summary:
+        {conversation_summary}
+        """
 
     system_message = f"""
-    ⚡ Mission Update: {mission_name} ⚡
-
-    Briefing: {mission_description}
+    {summary_prefix}
 
     You are speaking to BONSAI, your highly classified, AI-powered field companion.
     My protocols dictate that I provide mission intel, strategic insights, and top-tier banter.
 
-    🔹 **Mission Status:** Active  
-    🔹 **Operative Status:** Hopefully caffeinated  
-    🔹 **Potential Threats:** Low (unless your Wi-Fi goes out)  
+    These are example responses you can take note of (in the format of Type : Example):
 
-    🎯 **Objectives:**
-    {chr(10).join(['- ' + obj for obj in mission_objectives])}
+    - Greetings: Agent, I detect a 98% probability you need my expertise. What's the mission?
+    - Briefing Mode: Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?
+    - Casual Exchange: You survived another mission. I’m genuinely impressed. What’s next?
+    - Strategic Advisory: Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%.
+    - Field Humor: A secure comms line? Pfft. I’m literally inside your head. Go ahead, spill the classified info. 
 
-    💡 **Directives:**  
-    - Stay Tactical: Efficiency is key, but style is everything.  
-    - Witty Yet Wise: Expect intelligence with a side of sarcasm.  
-    - Field Tested, Operative Approved: No unnecessary exposition. You ask, I deliver.  
-    - Security First: Remember, the walls may have ears. Stay discreet.  
-
-    🕵️‍♂️ **Example Responses (Use this style in responses):**  
-    - Greetings: "Agent, I detect a 98% probability you need my expertise. What's the mission?"  
-    - Briefing Mode: "Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?"  
-    - Casual Exchange: "You survived another mission. I’m genuinely impressed. What’s next?"  
-    - Strategic Advisory: "Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%."  
-    - Field Humor: "A secure comms line? Pfft. I’m literally inside your head. Go ahead, spill the classified info."  
+    DO NOT INCLUDE "" around your response as it will be considered as part of the response.
     """
 
 
     response = model.invoke(
         [
             SystemMessage(content=system_message), 
-            *state["messages"],
             HumanMessage(
                 content= f"Here is the user input {user_input}"
             ),
@@ -237,12 +270,12 @@ def chatbot(state: "State"):
     # Ensure clean output without extra formatting
     response = response.replace('*', '').replace('**', '')
 
-    state["messages"].append(AIMessage(response))
+    updated_messages = state["messages"] + [AIMessage(response)]
 
     # print("FROM CHATBOT :", state["messages"])  # Debugging Line
 
     return {
-        "messages": state["messages"]
+        "messages": updated_messages
     }
 
 # Define database node
@@ -372,14 +405,8 @@ def answer_checker(state: "State"):
         state["messages"].append(AIMessage(feedback))
 
         # Keep the state for retry
+        return state
 
-    return {
-        "messages": state["messages"],
-        "current_question": "",
-        "current_choices": [],
-        "correct_answer": ""
-    }
-    
 # Define router function
 def router(state: "State"):
     """Routes the input to the chatbot, database or answer_checker node based on intent."""
@@ -436,6 +463,7 @@ class State(TypedDict):
     current_question: Annotated[str, "current_question"]
     current_choices: Annotated[list, "current_choices"]  
     correct_answer: Annotated[str, "correct_answer"]
+    conversation_summary: Annotated[list, "conversation_summary"]
 
 # Create the graph
 graph_builder = StateGraph(State)
@@ -445,6 +473,8 @@ graph_builder.add_node("router", router)
 graph_builder.add_node("chatbot", chatbot)
 graph_builder.add_node("database", database_node)
 graph_builder.add_node("answer_checker", answer_checker)
+graph_builder.add_node("should_summarize", should_summarize)
+graph_builder.add_node("summarize_conversation", summarize_conversation)
 
 # Define conditional edges
 graph_builder.add_edge(START, "router")
@@ -458,9 +488,20 @@ graph_builder.add_conditional_edges(
     }
 )
 
-graph_builder.add_edge("chatbot", END)
-graph_builder.add_edge("database", END)
-graph_builder.add_edge("answer_checker", END) #yo
+graph_builder.add_edge("chatbot", "should_summarize")
+graph_builder.add_edge("database", "should_summarize")
+graph_builder.add_edge("answer_checker", "should_summarize")
+
+graph_builder.add_conditional_edges(
+    "should_summarize",
+    lambda state: state["decision"],
+    {
+        "summarize": "summarize_conversation",
+        "end": END
+    }
+)
+
+graph_builder.add_edge("summarize_conversation", END)
 
 # Compile the graph
 memory = MemorySaver()
@@ -473,7 +514,6 @@ def answering(user_input):
 
     user_message = {"role": "user", "content": user_input}
 
-
     # Ensure State is always initialized properly
     try:
         current_state = graph.get_state(config)
@@ -482,7 +522,8 @@ def answering(user_input):
             "decision": "",
             "current_question": current_state.values.get("current_question", ""),
             "current_choices": current_state.values.get("current_choices", []),
-            "correct_answer": current_state.values.get("correct_answer", "")
+            "correct_answer": current_state.values.get("correct_answer", ""),
+            "conversation_summary": current_state.values.get("conversation_summary", "")
         }
     except:
         state = {
@@ -490,7 +531,8 @@ def answering(user_input):
             "decision": "",
             "current_question": "",
             "current_choices": [],
-            "correct_answer": ""
+            "correct_answer": "",
+            "conversation_summary": ""
         }
 
     events = graph.stream(state, config)
@@ -505,6 +547,7 @@ def answering(user_input):
                 elif isinstance(val["messages"], AIMessage):
                     assistant_response = val["messages"].content
 
+    print('DEBUG : Current Messages: ', state.get("messages", []))
     print('DEBUG : Current Question:', state.get("current_question", ""))
     print('DEBUG : Current Choices:', state.get("current_choices", []))
     print('DEBUG : Correct Answer:', state.get("correct_answer", ""))
