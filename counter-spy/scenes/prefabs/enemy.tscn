@@ -1,0 +1,58 @@
+[gd_scene load_steps=11 format=3 uid="uid://cr6oth1fbi3gy"]
+
+[ext_resource type="Script" path="res://scripts/enemy/enemy.gd" id="1_twq01"]
+[ext_resource type="Resource" uid="uid://ddd5ikv3i5tcn" path="res://settings/enemy/standard_enemy.tres" id="2_sisau"]
+[ext_resource type="PackedScene" uid="uid://cwedyk8jko048" path="res://scenes/prefabs/security.tscn" id="3_44apx"]
+[ext_resource type="Script" path="res://scripts/utility/state_machine.gd" id="4_irt23"]
+[ext_resource type="Script" path="res://scripts/enemy/states/patrol.gd" id="5_huxov"]
+[ext_resource type="Script" path="res://scripts/enemy/states/investigate.gd" id="6_rvoe7"]
+[ext_resource type="Script" path="res://scripts/enemy/states/hunting.gd" id="7_b1fwn"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6jdm4"]
+albedo_color = Color(0, 0.851473, 0.851473, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_pfnw3"]
+material = SubResource("StandardMaterial3D_6jdm4")
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_eg2rf"]
+
+[node name="Enemy" type="CharacterBody3D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 7
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+script = ExtResource("1_twq01")
+enemy_resource = ExtResource("2_sisau")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_pfnw3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_eg2rf")
+
+[node name="Nose" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.58867)
+size = Vector3(0.2, 0.2, 1)
+
+[node name="Security" parent="." instance=ExtResource("3_44apx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+debug_enabled = true
+
+[node name="EyeLevel" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.499259, 0)
+
+[node name="EnemyStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("4_irt23")
+initial_state = NodePath("Patrol")
+
+[node name="Patrol" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("5_huxov")
+
+[node name="Investigate" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("6_rvoe7")
+
+[node name="Hunting" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("7_b1fwn")

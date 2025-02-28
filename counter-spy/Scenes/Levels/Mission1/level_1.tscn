@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://2vcswfkcqgta"]
 
-[ext_resource type="Script" path="res://Scripts/Level/Mission1Level1.gd" id="1_3sgl5"]
-[ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://Scenes/Prefabs/Player/proto_controller_3p.tscn" id="2_4q1tt"]
-[ext_resource type="PackedScene" uid="uid://cunvtysmndrr0" path="res://Scenes/Levels/Mission1/level_1-model.tscn" id="4_7ojdb"]
-[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://Scenes/Levels/Hub/transition_screen.tscn" id="4_wkyt1"]
+[ext_resource type="Script" path="res://scripts/level/Mission1Level1.gd" id="1_3sgl5"]
+[ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://scenes/prefabs/player/proto_controller_3p.tscn" id="2_4q1tt"]
+[ext_resource type="PackedScene" uid="uid://cunvtysmndrr0" path="res://scenes/levels/mission1/level_1-model.tscn" id="4_7ojdb"]
+[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/levels/hub/transition_screen.tscn" id="4_wkyt1"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_cmh4s"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)

@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://cvbe8pwrgby1e"]
 
-[ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://Scenes/Prefabs/Player/proto_controller_3p.tscn" id="1_j7o5c"]
-[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://Scenes/Levels/Hub/transition_screen.tscn" id="2_ui3tb"]
-[ext_resource type="PackedScene" uid="uid://b1xb7mbig4isg" path="res://Scenes/Levels/Hub/level_select.tscn" id="3_6b65k"]
+[ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://scenes/prefabs/player/proto_controller_3p.tscn" id="1_j7o5c"]
+[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/levels/hub/transition_screen.tscn" id="2_ui3tb"]
+[ext_resource type="PackedScene" uid="uid://b1xb7mbig4isg" path="res://scenes/levels/hub/level_select.tscn" id="3_6b65k"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kml8i"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)

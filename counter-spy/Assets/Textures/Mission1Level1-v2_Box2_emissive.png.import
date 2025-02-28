@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6lettksk86ux"
-path.s3tc="res://.godot/imported/Mission1Level1-v2_Box2_emissive.png-f1e4f9f99ec8deea9829757faa05df1c.s3tc.ctex"
+path.s3tc="res://.godot/imported/Mission1Level1-v2_Box2_emissive.png-33ed5b804b457a2fc41e417c80082a24.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Assets/Textures/Mission1Level1-v2_Box2_emissive.png"
-dest_files=["res://.godot/imported/Mission1Level1-v2_Box2_emissive.png-f1e4f9f99ec8deea9829757faa05df1c.s3tc.ctex"]
+source_file="res://assets/textures/Mission1Level1-v2_Box2_emissive.png"
+dest_files=["res://.godot/imported/Mission1Level1-v2_Box2_emissive.png-33ed5b804b457a2fc41e417c80082a24.s3tc.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://v03uwhrmpdet"
-path.s3tc="res://.godot/imported/Mission1Level1-v2_panel3_baseColor.png-a7337dcda13e7b9c895939440ed4bbdd.s3tc.ctex"
+path.s3tc="res://.godot/imported/Mission1Level1-v2_panel3_baseColor.png-d6032590f23f47115fea63f17410af88.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Assets/Textures/Mission1Level1-v2_panel3_baseColor.png"
-dest_files=["res://.godot/imported/Mission1Level1-v2_panel3_baseColor.png-a7337dcda13e7b9c895939440ed4bbdd.s3tc.ctex"]
+source_file="res://assets/textures/Mission1Level1-v2_panel3_baseColor.png"
+dest_files=["res://.godot/imported/Mission1Level1-v2_panel3_baseColor.png-d6032590f23f47115fea63f17410af88.s3tc.ctex"]
 
 [params]
 

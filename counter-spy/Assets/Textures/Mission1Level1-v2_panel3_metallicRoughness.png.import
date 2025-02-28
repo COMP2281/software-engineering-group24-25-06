@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brmh7blax657j"
-path.s3tc="res://.godot/imported/Mission1Level1-v2_panel3_metallicRoughness.png-e1039078f33962ed95ccf5efe6261572.s3tc.ctex"
+path.s3tc="res://.godot/imported/Mission1Level1-v2_panel3_metallicRoughness.png-3b6b1de9c8d5eb27de482906758f81d7.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Assets/Textures/Mission1Level1-v2_panel3_metallicRoughness.png"
-dest_files=["res://.godot/imported/Mission1Level1-v2_panel3_metallicRoughness.png-e1039078f33962ed95ccf5efe6261572.s3tc.ctex"]
+source_file="res://assets/textures/Mission1Level1-v2_panel3_metallicRoughness.png"
+dest_files=["res://.godot/imported/Mission1Level1-v2_panel3_metallicRoughness.png-3b6b1de9c8d5eb27de482906758f81d7.s3tc.ctex"]
 
 [params]
 

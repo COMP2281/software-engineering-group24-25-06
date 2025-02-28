@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dyjo0nsjvu6g2"
-path.s3tc="res://.godot/imported/Mission1Level1_M_Gate01_normal.png-3495e256f60716a0582f8a07481fa0c8.s3tc.ctex"
+path.s3tc="res://.godot/imported/Mission1Level1_M_Gate01_normal.png-bbc24fb0e75c09dce12c3ca0bbb640cf.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Assets/Textures/Mission1Level1_M_Gate01_normal.png"
-dest_files=["res://.godot/imported/Mission1Level1_M_Gate01_normal.png-3495e256f60716a0582f8a07481fa0c8.s3tc.ctex"]
+source_file="res://assets/textures/Mission1Level1_M_Gate01_normal.png"
+dest_files=["res://.godot/imported/Mission1Level1_M_Gate01_normal.png-bbc24fb0e75c09dce12c3ca0bbb640cf.s3tc.ctex"]
 
 [params]
 

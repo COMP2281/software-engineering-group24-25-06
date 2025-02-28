@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://moorejoh1vly"
-path="res://.godot/imported/Mission1Level1-v2.glb-3d3ec1df38051528892f8e62b8009e7f.scn"
+path="res://.godot/imported/Mission1Level1-v2.glb-8d96cdbfe1743d23ac70a95c2c64b217.scn"
 
 [deps]
 
-source_file="res://Assets/Models/Mission1Level1-v2.glb"
-dest_files=["res://.godot/imported/Mission1Level1-v2.glb-3d3ec1df38051528892f8e62b8009e7f.scn"]
+source_file="res://assets/models/Mission1Level1-v2.glb"
+dest_files=["res://.godot/imported/Mission1Level1-v2.glb-8d96cdbfe1743d23ac70a95c2c64b217.scn"]
 
 [params]
 

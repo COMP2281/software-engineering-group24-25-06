@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cssruvy4qtggj"
-path.s3tc="res://.godot/imported/Mission1Level1_M_Sci-FiRoomWalls_baseColor.png-89315fc716e8f2612bd1f00b4af8f00b.s3tc.ctex"
+path.s3tc="res://.godot/imported/Mission1Level1_M_Sci-FiRoomWalls_baseColor.png-527ce4a6981cdad2f1861e34c068ea97.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Assets/Textures/Mission1Level1_M_Sci-FiRoomWalls_baseColor.png"
-dest_files=["res://.godot/imported/Mission1Level1_M_Sci-FiRoomWalls_baseColor.png-89315fc716e8f2612bd1f00b4af8f00b.s3tc.ctex"]
+source_file="res://assets/textures/Mission1Level1_M_Sci-FiRoomWalls_baseColor.png"
+dest_files=["res://.godot/imported/Mission1Level1_M_Sci-FiRoomWalls_baseColor.png-527ce4a6981cdad2f1861e34c068ea97.s3tc.ctex"]
 
 [params]
 

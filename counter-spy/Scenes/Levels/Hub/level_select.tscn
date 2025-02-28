@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://b1xb7mbig4isg"]
 
-[ext_resource type="Script" path="res://Scripts/Hub/level_select.gd" id="1_ytn2x"]
+[ext_resource type="Script" path="res://scripts/hub/level_select.gd" id="1_ytn2x"]
 
 [sub_resource type="Animation" id="Animation_tcb3k"]
 length = 0.001

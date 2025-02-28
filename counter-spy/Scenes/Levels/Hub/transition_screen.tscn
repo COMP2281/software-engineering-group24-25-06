@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://b1ajpn8hqx5vh"]
 
-[ext_resource type="Script" path="res://Scripts/Hub/transition_screen.gd" id="1_kemen"]
+[ext_resource type="Script" path="res://scripts/hub/transition_screen.gd" id="1_kemen"]
 
 [sub_resource type="Animation" id="Animation_rf256"]
 length = 0.001

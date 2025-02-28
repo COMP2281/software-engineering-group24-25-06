@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://chpnxr4a2b1qe"
-path.s3tc="res://.godot/imported/Mission1Level1_M_Sci-FiRoomWalls_metallicRoughness.png-cfc5d0b0934cc8158adea1ad43eada77.s3tc.ctex"
+path.s3tc="res://.godot/imported/Mission1Level1_M_Sci-FiRoomWalls_metallicRoughness.png-0821dede46de5c54e1a32815147132b9.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Assets/Textures/Mission1Level1_M_Sci-FiRoomWalls_metallicRoughness.png"
-dest_files=["res://.godot/imported/Mission1Level1_M_Sci-FiRoomWalls_metallicRoughness.png-cfc5d0b0934cc8158adea1ad43eada77.s3tc.ctex"]
+source_file="res://assets/textures/Mission1Level1_M_Sci-FiRoomWalls_metallicRoughness.png"
+dest_files=["res://.godot/imported/Mission1Level1_M_Sci-FiRoomWalls_metallicRoughness.png-0821dede46de5c54e1a32815147132b9.s3tc.ctex"]
 
 [params]
 

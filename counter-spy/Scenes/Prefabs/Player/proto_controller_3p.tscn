@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://s3tlavdof7ey"]
 
-[ext_resource type="Script" path="res://Scripts/Player/proto_controller.gd" id="1_x0abh"]
-[ext_resource type="Script" path="res://Scripts/Player/camera_controller.gd" id="2_gl6vu"]
+[ext_resource type="Script" path="res://scripts/player/proto_controller.gd" id="1_x0abh"]
+[ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2_gl6vu"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
 albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
