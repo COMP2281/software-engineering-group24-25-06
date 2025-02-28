@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=3 uid="uid://cwj82duxudtse"]
+
+[ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://Scenes/Prefabs/Player/proto_controller_3p.tscn" id="2_hjkv8"]
+[ext_resource type="PackedScene" uid="uid://b1xb7mbig4isg" path="res://Scenes/Levels/Hub/level_select.tscn" id="3_7xwqd"]
+[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://Scenes/Levels/Hub/transition_screen.tscn" id="4_ahie3"]
+[ext_resource type="PackedScene" uid="uid://dg1crp875no5c" path="res://Scenes/Levels/Hub/hub-model.tscn" id="4_u1nyo"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_k8blq"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_q0elt"]
+sky_material = SubResource("ProceduralSkyMaterial_k8blq")
+
+[sub_resource type="Environment" id="Environment_77kxt"]
+background_mode = 2
+sky = SubResource("Sky_q0elt")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_npv4g"]
+height = 2.38803
+radius = 1.18807
+
+[node name="Hub" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_77kxt")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="ProtoController" parent="." instance=ExtResource("2_hjkv8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.81899, -0.00637197, -0.00668335)
+
+[node name="LevelSelectionArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.7546, 1.1039, -0.0059804)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LevelSelectionArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.344379, 0.13628, 0)
+shape = SubResource("CylinderShape3D_npv4g")
+
+[node name="Tooltip" type="Label3D" parent="LevelSelectionArea"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.6686, 0.384184, 0)
+text = "[E] to Select Level
+"
+
+[node name="LevelSelect" parent="." instance=ExtResource("3_7xwqd")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TransitionScreen" parent="CanvasLayer" instance=ExtResource("4_ahie3")]
+mouse_filter = 1
+
+[node name="hub" parent="." instance=ExtResource("4_u1nyo")]
+
+[connection signal="body_entered" from="LevelSelectionArea" to="LevelSelect" method="_on_level_selection_area_body_entered"]
