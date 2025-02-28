@@ -204,15 +204,8 @@ def summarize_conversation(state: "State"):
     new_summary = model.invoke(prompt)
     print(f"DEBUG: New Summary: {new_summary}")
 
-    # Keep only the last two messages
-    updated_messages = state["messages"][-2:]
-    print(f"DEBUG: Updated Messages: {updated_messages}")
-
-
-    remove_messages = [RemoveMessage(id=msg.id) for msg in state["messages"][:-2]]
-
     # Update the state with the new summary and the last two messages
-    state["messages"] = remove_messages + updated_messages
+    state["messages"] = [RemoveMessage(id=m.id) for m in messages[:-2]]
     state["conversation_summary"] = new_summary
 
     return state
@@ -546,11 +539,14 @@ def answering(user_input):
                     assistant_response = val["messages"][-1].content
                 elif isinstance(val["messages"], AIMessage):
                     assistant_response = val["messages"].content
+    
+    final_state = graph.get_state(config)
 
-    print('DEBUG : Current Messages: ', state.get("messages", []))
-    print('DEBUG : Current Question:', state.get("current_question", ""))
-    print('DEBUG : Current Choices:', state.get("current_choices", []))
-    print('DEBUG : Correct Answer:', state.get("correct_answer", ""))
+    print('DEBUG : Current Messages: ', final_state.values["messages"])  # Debugging Line
+    print('DEBUG : Current Question: ', final_state.values["current_question"])
+    print('DEBUG : Current Choices: ', final_state.values["current_choices"])
+    print('DEBUG : Correct Answer: ', final_state.values["correct_answer"])
+    print('DEBUG : Conversation Summary: ', final_state.values["conversation_summary"])
     
     print('AI:', assistant_response)
 
