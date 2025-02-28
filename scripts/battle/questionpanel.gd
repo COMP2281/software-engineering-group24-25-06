@@ -1,4 +1,4 @@
-extends Panel
+extends VBoxContainer
 
 signal answer_selected(answer)
 
@@ -19,17 +19,11 @@ func style_panel():
 	add_theme_stylebox_override("panel", style)
 	
 	custom_minimum_size = Vector2(600, 400)
-	position = Vector2(
-		(get_viewport().size.x - custom_minimum_size.x) / 2,
-		(get_viewport().size.y - custom_minimum_size.y) / 2
-	)
 	
 	$Questionlabel.add_theme_color_override("font_color", Color.WHITE)
 	$Questionlabel.custom_minimum_size = Vector2(580, 100)
-	$Questionlabel.position = Vector2(10, 20)
 	
 	$Optionscontainer.custom_minimum_size = Vector2(580, 250)
-	$Optionscontainer.position = Vector2(10, 20)
 	$Optionscontainer.add_theme_constant_override("seperation", 20)
 	
 func show_question(question: Question):

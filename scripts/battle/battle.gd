@@ -156,10 +156,7 @@ func game_over(player_won: bool) -> void:
 	panel_style.corner_radius_bottom_right = 15
 	game_over_panel.add_theme_stylebox_override("panel", panel_style)
 	game_over_panel.custom_minimum_size = Vector2(400, 200)
-	game_over_panel.position = Vector2(
-		(get_viewport().size.x - game_over_panel.custom_minimum_size.x) / 2,
-		(get_viewport().size.y - game_over_panel.custom_minimum_size.y) / 2
-	)
+
 	if player_won:
 		result_label.text = "VICTORY!"
 		result_label.add_theme_color_override("font_color", Color(0, 1, 0))  # Green
@@ -167,8 +164,7 @@ func game_over(player_won: bool) -> void:
 		result_label.text = "DEFEAT!"
 		result_label.add_theme_color_override("font_color", Color(1, 0, 0))  # Red
 	result_label.add_theme_font_size_override("font_size", 32)
-	result_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	result_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER   
+
 	game_over_panel.show() 
 	result_label.show()
 	

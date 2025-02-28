@@ -43,7 +43,7 @@ func physics_update(delta: float) -> void:
 		else:
 			# Scan around the place
 			var percent_time_spent: float = 1.0 - enemy.investigate_time_left / enemy.enemy_resource.investigation_time
-			var direction: float = sign(sin(percent_time_spent * 2.0 * PI * enemy.scan_times))
-			var speed: float = (enemy.fov_scan * enemy.scan_times) / enemy.enemy_resource.investigation_time
+			var direction: float = sign(sin(percent_time_spent * 2.0 * PI * enemy.enemy_resource.scan_times))
+			var speed: float = (enemy.enemy_resource.fov_scan * enemy.enemy_resource.scan_times) / enemy.enemy_resource.investigation_time
 			
 			enemy.set_heading(enemy.global_rotation.y + direction * speed * delta)

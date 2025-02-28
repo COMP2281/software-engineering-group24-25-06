@@ -18,8 +18,6 @@ func style_health_bar():
 	
 	player_health.max_value = 100
 	player_health.value = 100
-	player_health.custom_minimum_size = Vector2(120, 30)
-	player_health.position = Vector2(50, get_viewport().size.y - 100)
 	
 	var player_style = StyleBoxFlat.new()
 	player_style.bg_color = Color(0, 0, 0, 1)  # Black background
@@ -38,10 +36,6 @@ func style_health_bar():
 	player_health.add_theme_stylebox_override("background", player_bg_style)
 	
 	player_health_label.add_theme_color_override("font_color", Color.WHITE)
-	player_health_label.position = Vector2(30, -25)  # Position above health bar
- 
-	enemy_health.custom_minimum_size = Vector2(120, 30)
-	enemy_health.position = Vector2(get_viewport().size.x - 170, get_viewport().size.y - 100)
 	
 	var enemy_style = player_style.duplicate()
 	var enemy_bg_style = player_bg_style.duplicate()
@@ -50,7 +44,6 @@ func style_health_bar():
 	enemy_health.add_theme_stylebox_override("background", enemy_bg_style)
 	
 	enemy_health_label.add_theme_color_override("font_color", Color.WHITE)
-	enemy_health_label.position = Vector2(30, -25)
 
 func update_health_displays():
 	if player_health_label:

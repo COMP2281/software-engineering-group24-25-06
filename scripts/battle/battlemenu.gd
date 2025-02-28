@@ -48,6 +48,8 @@ func setup_menu():
 	style.border_color = Color(1, 0, 0)
 	style.corner_radius_top_left = 10
 	
+	# TODO: ideally keep the wheel-based positioning system
+	#	but also allow it to scale nicely
 	for i in range(options.size()):
 		var button = Button.new()
 		var angle = (i * PI/2) - PI/4
