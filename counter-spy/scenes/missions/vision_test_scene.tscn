@@ -93,7 +93,7 @@ transform = Transform3D(-1, 4.37114e-08, -7.57103e-08, 0, 0.866025, 0.5, 8.74228
 viewzone_resource = SubResource("Resource_isor4")
 
 [node name="Enemy" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("4_khivw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, 35)
 enemy_resource = SubResource("Resource_qlx0q")
 patrol_path = NodePath("../Path3D")
 

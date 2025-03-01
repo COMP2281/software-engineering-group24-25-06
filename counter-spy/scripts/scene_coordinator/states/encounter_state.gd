@@ -14,7 +14,7 @@ func enter(previous_state_path: String, data := {}) -> void:
 	child_scene.prepare_enter()
 	_enable_processing(child_scene)
 	
-func exit(data := {}) -> void:
+func exit(_data := {}) -> void:
 	child_scene.prepare_exit()
 	_disable_processing(child_scene)
 	

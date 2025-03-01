@@ -7,11 +7,11 @@ func _ready() -> void:
 	SceneCoordinator.change_scene.connect(func(state: SceneType.Name, metadata: Dictionary): finished.emit(SceneCoordinator.get_scene_name(state), metadata))
 	child_scene = get_tree().get_first_node_in_group("hub_group")
 
-func enter(previous_state_path: String, data := {}) -> void:
+func enter(_previous_state_path: String, _data := {}) -> void:
 	child_scene.prepare_enter()
 	_enable_processing(child_scene)
 	
-func exit(data := {}) -> void:
+func exit(_data := {}) -> void:
 	child_scene.prepare_exit()
 	_disable_processing(child_scene)
 	

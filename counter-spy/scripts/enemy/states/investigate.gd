@@ -36,7 +36,7 @@ func physics_update(delta: float) -> void:
 	
 		# If we see player during investigation, try to follow them with the camera
 		if enemy.currently_seeing_player:
-			var towards_player: Vector3 = (get_tree().get_nodes_in_group("player")[0].global_position - enemy.global_position).normalized()
+			var towards_player: Vector3 = (StealthManager.player_position - enemy.global_position).normalized()
 			var toward_player_angle: float = atan2(towards_player.x, towards_player.z) - PI
 			enemy.set_heading(toward_player_angle)
 		# Otherwise scan around the location to look for them

@@ -25,15 +25,15 @@ axis_lock_angular_z = true
 script = ExtResource("1_twq01")
 enemy_resource = ExtResource("2_sisau")
 
+[node name="Nose" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.58867)
+size = Vector3(0.2, 0.2, 1)
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_pfnw3")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_eg2rf")
-
-[node name="Nose" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.58867)
-size = Vector3(0.2, 0.2, 1)
 
 [node name="Security" parent="." instance=ExtResource("3_44apx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)

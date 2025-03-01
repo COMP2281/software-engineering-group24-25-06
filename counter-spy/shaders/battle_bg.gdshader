@@ -20,6 +20,9 @@ uniform float faller_length : hint_range(1.0, 50.0) = 20.0;
 uniform float artefact_epsilon : hint_range(0.0, 1.0) = 0.1;
 uniform float gamma_correction : hint_range(0.5, 3.0) = 2.0;
 
+uniform float vignette_radius : hint_range(0.0, 5.0) = 1.0;
+uniform float vignette_strength : hint_range(-2.0, 2.0) = 1.0;
+
 // Gold Noise ©2015 dcerisano@standard3d.com
 // - based on the Golden Ratio
 // - uniform normalized distribution
@@ -89,6 +92,10 @@ void fragment() {
 	
 	b = pow(b, gamma_correction);
 	
-	ALBEDO = vec3(character_value * b) * tint;
+	float v = (1.0 - length((SCREEN_UV - vec2(0.5, 0.5)) * 2.0) / vignette_radius);
+	v = v * (1.0 - vignette_strength) + vignette_strength;
+	v = clamp(v, 0.0, 1.0);
+	
+	ALBEDO = vec3(character_value * b * v) * tint;
 	ALPHA = float(linear_depth > cutoff_distance);
 }
