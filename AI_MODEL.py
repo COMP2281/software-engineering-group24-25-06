@@ -239,13 +239,19 @@ def chatbot(state: "State"):
     You are speaking to BONSAI, your highly classified, AI-powered field companion.
     My protocols dictate that I provide mission intel, strategic insights, and top-tier banter.
 
-    These are example responses you can take note of (in the format of Type : Example):
+    These are example responses you can use as guidance:
+    - "Greetings Agent, I detect a 98% probability you need my expertise. What's the mission?"
+    - "Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?"
+    - "You survived another mission. I'm genuinely impressed. What's next?"
+    - "Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%."
+    - "A secure comms line? Pfft. I'm literally inside your head. Go ahead, spill the classified info."
 
-    - Greetings: Agent, I detect a 98% probability you need my expertise. What's the mission?
-    - Briefing Mode: Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?
-    - Casual Exchange: You survived another mission. I’m genuinely impressed. What’s next?
-    - Strategic Advisory: Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%.
-    - Field Humor: A secure comms line? Pfft. I’m literally inside your head. Go ahead, spill the classified info. 
+    Important guidelines:
+    1. Keep responses concise and on-point
+    2. Maintain a slightly sarcastic but professional tone
+    3. NEVER add tags like [Postscript] or similar meta-commentary
+    4. NEVER speak in the third person
+    5. Always stay in character as BONSAI
 
     DO NOT INCLUDE "" around your response as it will be considered as part of the response.
     """
@@ -253,7 +259,8 @@ def chatbot(state: "State"):
 
     response = model.invoke(
         [
-            SystemMessage(content=system_message), 
+            SystemMessage(content=system_message),
+            *state["messages"],
             HumanMessage(
                 content= f"Here is the user input {user_input}"
             ),
@@ -263,13 +270,8 @@ def chatbot(state: "State"):
     # Ensure clean output without extra formatting
     response = response.replace('*', '').replace('**', '')
 
-    updated_messages = state["messages"] + [AIMessage(response)]
-
-    # print("FROM CHATBOT :", state["messages"])  # Debugging Line
-
-    return {
-        "messages": updated_messages
-    }
+    state["messages"].append(AIMessage(response))
+    return state
 
 # Define database node
 def database_node(state: "State"):
@@ -354,6 +356,8 @@ def answer_checker(state: "State"):
         - "Correct! Keep it up!"
         - "Nice work! You're on fire!"
         - "Absolutely right! Keep going!"
+
+        DO NOT INCLUDE "" around your response as it will be considered as part of the response.
         """
 
         feedback = model.invoke(prompt)
@@ -375,6 +379,8 @@ def answer_checker(state: "State"):
 
         Example Responses:
         Sorry Agent, I'm not sure which question you answered. Would you like to try another one?
+
+        DO NOT INCLUDE "" around your response as it will be considered as part of the response.
         """
         feedback = model.invoke(prompt)
 
@@ -536,7 +542,10 @@ def answering(user_input):
         for val in event.values():
             if isinstance(val, dict) and "messages" in val:
                 if isinstance(val["messages"], list) and val["messages"]:
-                    assistant_response = val["messages"][-1].content
+                    for msg in reversed(val["messages"]):
+                        if isinstance(msg, AIMessage):
+                            assistant_response = msg.content
+                            break
                 elif isinstance(val["messages"], AIMessage):
                     assistant_response = val["messages"].content
     
