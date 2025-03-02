@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3 uid="uid://di4y1547ra656"]
+
+[ext_resource type="Shader" path="res://shaders/fire_move.gdshader" id="1_qbuxf"]
+[ext_resource type="Shader" path="res://shaders/water_move.gdshader" id="2_wv80g"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_710p1"]
+shader = ExtResource("1_qbuxf")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m3cw1"]
+shader = ExtResource("2_wv80g")
+
+[node name="ShaderMoveTest" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -51.0
+offset_top = -50.5
+offset_right = 51.0
+offset_bottom = 50.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FireMove" type="Button" parent="VBoxContainer"]
+material = SubResource("ShaderMaterial_710p1")
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Fire move"
+
+[node name="WaterMove" type="Button" parent="VBoxContainer"]
+material = SubResource("ShaderMaterial_m3cw1")
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Water move
+"
+
+[node name="PlantMove" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Plant move
+"
