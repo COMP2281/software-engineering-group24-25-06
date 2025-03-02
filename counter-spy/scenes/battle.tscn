@@ -45,10 +45,12 @@ render_priority = 0
 shader = ExtResource("5_p6kgc")
 shader_parameter/tint = Color(0.3744, 0.44272, 0.96, 1)
 shader_parameter/speed = 1.209
-shader_parameter/density = 7.308
-shader_parameter/random_influence = 0.396
-shader_parameter/gamma_correction = 4.143
-shader_parameter/value_multiplier = 3.451
+shader_parameter/density = 6.605
+shader_parameter/random_influence = 0.0
+shader_parameter/gamma_correction = 4.846
+shader_parameter/value_multiplier = 10.0
+shader_parameter/traversal_distance = 1.962
+shader_parameter/traversal_speed = 0.126
 shader_parameter/octaves = 3
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ebnrg"]

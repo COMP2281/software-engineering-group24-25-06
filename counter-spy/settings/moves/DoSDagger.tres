@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="MoveResource" load_steps=2 format=3 uid="uid://5kx21or1uc1k"]
+
+[ext_resource type="Script" path="res://scripts/utility/move_resource.gd" id="1_ef8pv"]
+
+[resource]
+script = ExtResource("1_ef8pv")
+name = "Throw bug"
+damage = 10
+difficulty = 1
+type = 3
