@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import datetime, timezone
 
 from langchain_ollama.llms import OllamaLLM
 from langchain_chroma import Chroma
@@ -10,10 +11,12 @@ from langchain.tools import tool
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
-from typing import TypedDict, Annotated
+from typing import TypedDict, Annotated, Optional
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, RemoveMessage
 from langmem import create_memory_manager
 from pydantic import BaseModel
+from langgraph.checkpoint.mongodb import MongoDBSaver
+from pymongo import MongoClient
 
 
 #EU = "https://eu-gb.ml.cloud.ibm.com"
@@ -26,9 +29,102 @@ credentials = {
 project_id = os.getenv("WATSONX_PROJECT_ID")
 model_id = "granite3.1-dense"
 
-#--------------------------------------------------------
-#-------------------MIssion Stuff------------------------
+mongodb_uri = os.getenv("MONGODB_URI")
+db_name = "SE-prog"
 
+class UserProfile(BaseModel):
+    """User profile information for personalization"""
+    user_id: str
+    name: Optional[str] = None
+    user_preferences: Optional[str] = None
+    interaction_style: Optional[str] = None
+    updated_at: Optional[datetime] = None
+    conversation_count: int = 0
+
+def get_mongodb_connection():
+    """Get MongoDB connection"""
+    try:
+        client = MongoClient(mongodb_uri)
+        client.admin.command('ping')
+        print("Connected to MongoDB")
+        return client
+    except Exception as e:
+        print(f"Error connecting to MongoDB: {e}")
+        return None
+
+def mongodb_saver(client):
+    """Create MongoDBSaver for checkpointing"""
+    if client: 
+        return MongoDBSaver(client)
+    else:
+        print("Using in memory saver as fallback")
+        return MemorySaver()
+    
+mongo_client = get_mongodb_connection()
+checkpointer = mongodb_saver(mongo_client)
+
+def get_user_profile(user_id):
+    """Get user profile from MongoDB"""
+    if not mongo_client:
+        return None
+    
+    db = mongo_client[db_name]
+    collection = db["User-Profiles"]
+    profile = collection.find_one({"user_id": user_id})
+    if profile:
+        return UserProfile(**profile)
+    return None
+
+def save_user_profile(profile: UserProfile):
+    """Save user profile to MongoDB"""
+    if not mongo_client:
+        return False
+    
+    db = mongo_client[db_name]
+    collection = db["User-Profiles"]
+    
+    profile.updated_at = datetime.now(timezone.utc)
+    profile_dict = profile.model_dump()
+
+    result = collection.update_one( #update one ere as to ensure there is only one profile per user
+        {"user_id": profile.user_id},
+        {"$set": profile_dict},
+        upsert=True
+    )
+
+    return result.acknowledged
+
+def save_conversation_summary(user_id, summary):
+    """Save conversation summary to MongoDB"""
+    if not mongo_client:
+        return False
+    
+    db = mongo_client[db_name]
+    collection = db["Convo-History"]
+
+    convo_doc = {
+        "user_id": user_id,
+        "summary": summary,
+        "created_at": datetime.now(timezone.utc)
+    }
+
+    result = collection.insert_one(convo_doc)
+    return result.acknowledged
+
+def get_recent_conversation(user_id, limit=4):
+    """Get recent conversations from MongoDB"""
+    if not mongo_client:
+        return []
+    db = mongo_client[db_name]
+    collection = db["Convo-History"]
+
+    conversation = list(collection.find(
+        {"user_id" : user_id},
+        sort=[("created_at", -1)],
+        limit=limit
+    ))
+
+    return conversation
 
 missions = {
     "Silent Strike": {
@@ -57,21 +153,6 @@ missions = {
         ]
     }
 }
-
-
-## --------------------------------------------------------
-## -------------------Long term memory---------------------
-#----------------------------------------------------------
-
-class Triple(BaseModel): 
-    """Stores mission-related facts, preferences, and user interactions."""
-    subject: str
-    predicate: str
-    object: str
-    context: str | None = None
-
-# --------------------------------------------------------
-# --------------------------------------------------------
 
 
 selected_mission = "Silent Strike"
@@ -504,7 +585,7 @@ graph_builder.add_edge("summarize_conversation", END)
 
 # Compile the graph
 memory = MemorySaver()
-graph = graph_builder.compile(checkpointer=memory)
+graph = graph_builder.compile(checkpointer=memory) #REMOVE =memory WHEN DONE TESTING
 
 # Define answering function
 def answering(user_input):
