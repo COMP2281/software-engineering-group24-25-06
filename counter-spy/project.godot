@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 QuestionSelector="*res://scripts/question/question_select.gd"
 StealthManager="*res://scripts/security/stealth_manager.gd"
 SceneCoordinator="*res://scripts/scene_coordinator/scene_coordinator.gd"
+MoveLoader="*res://scripts/battle/move_loader.gd"
 
 [global_group]
 
