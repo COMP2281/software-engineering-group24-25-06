@@ -94,38 +94,6 @@ def save_user_profile(profile: UserProfile):
 
     return result.acknowledged
 
-def save_conversation_summary(user_id, summary):
-    """Save conversation summary to MongoDB"""
-    if not mongo_client:
-        return False
-    
-    db = mongo_client[db_name]
-    collection = db["Convo-History"]
-
-    convo_doc = {
-        "user_id": user_id,
-        "summary": summary,
-        "created_at": datetime.now(timezone.utc)
-    }
-
-    result = collection.insert_one(convo_doc)
-    return result.acknowledged
-
-def get_recent_conversation(user_id, limit=4):
-    """Get recent conversations from MongoDB"""
-    if not mongo_client:
-        return []
-    db = mongo_client[db_name]
-    collection = db["Convo-History"]
-
-    conversation = list(collection.find(
-        {"user_id" : user_id},
-        sort=[("created_at", -1)],
-        limit=limit
-    ))
-
-    return conversation
-
 missions = {
     "Silent Strike": {
         "description": "Eliminate 10 high-value targets and extract encrypted intel from the vault.",
@@ -317,7 +285,7 @@ def chatbot(state: "State"):
     system_message = f"""
     {summary_prefix}
 
-    You are speaking to BONSAI, your highly classified, AI-powered field companion.
+    You are speaking to BONSAI (BONSAI is your name), your highly classified, AI-powered field companion.
     My protocols dictate that I provide mission intel, strategic insights, and top-tier banter.
 
     These are example responses you can use as guidance:
@@ -585,7 +553,7 @@ graph_builder.add_edge("summarize_conversation", END)
 
 # Compile the graph
 memory = MemorySaver()
-graph = graph_builder.compile(checkpointer=memory) #REMOVE =memory WHEN DONE TESTING
+graph = graph_builder.compile(checkpointer=checkpointer) #REMOVE =memory WHEN DONE TESTING
 
 # Define answering function
 def answering(user_input):
