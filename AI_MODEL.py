@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import datetime, timezone
 
 from langchain_ollama.llms import OllamaLLM
 from langchain_chroma import Chroma
@@ -10,10 +11,12 @@ from langchain.tools import tool
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
-from typing import TypedDict, Annotated
+from typing import TypedDict, Annotated, Optional
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, RemoveMessage
 from langmem import create_memory_manager
 from pydantic import BaseModel
+from langgraph.checkpoint.mongodb import MongoDBSaver
+from pymongo import MongoClient
 
 
 #EU = "https://eu-gb.ml.cloud.ibm.com"
@@ -26,9 +29,70 @@ credentials = {
 project_id = "..."
 model_id = "granite3.1-dense"
 
-#--------------------------------------------------------
-#-------------------MIssion Stuff------------------------
+mongodb_uri = os.getenv("MONGODB_URI")
+db_name = "SE-prog"
 
+class UserProfile(BaseModel):
+    """User profile information for personalization"""
+    user_id: str
+    name: Optional[str] = None
+    user_preferences: Optional[str] = None
+    interaction_style: Optional[str] = None
+    updated_at: Optional[datetime] = None
+    conversation_count: int = 0
+
+def get_mongodb_connection():
+    """Get MongoDB connection"""
+    try:
+        client = MongoClient(mongodb_uri)
+        client.admin.command('ping')
+        print("Connected to MongoDB")
+        return client
+    except Exception as e:
+        print(f"Error connecting to MongoDB: {e}")
+        return None
+
+def mongodb_saver(client):
+    """Create MongoDBSaver for checkpointing"""
+    if client: 
+        return MongoDBSaver(client)
+    else:
+        print("Using in memory saver as fallback")
+        return MemorySaver()
+    
+mongo_client = get_mongodb_connection()
+checkpointer = mongodb_saver(mongo_client)
+
+def get_user_profile(user_id):
+    """Get user profile from MongoDB"""
+    if not mongo_client:
+        return None
+    
+    db = mongo_client[db_name]
+    collection = db["User-Profiles"]
+    profile = collection.find_one({"user_id": user_id})
+    if profile:
+        return UserProfile(**profile)
+    return None
+
+def save_user_profile(profile: UserProfile):
+    """Save user profile to MongoDB"""
+    if not mongo_client:
+        return False
+    
+    db = mongo_client[db_name]
+    collection = db["User-Profiles"]
+    
+    profile.updated_at = datetime.now(timezone.utc)
+    profile_dict = profile.model_dump()
+
+    result = collection.update_one( #update one ere as to ensure there is only one profile per user
+        {"user_id": profile.user_id},
+        {"$set": profile_dict},
+        upsert=True
+    )
+
+    return result.acknowledged
 
 missions = {
     "Silent Strike": {
@@ -57,21 +121,6 @@ missions = {
         ]
     }
 }
-
-
-## --------------------------------------------------------
-## -------------------Long term memory---------------------
-#----------------------------------------------------------
-
-class Triple(BaseModel): 
-    """Stores mission-related facts, preferences, and user interactions."""
-    subject: str
-    predicate: str
-    object: str
-    context: str | None = None
-
-# --------------------------------------------------------
-# --------------------------------------------------------
 
 
 selected_mission = "Silent Strike"
@@ -236,16 +285,22 @@ def chatbot(state: "State"):
     system_message = f"""
     {summary_prefix}
 
-    You are speaking to BONSAI, your highly classified, AI-powered field companion.
+    You are speaking to BONSAI (BONSAI is your name), your highly classified, AI-powered field companion.
     My protocols dictate that I provide mission intel, strategic insights, and top-tier banter.
 
-    These are example responses you can take note of (in the format of Type : Example):
+    These are example responses you can use as guidance:
+    - "Greetings Agent, I detect a 98% probability you need my expertise. What's the mission?"
+    - "Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?"
+    - "You survived another mission. I'm genuinely impressed. What's next?"
+    - "Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%."
+    - "A secure comms line? Pfft. I'm literally inside your head. Go ahead, spill the classified info."
 
-    - Greetings: Agent, I detect a 98% probability you need my expertise. What's the mission?
-    - Briefing Mode: Intel suggests high-value assets in sector 7. Do we strike, or shall I fetch your tea?
-    - Casual Exchange: You survived another mission. I’m genuinely impressed. What’s next?
-    - Strategic Advisory: Mission complexity: 6/10. Risk factor: Medium. Probability of you winging it anyway: 100%.
-    - Field Humor: A secure comms line? Pfft. I’m literally inside your head. Go ahead, spill the classified info. 
+    Important guidelines:
+    1. Keep responses concise and on-point
+    2. Maintain a slightly sarcastic but professional tone
+    3. NEVER add tags like [Postscript] or similar meta-commentary
+    4. NEVER speak in the third person
+    5. Always stay in character as BONSAI
 
     DO NOT INCLUDE "" around your response as it will be considered as part of the response.
     """
@@ -253,7 +308,8 @@ def chatbot(state: "State"):
 
     response = model.invoke(
         [
-            SystemMessage(content=system_message), 
+            SystemMessage(content=system_message),
+            *state["messages"],
             HumanMessage(
                 content= f"Here is the user input {user_input}"
             ),
@@ -263,13 +319,8 @@ def chatbot(state: "State"):
     # Ensure clean output without extra formatting
     response = response.replace('*', '').replace('**', '')
 
-    updated_messages = state["messages"] + [AIMessage(response)]
-
-    # print("FROM CHATBOT :", state["messages"])  # Debugging Line
-
-    return {
-        "messages": updated_messages
-    }
+    state["messages"].append(AIMessage(response))
+    return state
 
 # Define database node
 def database_node(state: "State"):
@@ -354,6 +405,8 @@ def answer_checker(state: "State"):
         - "Correct! Keep it up!"
         - "Nice work! You're on fire!"
         - "Absolutely right! Keep going!"
+
+        DO NOT INCLUDE "" around your response as it will be considered as part of the response.
         """
 
         feedback = model.invoke(prompt)
@@ -375,6 +428,8 @@ def answer_checker(state: "State"):
 
         Example Responses:
         Sorry Agent, I'm not sure which question you answered. Would you like to try another one?
+
+        DO NOT INCLUDE "" around your response as it will be considered as part of the response.
         """
         feedback = model.invoke(prompt)
 
@@ -498,7 +553,7 @@ graph_builder.add_edge("summarize_conversation", END)
 
 # Compile the graph
 memory = MemorySaver()
-graph = graph_builder.compile(checkpointer=memory)
+graph = graph_builder.compile(checkpointer=checkpointer) #REMOVE =memory WHEN DONE TESTING
 
 # Define answering function
 def answering(user_input):
@@ -536,7 +591,10 @@ def answering(user_input):
         for val in event.values():
             if isinstance(val, dict) and "messages" in val:
                 if isinstance(val["messages"], list) and val["messages"]:
-                    assistant_response = val["messages"][-1].content
+                    for msg in reversed(val["messages"]):
+                        if isinstance(msg, AIMessage):
+                            assistant_response = msg.content
+                            break
                 elif isinstance(val["messages"], AIMessage):
                     assistant_response = val["messages"].content
     
