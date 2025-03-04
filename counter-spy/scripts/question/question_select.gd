@@ -14,8 +14,9 @@ enum {
 }
 
 enum {
-	QUESTION_TYPE_SINGLE,
-	QUESTION_TYPE_MULTIPLE
+	QUESTION_TYPE_SINGLE = 0x01_00,
+	QUESTION_TYPE_MULTIPLE = 0x02_00,
+	QUESTION_TYPE_BITS = 0x0F_00
 }
 
 # _seenQuestionIDMap[questionID] returns whether or not that question has been seen
@@ -126,7 +127,7 @@ func _createQuestionFromEntry(entry : TableEntry) -> Question:
 	question.id = entry.id;
 	question.text = entry.question;
 	question.type = QUESTION_TYPE_SINGLE if len(entry.correctChoices) == 1 else QUESTION_TYPE_MULTIPLE;
-	question.topic = entry.topicID;
+	question.topic = entry.topicID | question.type;
 	
 	return question;
 	
@@ -199,8 +200,9 @@ func _doesTopicMatch(questionMask : int, requestedMask : int) -> bool:
 	#	Could simplify, but wanna make clear we're comparing only low bits of both
 	#	questionMask & requestedMask & TOPIC_LOW_BITS
 	var lowBitsMatch: bool = bool((questionMask & TOPIC_LOW_BITS) & (requestedMask & TOPIC_LOW_BITS));
+	var questionTypeMatch: bool = (requestedMask & QUESTION_TYPE_BITS == 0) || ((questionMask & QUESTION_TYPE_BITS) & (requestedMask & QUESTION_TYPE_BITS));
 	
-	return lowBitsMatch;
+	return lowBitsMatch and questionTypeMatch;
 	
 # Difficulty of a question relative to a player's skill
 func _relativeDifficulty(question : Question) -> float:
