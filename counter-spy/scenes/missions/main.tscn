@@ -1,0 +1,37 @@
+[gd_scene load_steps=9 format=3 uid="uid://dipbvseepvdun"]
+
+[ext_resource type="PackedScene" uid="uid://bbhvgdj8cy05u" path="res://scenes/missions/enemy_hunt_scene.tscn" id="1_t8uv5"]
+[ext_resource type="Script" path="res://scripts/utility/state_machine.gd" id="3_1sp55"]
+[ext_resource type="PackedScene" uid="uid://c7f4ajlxoh1vx" path="res://scenes/battle.tscn" id="3_064rh"]
+[ext_resource type="Script" path="res://scripts/mission/enemy_hunt_scene.gd" id="4_1r8n8"]
+[ext_resource type="Script" path="res://scripts/scene_coordinator/states/mission_state.gd" id="4_2jaig"]
+[ext_resource type="PackedScene" uid="uid://cwj82duxudtse" path="res://scenes/levels/hub/hub-2.tscn" id="4_5dj3d"]
+[ext_resource type="Script" path="res://scripts/scene_coordinator/states/encounter_state.gd" id="5_oicvy"]
+[ext_resource type="Script" path="res://scripts/scene_coordinator/states/hub_state.gd" id="6_dyaaw"]
+
+[node name="MainSceneNode" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 0)
+
+[node name="Mission" parent="." groups=["mission_group"] instance=ExtResource("1_t8uv5")]
+process_mode = 4
+visible = false
+script = ExtResource("4_1r8n8")
+
+[node name="Encounter" parent="." groups=["encounter_group"] instance=ExtResource("3_064rh")]
+process_mode = 4
+visible = false
+
+[node name="Hub" parent="." groups=["hub_group"] instance=ExtResource("4_5dj3d")]
+
+[node name="SceneStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("3_1sp55")
+initial_state = NodePath("Hub")
+
+[node name="Hub" type="Node" parent="SceneStateMachine"]
+script = ExtResource("6_dyaaw")
+
+[node name="Mission" type="Node" parent="SceneStateMachine"]
+script = ExtResource("4_2jaig")
+
+[node name="Encounter" type="Node" parent="SceneStateMachine"]
+script = ExtResource("5_oicvy")

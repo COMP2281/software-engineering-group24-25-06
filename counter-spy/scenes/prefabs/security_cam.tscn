@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://bp2kqx6gewi8t"]
+
+[ext_resource type="Script" path="res://scripts/enemy/security_cam.gd" id="1_85dlm"]
+[ext_resource type="Resource" uid="uid://cgmw082vs1qwk" path="res://settings/viewzones/camera_enemy_viewzone.tres" id="2_ar836"]
+[ext_resource type="PackedScene" uid="uid://cwedyk8jko048" path="res://scenes/prefabs/security.tscn" id="3_kxi3s"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_jxg61"]
+size = Vector3(1, 1, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_x1k8j"]
+points = PackedVector3Array(0.0237223, 0.531746, 1.01587, -0.5, -0.5, -0.985088, 0.423483, -0.5, -0.985089, 0.0237223, 0.531746, -1.01587, 0.531734, -0.484084, 1.01587, -0.515873, -0.452191, 1.01587, 0.531734, -0.484084, -1.01587, -0.0396509, 0.499956, -1.01587, -0.5, -0.5, 0.985088, -0.515873, -0.452191, -1.01587, -0.0396509, 0.499956, 1.01587, 0.392657, -0.5, 0.985089, 0.423483, -0.5, 0.0615198)
+
+[node name="SecurityCam" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 0, 0)
+script = ExtResource("1_85dlm")
+viewzone_resource = ExtResource("2_ar836")
+
+[node name="Security" parent="." instance=ExtResource("3_kxi3s")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+mesh = SubResource("PrismMesh_jxg61")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+collision_layer = 4
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_x1k8j")

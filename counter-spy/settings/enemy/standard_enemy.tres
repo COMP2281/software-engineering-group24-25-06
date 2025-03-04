@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=3 format=3 uid="uid://ddd5ikv3i5tcn"]
+
+[ext_resource type="Script" path="res://scripts/utility/enemy_resource.gd" id="1_uaowl"]
+[ext_resource type="Resource" uid="uid://hcf8g06prayd" path="res://settings/viewzones/standard_enemy_viewzone.tres" id="2_e2tq0"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("1_uaowl")
+viewzone_resource = ExtResource("2_e2tq0")
+enemy_name = "Standard"
+health = 100
+weakness = "fire"
+battle_begin_proximity = 1.0
+move_speed = 5.0
+hunt_speed = 7.5
+max_rotation_speed = 3.14159
+investigate_begin_threshold = 0.4
+investigation_time = 2.0
+fov_scan = 1.5708
+scan_times = 1.5
+hunting_begin_threshold = 0.9
+hunting_end_threshold = 0.5

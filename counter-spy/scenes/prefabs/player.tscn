@@ -1,0 +1,25 @@
+[gd_scene load_steps=6 format=3 uid="uid://bhhyrcyu5vw0e"]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_m78fg"]
+[ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://scenes/prefabs/player/proto_controller_3p.tscn" id="2_c4b32"]
+[ext_resource type="PackedScene" uid="uid://bannoqagwsw7o" path="res://scenes/prefabs/suspicion_hud.tscn" id="2_uw33c"]
+[ext_resource type="PackedScene" uid="uid://d2vdxmwicnjhs" path="res://scenes/prefabs/alert_indicator.tscn" id="3_afela"]
+[ext_resource type="Script" path="res://scripts/ui/alert_indicator.gd" id="4_f7gb4"]
+
+[node name="Player" type="Node3D"]
+script = ExtResource("1_m78fg")
+
+[node name="ProtoController3P" parent="." instance=ExtResource("2_c4b32")]
+collision_layer = 2
+collision_mask = 5
+
+[node name="SuspicionView" parent="." instance=ExtResource("2_uw33c")]
+visible = false
+
+[node name="AlertIndicator" parent="." instance=ExtResource("3_afela")]
+visible = false
+offset_left = 395.0
+offset_top = 2.0
+offset_right = 395.0
+offset_bottom = 2.0
+script = ExtResource("4_f7gb4")
