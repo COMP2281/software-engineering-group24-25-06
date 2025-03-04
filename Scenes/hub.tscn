@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="2_hjkv8"]
 [ext_resource type="PackedScene" uid="uid://b1xb7mbig4isg" path="res://scenes/level_select.tscn" id="3_7xwqd"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_ahie3"]
-[ext_resource type="PackedScene" uid="uid://sxwm712fxj0e" path="res://scenes/world_select.tscn" id="6_04h6j"]
+[ext_resource type="PackedScene" uid="uid://h3k27ga3iolj" path="res://scenes/world_select.tscn" id="6_2rv1e"]
 [ext_resource type="PackedScene" uid="uid://c8lj4bah1i8a0" path="res://scenes/cyber_security.tscn" id="7_uq2mt"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_k8blq"]
@@ -91,7 +91,7 @@ shape = SubResource("BoxShape3D_dejmd")
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0.877578, 0)
 text = "[E] World Completions"
 
-[node name="WorldSelect" parent="." instance=ExtResource("6_04h6j")]
+[node name="WorldSelect" parent="." instance=ExtResource("6_2rv1e")]
 
 [node name="CyberSecurity" parent="." instance=ExtResource("7_uq2mt")]
 

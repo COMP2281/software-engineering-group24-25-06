@@ -1,8 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://sxwm712fxj0e"]
+[gd_scene load_steps=12 format=3 uid="uid://h3k27ga3iolj"]
 
 [ext_resource type="Script" path="res://Scripts/world_select.gd" id="1_vvqx2"]
 [ext_resource type="PackedScene" uid="uid://c8lj4bah1i8a0" path="res://scenes/cyber_security.tscn" id="2_rxjkf"]
-[ext_resource type="PackedScene" uid="uid://cwj82duxudtse" path="res://scenes/hub.tscn" id="3_ts5jq"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7bsfj"]
 
@@ -29,6 +28,21 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 anti_aliasing = false
 
+[sub_resource type="Animation" id="Animation_6loav"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PanelContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
 [sub_resource type="Animation" id="Animation_rw0nf"]
 resource_name = "fade_in"
 length = 0.8
@@ -43,21 +57,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_6loav"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("PanelContainer:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1h6xb"]
@@ -75,7 +74,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_vvqx2")
 cyber_security_scene = ExtResource("2_rxjkf")
-main_menu_scene = ExtResource("3_ts5jq")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 modulate = Color(1, 1, 1, 0)

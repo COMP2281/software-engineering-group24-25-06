@@ -4,7 +4,6 @@ extends Control
 @export var ai_scene: PackedScene
 @export var cyber_security_scene: PackedScene
 @export var data_analytics_scene: PackedScene
-@export var main_menu_scene: PackedScene  # For the back button
 
 
 var is_in_area = false  # Flag to track if the player is inside the area
