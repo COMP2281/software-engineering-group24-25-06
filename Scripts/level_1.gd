@@ -38,14 +38,17 @@ func _process(delta: float) -> void:
 	if inside_area and Input.is_action_just_pressed("interact"):
 		# Change the lvl1 value in the Global singleton
 		Global.lvl1 = true
-		print("lvl1 is now: ", Global.lvl1)
+		Global.save_game()  # Save the updated value permanently
 		
+		print("lvl1 is now: ", Global.lvl1)
+
 		# Scene transition
 		transition_screen.visible = true
 		SceneTransitionAnimation.play("fade_in_to_loading_screen")
 		await $TransitionScreen/AnimationPlayer.animation_finished
 		
 		get_tree().change_scene_to_file("res://scenes/hub.tscn")
+
 		
 		
 # Function to update the color of the Level1Block after scene transition
