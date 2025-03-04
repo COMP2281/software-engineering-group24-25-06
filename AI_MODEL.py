@@ -1,6 +1,7 @@
 import os
 import re
 from datetime import datetime, timezone
+import random
 
 from langchain_ollama.llms import OllamaLLM
 from langchain_chroma import Chroma
@@ -13,23 +14,24 @@ from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from typing import TypedDict, Annotated, Optional
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, RemoveMessage
-from langmem import create_memory_manager
+# from langmem import create_memory_manager
 from pydantic import BaseModel
 from langgraph.checkpoint.mongodb import MongoDBSaver
 from pymongo import MongoClient
 
 
+
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url": "https://us-south.ml.cloud.ibm.com",
-    "apikey": os.getenv("WATSONX_APIKEY"),
+    "url": "https://eu-gb.ml.cloud.ibm.com",
+    "apikey": "JOzHijjg6zn8G9hfkZxY34kJ_jHTXo4pzFLAjoTnzdIw"
 }
 
-project_id = "..."
+project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
 model_id = "granite3.1-dense"
 
-mongodb_uri = os.getenv("MONGODB_URI")
+mongodb_uri = "mongodb+srv://jacob:progprog4@se-project.xg1tx.mongodb.net/?retryWrites=true&w=majority&appName=SE-Project"
 db_name = "SE-prog"
 
 class UserProfile(BaseModel):
@@ -122,6 +124,24 @@ missions = {
     }
 }
 
+## --- Mission Selection --- ##
+## ------------------------- ##
+
+# def start_mission(state: "State", mission_name: str):
+#     state["in_mission"] = True
+#     state["mission_name"] = mission_name
+#     return state
+
+# def end_mission(state: "State"):
+#     state["in_mission"] = False
+#     state["mission_name"] = None
+#     return state
+
+## ------------------------- ##
+## ------------------------- ##
+
+
+
 
 selected_mission = "Silent Strike"
 mission_data = missions[selected_mission]
@@ -156,69 +176,63 @@ def get_relevant_question_from_database(data: dict):
     """Retrieve a mission-specific question with 4 options from the database based on the topic."""
 
     topic = data.get("topic", "")
-    mission_name = data.get("mission_name")
-    print("\n🔥 DEBUG: Mission Name :", mission_name)  # Debugging Line
+    in_mission = data.get("in_mission", True)  # Check if user is in a mission
+    mission_name = data.get("mission_name") if in_mission else None
 
+    print(f"\n🔥 DEBUG: Mission Status: {in_mission}, Mission Name: {mission_name}, Topic: {topic}") 
 
-    mission_data = missions[mission_name]
-    print("\n🔥 DEBUG: Mission Data:", mission_data)  # Debugging Line
-    
-    mission_keywords = mission_data.get("keywords", [])
+    if in_mission and mission_name:
+        mission_data = missions[mission_name]
+        mission_keywords = mission_data.get("keywords", [])
 
-    keyword_query = " ".join(mission_keywords)
-    print("\n🔥 DEBUG: Mission Keywords:", mission_keywords)  # Debugging Line
+        # Randomly cycle through keywords
+        selected_keyword = random.choice(mission_keywords)     
+        query = f"{selected_keyword} {topic}" if topic else selected_keyword
 
+        print(f"\n🔥 DEBUG: Query using Keyword '{selected_keyword}': {query}")  
 
-    query = f"{mission_keywords} {topic}" if keyword_query else topic 
-    print("\n🔥 DEBUG: Query Sent to Retriever:", query)  # Debugging Line
- 
-    results = retriever.invoke(query)
+        results = retriever.invoke(query)
+
+        if not results:
+            return {"question": "No mission-relevant question found in the database.", "options": ["N/A", "N/A", "N/A", "N/A"]}
+        
+        doc = random.choice(results)
+
+    else:
+        query = topic
+        print(f"\n🔥 DEBUG: General Query: {query}")
+
+        results = retriever.invoke(query)
+
+        doc = random.choice(results)
 
     # print("\nDEBUG: Retrieved results:", results)  # Debugging Line
 
-    if results and len(results) > 0:
-        # Filter for the most relevant mission-based question
-        best_match = None
-        for doc in results:
-            for keyword in mission_keywords:
-                if keyword.lower() in doc.page_content.lower():
-                    best_match = doc  # Prioritize mission-related question
-                    break  
-            if best_match:
-                break
-
-        doc = best_match if best_match else results[0]  # Fallback to first result
-        print("\nDEBUG: Retrieved document page_content:", doc.page_content)  # Debugging Line
-        
         # Extract question and choices using regex
-        question_match = re.search(r'question:\s(.*?)\schoice1:', doc.page_content)
-        choice1_match = re.search(r'choice1:\s(.*?)\schoice2:', doc.page_content)
-        choice2_match = re.search(r'choice2:\s(.*?)\schoice3:', doc.page_content)
-        choice3_match = re.search(r'choice3:\s(.*?)\schoice4:', doc.page_content)
-        choice4_match = re.search(r'choice4:\s(.*?)\scorrectChoices', doc.page_content)
-        correct_answer_match = re.search(r'correctChoices:\s(\d)', doc.page_content)
+    question_match = re.search(r'question:\s(.*?)\schoice1:', doc.page_content)
+    choice1_match = re.search(r'choice1:\s(.*?)\schoice2:', doc.page_content)
+    choice2_match = re.search(r'choice2:\s(.*?)\schoice3:', doc.page_content)
+    choice3_match = re.search(r'choice3:\s(.*?)\schoice4:', doc.page_content)
+    choice4_match = re.search(r'choice4:\s(.*?)\scorrectChoices', doc.page_content)
+    correct_answer_match = re.search(r'correctChoices:\s(\d)', doc.page_content)
 
-        question = question_match.group(1) if question_match else "No question found"
-        options = [
-            choice1_match.group(1) if choice1_match else "Option A",
-            choice2_match.group(1) if choice2_match else "Option B",
-            choice3_match.group(1) if choice3_match else "Option C",
-            choice4_match.group(1) if choice4_match else "Option D",
-        ]
-        correct_answer = correct_answer_match.group(1) if correct_answer_match else "N/A"
+    question = question_match.group(1) if question_match else "No question found"
+    options = [
+        choice1_match.group(1) if choice1_match else "Option A",
+        choice2_match.group(1) if choice2_match else "Option B",
+        choice3_match.group(1) if choice3_match else "Option C",
+        choice4_match.group(1) if choice4_match else "Option D",
+    ]
+    correct_answer = correct_answer_match.group(1) if correct_answer_match else "N/A"
 
-        if correct_answer in ["1", "2", "3", "4"]:
-            correct_answer = chr(64 + int(correct_answer)) 
+    if correct_answer in ["1", "2", "3", "4"]:
+        correct_answer = chr(64 + int(correct_answer)) 
 
-        return {
-            "question": f"[Mission: {mission_name}] {question}",
-            "options": options,
-            "correct_answer": correct_answer
-        }
-    
-    else:
-        return {"question": "No mission-relevant question found in the database.", "options": ["N/A", "N/A", "N/A", "N/A"]}
-
+    return {
+        "question": f"[Mission: {mission_name}] {question}",
+        "options": options,
+        "correct_answer": correct_answer
+    }
 
 
 tools = [get_relevant_documents, get_relevant_question_from_database]
@@ -444,7 +458,7 @@ def answer_checker(state: "State"):
     
     else:
         prompt = f"""
-        Your answer was incorrect. The correct choice is {correct_answer}.
+        The Users's answer is incorrect. The correct choice is {correct_answer}.
         Explanation: {choices[ord(correct_answer) - 65]}.
         Keep the response concise. Do **not** add examples or unrelated context.
         """
@@ -512,6 +526,8 @@ class State(TypedDict):
     current_choices: Annotated[list, "current_choices"]  
     correct_answer: Annotated[str, "correct_answer"]
     conversation_summary: Annotated[list, "conversation_summary"]
+    in_mission: Annotated[bool, "in_mission"] #NEW: Added in_mission to keep track of whether the user is in a mission or not
+    mission_name: Annotated[str, "mission_name"] #NEW: Added mission_name to keep track of the current mission
 
 # Create the graph
 graph_builder = StateGraph(State)
@@ -561,6 +577,7 @@ def answering(user_input):
     config = {"configurable": {"thread_id": "1"}}
 
     user_message = {"role": "user", "content": user_input}
+    selected_mission = "Silent Strike"  # Default mission
 
     # Ensure State is always initialized properly
     try:
@@ -571,7 +588,9 @@ def answering(user_input):
             "current_question": current_state.values.get("current_question", ""),
             "current_choices": current_state.values.get("current_choices", []),
             "correct_answer": current_state.values.get("correct_answer", ""),
-            "conversation_summary": current_state.values.get("conversation_summary", "")
+            "conversation_summary": current_state.values.get("conversation_summary", ""),
+            "in_mission": True,
+            "mission_name": selected_mission
         }
     except:
         state = {
