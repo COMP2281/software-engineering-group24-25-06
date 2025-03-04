@@ -195,6 +195,26 @@ layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
+[node name="Weaknesspanel" type="Panel" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Weaknesslist" type="VBoxContainer" parent="CanvasLayer/UI/Weaknesspanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Itempanel" type="Panel" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Itemlist" type="VBoxContainer" parent="CanvasLayer/UI/Itempanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="enemy" parent="." instance=ExtResource("8_203gs")]
 
 [node name="player" parent="." instance=ExtResource("9_jmbyx")]

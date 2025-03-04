@@ -14,9 +14,16 @@ var enemy_max_health: float = 0.0
 # If the player is defending
 var player_defense: bool = false
 var current_turn: String = "player"
+var current_attack: String = ""
 
 var enemy_being_fought: Enemy = null
 var current_question: Question = null
+
+#ADDING TEMP ITEM
+var player_items = {
+	"Health Potion": {"count": 3, "heal_amount": 30},
+	"Attack Boost": {"count": 2, "boost_amount": 1.5}
+}
 
 func entered_from_mission(data: Dictionary) -> void:
 	if data == {}: return
@@ -53,7 +60,7 @@ func _ready() -> void:
 	battle_menu.connect("option_selected", _on_option_selected)
 	question_panel.connect("answer_selected", _on_answer_selected)
 	start_turn()
-	# TODO: waiting for 1 process frame? not sure what its doing/if necessary
+	# TODO: waiting for 1 process frame? not sure what its doing/if necessary #CAN REMOVE
 	await get_tree().process_frame
 	
 	if player and enemy:
@@ -64,57 +71,134 @@ func setup_battle() -> void:
 	question_panel.hide()
 	battle_menu.hide_menu()
 	
+	if has_node("CanvasLayer/UI/Itempanel"):
+		$CanvasLayer/UI/Itempanel.hide()
+	if has_node("CanvasLayer/UI/Weaknesspanel"):
+		$CanvasLayer/UI/Weaknesspanel.hide()
+	
 func start_turn() -> void:
-	print("Starting turn...")
-	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_AI, 0.5)
-	if current_question:
-		print("Question found:", current_question.text)
-		question_panel.show_question(current_question)
-	else:
-		print("No question found!")
+	battle_menu.show_menu()
 
 ## Given an answer index 1-4, check if answer is correct
 func _on_answer_selected(answer: int) -> void:
 	var correct: bool = QuestionSelector.markQuestion(current_question, [answer])
 	
 	if correct:
-		battle_menu.show_menu()
+		match current_attack:
+			"ATTACK1":
+				execute_attack(10)
+			"ATTACK2":
+				execute_attack(20)
+			"ATTACK3":
+				execute_attack(30)
+			"WEAKNESS":
+				reveal_weakness()
 	else:
 		start_enemy_turn()
 
 # TODO(minor): should be enum
 func _on_option_selected(option: String) -> void:
 	match option:
-		"ATTACK":
-			execute_attack()
-		"GUARD":
-			execute_guard()
+		"ATTACK1", "ATTACK2", "ATTACK3":
+			current_attack = option
+			show_question_for_action()
 		"ITEM":
 			show_items()
 		"WEAKNESS":
-			reveal_weakness()
-			
+			current_attack = "WEAKNESS"
+			show_question_for_action()
 
-func execute_attack() -> void:
+func show_question_for_action() -> void:
+	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_AI, 0.5)
+	if current_question:
+		question_panel.show_question(current_question)
+		battle_menu.hide_menu()
+	else:
+		print("No question found!")
+
+func execute_attack(damage: float = 15.0) -> void:
 	# TODO: should read out value from move settings/list
-	var damage: float = 15.0
 	apply_damage_to_enemy(damage)
 	battle_menu.hide_menu()
 	start_enemy_turn()
 	
-func execute_guard() -> void:
-	player_defense = true
-	battle_menu.hide_menu()
-	start_enemy_turn()
-	
 func show_items() -> void:
-	#ITEM LOGIC
+	var item_panel = $CanvasLayer/UI/Itempanel
+	var item_list = $CanvasLayer/UI/Itempanel/Itemlist
+	
+	for child in item_list.get_children():
+		child.queue_free()
+	
+	for item_name in player_items:
+		var item_data = player_items[item_name]
+		if item_data.count > 0:
+			var button = Button.new()
+			button.text = item_name + " (x" + str(item_data.count) + ")"
+			
+			var btn_style = StyleBoxFlat.new()
+			btn_style.bg_color = Color(0, 0, 0, 0.8)
+			btn_style.border_color = Color(1, 0, 0)
+			btn_style.corner_radius_top_left = 10
+			btn_style.corner_radius_bottom_right = 10
+			
+			button.add_theme_stylebox_override("normal", btn_style)
+			button.custom_minimum_size = Vector2(200, 40)
+			button.connect("pressed", use_item.bind(item_name))
+			item_list.add_child(button)
+	
+	var back_button = Button.new()
+	back_button.text = "Back"
+	back_button.custom_minimum_size = Vector2(200, 40)
+	back_button.connect("pressed", _on_back_pressed)
+	item_list.add_child(back_button)
+	
 	battle_menu.hide_menu()
-	start_enemy_turn()
+	item_panel.show()
+	
+func _on_back_pressed() -> void:
+	$CanvasLayer/UI/Itempanel.hide()
+	battle_menu.show_menu()
+
+func use_item(item_name: String) -> void:
+	var item = player_items[item_name]
+	match item_name:
+		"Health Potion":
+			var heal = item.heal_amount
+			player_health_value = min(player.max_health, player_health_value + heal)
+			player.health_change.emit(player_health_value)
+			item.count -= 1
+		"Attack Boost":
+			# Implement attack boost logic
+			item.count -= 1
+
+	$CanvasLayer/UI/Itempanel.hide()
+	battle_menu.show_menu()
 	
 func reveal_weakness() -> void:
-	#DISPLAY WEAKNESS
-	battle_menu.hide_menu()
+	var weakness_panel = $CanvasLayer/UI/Weaknesspanel
+	var weakness_list = $CanvasLayer/UI/Weaknesspanel/Weaknesslist
+	for child in weakness_list.get_children():
+		child.queue_free()
+	
+	#TEMPORARY WEAKNESS IMPLEMENTATION
+	var weaknesses = enemy.enemy_resource.weaknesses if enemy.enemy_resource.has("weaknesses") else {
+		"fire": true,
+		"water": false,
+		"earth": false,
+	}
+	
+	for type in weaknesses:
+		var label = Label.new()
+		var is_weak = weaknesses[type]
+		label.text = type.capitalize() + ": " + ("WEAK" if is_weak else "Resist")
+		label.add_theme_color_override("font_color", 
+		Color(1, 0, 0) if is_weak else Color(0, 1, 0))
+		weakness_list.add_child(label)
+	weakness_panel.show()
+	
+	# Auto-hide after 2 seconds
+	await get_tree().create_timer(2.0).timeout
+	weakness_panel.hide()
 	start_enemy_turn()
 
 func start_enemy_turn() -> void:
@@ -123,10 +207,6 @@ func start_enemy_turn() -> void:
 	
 func execute_enemy_attack() -> void:
 	var enemy_damage: float = 10.0
-	
-	if player_defense:
-		enemy_damage = enemy_damage / 2
-		player_defense = false
 		
 	apply_damage_to_player(enemy_damage)
 	await get_tree().create_timer(1.0).timeout
