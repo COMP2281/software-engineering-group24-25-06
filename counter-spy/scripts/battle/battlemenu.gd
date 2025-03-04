@@ -2,7 +2,7 @@ extends Control
 
 signal option_selected(option)
 
-var options = ["ATTACK", "GUARD", "ITEM", "ATTACK2"]
+var options = ["ATTACK", "ATTACK3", "ITEMS", "ATTACK2", "WEAKNESS"]
 var menu_visible = false
 var selected_index = 0
 var buttons = []  # Store button references
@@ -42,6 +42,9 @@ func setup_menu():
 	var wheel = $Wheelcontainer
 	buttons.clear()  # Clear any existing buttons
 	
+	for child in wheel.get_children():
+		child.queue_free()
+	
 	# Style the container like P5
 	var style = StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0.8)
@@ -54,19 +57,16 @@ func setup_menu():
 		var button = Button.new()
 		var angle = (i * PI/2) - PI/4
 		
-		# P5 style positioning
 		var radius = 150
 		var pos = Vector2(
 			cos(angle) * radius + 200,
 			sin(angle) * radius + 200
 		)
 		
-		# Style the button P5 style
 		button.text = options[i]
 		button.custom_minimum_size = Vector2(120, 40)
 		button.position = pos - button.custom_minimum_size/2
 		
-		# P5 styling
 		var btn_style = StyleBoxFlat.new()
 		btn_style.bg_color = Color(0, 0, 0, 0.9)
 		btn_style.border_color = Color(1, 0, 0)
@@ -77,14 +77,13 @@ func setup_menu():
 		button.add_theme_stylebox_override("normal", btn_style)
 		button.connect("pressed", _on_option_pressed.bind(i))
 		
-		# Add P5 style controls indicator
 		var control_label = Label.new()
 		control_label.text = "○ " if i == 0 else "□ " if i == 1 else "△ " if i == 2 else "× "
 		control_label.add_theme_color_override("font_color", Color(1, 0, 0))
 		button.add_child(control_label)
 		
 		wheel.add_child(button)
-		buttons.append(button)  # Store button reference
+		buttons.append(button)  
 
 func show_menu():
 	menu_visible = true
@@ -97,5 +96,5 @@ func hide_menu():
 	hide()
 
 func _on_option_pressed(index):
-	var options = ["ATTACK", "GUARD", "ITEM", "WEAKNESS"]
+	var options = ["ATTACK", "ATTACK3", "ITEMS", "ATTACK2", "WEAKNESS"]
 	emit_signal("option_selected", options[index])
