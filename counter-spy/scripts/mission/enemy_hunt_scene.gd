@@ -5,6 +5,10 @@ func entered_from_encounter(data: Dictionary) -> void:
 	
 	var enemy: Enemy = data["enemy_defeated"] as Enemy
 	
+	if enemy == null:
+		push_warning("Exited from battle scene without a defeated enemy")
+		return
+	
 	# lol
 	enemy.die()
 

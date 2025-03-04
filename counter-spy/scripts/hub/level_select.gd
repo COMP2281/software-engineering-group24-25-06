@@ -49,7 +49,7 @@ func _on_back_btn_pressed() -> void:
 	close_levels()
 
 func _on_level_1_pressed() -> void:
-	var transition_screen = get_node("/root/Hub/CanvasLayer/TransitionScreen")
+	var transition_screen = get_node("../CanvasLayer/TransitionScreen")
 	
 	transition_screen.visible = true
 	print("Starting transition animation...")

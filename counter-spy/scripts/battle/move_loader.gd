@@ -10,7 +10,7 @@ func _ready() -> void:
 	
 	for move in movesList:
 		var moveObject : Move = Move.new()
-		moveObject.name = move["name"]
+		moveObject.name = move["moveName"]
 		moveObject.type = move["type"]
 		moveObject.difficulty = move["difficulty"]
 		moveObject.damage = move["damage"]

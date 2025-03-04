@@ -32,10 +32,14 @@ var _questionTable : Array[TableEntry];
 var _questions : Array[Question];
 var _maxQuestionID : int = 0;
 
+var _rng : RandomNumberGenerator;
+
 const DEFAULT_QUESTION_ANSWER_TIME : float = 10.0;
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	_rng = RandomNumberGenerator.new();
+	
 	var questionsFile := FileAccess.open("res://questions/SkillsBuildQs.csv", FileAccess.READ);
 	
 	# Ignore headers
@@ -226,6 +230,8 @@ func selectQuestion(topicMask : int, requestedDifficulty : float) -> Question:
 	const totalWeight : float = topicMatchingWeight + seenWeight + difficultyWeight;
 	const inverseTotalWeight : float = 1.0 / totalWeight;
 	
+	const randomVariance : float = 0.2;
+	
 	var bestQuestionScore : float = 0;
 	var bestQuestion : Question = Question.new();
 	
@@ -234,6 +240,7 @@ func selectQuestion(topicMask : int, requestedDifficulty : float) -> Question:
 			int(_doesTopicMatch(question.topic, topicMask)) * topicMatchingWeight +
 			(1 - int(_seenBefore(question))) * seenWeight + # Note, negatively weighted
 			(1.0 - abs(_relativeDifficulty(question) - requestedDifficulty)) * difficultyWeight
+			+ _rng.randf_range(-randomVariance, randomVariance)
 		);
 		
 		if questionScore > bestQuestionScore:
