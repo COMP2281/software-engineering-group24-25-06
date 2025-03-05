@@ -7,7 +7,7 @@ class_name StateMachine extends Node
 ).call()
 
 func _ready() -> void:
-	for state_node: State in find_children("*", "State"):
+	for state_node: State in find_children("*", "State", false):
 		state_node.finished.connect(_transition_to_next_state)
 
 	await owner.ready
@@ -26,6 +26,11 @@ func _transition_to_next_state(target_state_path: String, data: Dictionary = {})
 	if not has_node(target_state_path):
 		printerr(owner.name + ": Trying to transition to state " + target_state_path + " but it does not exist.")
 		return
+		
+	# Do not attempt to transition to self
+	if state.name == target_state_path: return
+		
+	print("Invoking a transition between ", state.name, " and ", target_state_path)
 
 	var previous_state_path := state.name
 	state.exit(data)

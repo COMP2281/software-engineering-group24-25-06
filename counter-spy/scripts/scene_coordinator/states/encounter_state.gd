@@ -8,6 +8,8 @@ func _ready() -> void:
 	child_scene = get_tree().get_first_node_in_group("encounter_group")
 
 func enter(previous_state_path: String, data := {}) -> void:
+	print("Entering transition with previous state", previous_state_path)
+	
 	if SceneCoordinator.get_scene_enum(previous_state_path) == SceneType.Name.MISSION:
 		child_scene.entered_from_mission(data)
 	

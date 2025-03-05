@@ -1,4 +1,8 @@
-class_name MissionNode extends Node3D
+# TODO: DEPRECATED REMOVE EVERYTHING ALL BAD
+# BAAAD!!!
+
+#class_name MissionNode extends Node3D
+extends Node3D
 
 func entered_from_encounter(data: Dictionary) -> void:
 	if data == {}: return

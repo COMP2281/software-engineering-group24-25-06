@@ -2,4 +2,3 @@
 .godot/
 *.tmp
 .DS_STORE
-*.import

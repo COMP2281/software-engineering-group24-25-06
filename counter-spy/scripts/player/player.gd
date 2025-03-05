@@ -10,7 +10,6 @@ const MOVEMENT_EPSILON: float = 0.1;
 const SNEAKING_SCALE: float = 0.75
 
 # TODO: rename
-# TODO: should pass in camera from scene probably
 func hide_ui():
 	$SuspicionView.hide()
 	$AlertIndicator.hide()
@@ -21,6 +20,7 @@ func hide_ui():
 func show_ui():
 	$SuspicionView.show()
 	$AlertIndicator.show()
+	
 	$ProtoController3P.camera.make_current()
 
 func _ready() -> void:

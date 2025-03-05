@@ -6,8 +6,11 @@ var child_scene: MissionNode = null
 func _ready() -> void:
 	SceneCoordinator.change_scene.connect(func(state: SceneType.Name, metadata: Dictionary): finished.emit(SceneCoordinator.get_scene_name(state), metadata))
 	child_scene = get_tree().get_first_node_in_group("mission_group")
-
+	
 func enter(previous_state_path: String, data := {}) -> void:
+	# TODO: for whatever fucked up reason, state machine is doign this shit
+	child_scene.load_level("res://scenes/levels/mission1/level_1.tscn")
+	
 	# We expect the data passed to contain the "enemy_defeated field"
 	# TODO: maybe dedicated structures for EncounterToMission (etc.)
 	if SceneCoordinator.get_scene_enum(previous_state_path) == SceneType.Name.BATTLE:

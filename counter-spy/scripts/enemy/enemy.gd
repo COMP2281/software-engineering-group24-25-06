@@ -45,11 +45,17 @@ func set_destination(destination: Vector3) -> void:
 	if destination == Vector3.INF: return
 	
 	# TODO: also ignore call if made before first map synchronisation
-	
 	var closest_point: Vector3 = NavigationServer3D.map_get_closest_point(
 		navigation_agent_3d.get_navigation_map(),
 		destination
 	)
+	
+	# TODO: better system
+	#	currently just tries to path to 0,0 immediately
+	if closest_point == Vector3.ZERO:
+		navigation_agent_3d.set_target_position(global_position)
+		return
+	
 	navigation_agent_3d.set_target_position(closest_point)
 
 func _process(delta: float) -> void:

@@ -1,7 +1,14 @@
 extends Node
 
+# When changing scene, the metadata is passed both to the scene we're exiting from, and the scene
+#	we're entering
+signal change_scene(scene: SceneType.Name, metadata: Dictionary)
+
 # TODO: the lengths to get a global enum...
 @export var type : SceneType.Name = SceneType.Name.MISSION
+
+func _ready() -> void:
+	change_scene.connect(log_scene_change)
 
 func get_scene_name(scene: SceneType.Name) -> String:
 	match scene:
@@ -20,9 +27,8 @@ func get_scene_enum(scene: String) -> SceneType.Name:
 	# Default to mission scene
 	return SceneType.Name.MISSION
 
-# When changing scene, the metadata is passed both to the scene we're exiting from, and the scene
-#	we're entering
-signal change_scene(scene: SceneType.Name, metadata: Dictionary)
+func log_scene_change(scene: SceneType.Name, metadata: Dictionary) -> void:
+	print("Scene transition to ", scene, " named ", get_scene_name(scene))
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("change_battle"):

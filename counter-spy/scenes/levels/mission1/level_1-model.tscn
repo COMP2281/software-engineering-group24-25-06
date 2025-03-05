@@ -1,6 +1,6 @@
 [gd_scene load_steps=40 format=3 uid="uid://cunvtysmndrr0"]
 
-[ext_resource type="PackedScene" uid="uid://moorejoh1vly" path="res://assets/models/Mission1Level1-v2.glb" id="1_d4u6l"]
+[ext_resource type="PackedScene" uid="uid://byl1llnsexq4h" path="res://assets/models/Mission1Level1-v2.glb" id="1_d4u6l"]
 [ext_resource type="PackedScene" uid="uid://bcaf7cd5omh1o" path="res://scenes/prefabs/level/door.tscn" id="2_qdd6j"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_lcv24"]
@@ -135,25 +135,35 @@ size = Vector3(11.7197, 1.48927, 0.0134277)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5869, 4.91438, -14.4084)
 size = Vector3(4.72827, 4.15131, 0.0795898)
 
+[node name="Floor_Panel_1" parent="." index="5" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Floor_Panel_1" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor_Panel_1/StaticBody3D" index="0"]
 shape = SubResource("ConcavePolygonShape3D_lcv24")
+
+[node name="Large_Container_1" parent="." index="6" groups=["in_nav_mesh"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Large_Container_1" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Large_Container_1/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_h84l8")
 
+[node name="Small_Container_1" parent="." index="7" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Small_Container_1" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Small_Container_1/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_bhb4d")
 
+[node name="Large_Container_2" parent="." index="8" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Large_Container_2" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Large_Container_2/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_q3r13")
+
+[node name="railings" parent="." index="9" groups=["in_nav_mesh"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="railings" index="0"]
 
@@ -213,30 +223,42 @@ shape = SubResource("BoxShape3D_pcpvu")
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -3.20604, 3.46913, -49.2703)
 shape = SubResource("BoxShape3D_twk3c")
 
+[node name="Door01_M_Gate01_0_002" parent="." index="10" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Door01_M_Gate01_0_002" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Door01_M_Gate01_0_002/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_gvels")
+
+[node name="Door02_M_Gate01_0_002" parent="." index="11" groups=["in_nav_mesh"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Door02_M_Gate01_0_002" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Door02_M_Gate01_0_002/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_0lxya")
 
+[node name="Floor_Panel_2" parent="." index="12" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Floor_Panel_2" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor_Panel_2/StaticBody3D" index="0"]
 shape = SubResource("ConcavePolygonShape3D_mbot7")
+
+[node name="Machine_Deco_1" parent="." index="13" groups=["in_nav_mesh"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Machine_Deco_1" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Machine_Deco_1/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_snrmy")
 
+[node name="Machine_Deco_2" parent="." index="14" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Machine_Deco_2" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Machine_Deco_2/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_v8kwn")
+
+[node name="MAchine_Deco_3" parent="." index="15" groups=["in_nav_mesh"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MAchine_Deco_3" index="0"]
 
@@ -272,10 +294,14 @@ shape = SubResource("ConvexPolygonShape3D_34f7w")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="View_Window_1/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_w630e")
 
+[node name="Walkway_1" parent="." index="20" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Walkway_1" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Walkway_1/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_vt8jq")
+
+[node name="Wall_Deco_1" parent="." index="21" groups=["in_nav_mesh"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Wall_Deco_1" index="0"]
 
@@ -287,20 +313,28 @@ shape = SubResource("ConvexPolygonShape3D_qfmsd")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Windows/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_3imo1")
 
+[node name="Medium_Box_1" parent="." index="23" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Medium_Box_1" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Medium_Box_1/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_j4upx")
+
+[node name="Small_Box_1" parent="." index="24" groups=["in_nav_mesh"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Small_Box_1" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Small_Box_1/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_8nrmj")
 
+[node name="Small_Box_2" parent="." index="25" groups=["in_nav_mesh"]]
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Small_Box_2" index="0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Small_Box_2/StaticBody3D" index="0"]
 shape = SubResource("ConvexPolygonShape3D_6paab")
+
+[node name="Ceiling_1" parent="." index="26" groups=["in_nav_mesh"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Ceiling_1" index="0"]
 
