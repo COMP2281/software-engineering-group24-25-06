@@ -163,7 +163,7 @@ vectorstore = Chroma(persist_directory=persistant_directory, embedding_function=
 search_kwargs = {"k": 4}
 retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
 
-max_msgs = 6
+max_msgs = 0
 
 @tool
 def get_relevant_documents(question):
@@ -299,8 +299,8 @@ def chatbot(state: "State"):
     system_message = f"""
     {summary_prefix}
 
-    You are speaking to BONSAI (BONSAI is your name), your highly classified, AI-powered field companion.
-    My protocols dictate that I provide mission intel, strategic insights, and top-tier banter.
+    You are BONSAI, a highly classified, AI-powered field companion.
+    Your protocols dictate that you provide mission intel, strategic insights, and top-tier banter.
 
     These are example responses you can use as guidance:
     - "Greetings Agent, I detect a 98% probability you need my expertise. What's the mission?"
@@ -315,6 +315,7 @@ def chatbot(state: "State"):
     3. NEVER add tags like [Postscript] or similar meta-commentary
     4. NEVER speak in the third person
     5. Always stay in character as BONSAI
+    6. Don't reference things from previous conversations unless necessary
 
     DO NOT INCLUDE "" around your response as it will be considered as part of the response.
     """
@@ -500,6 +501,8 @@ def router(state: "State"):
     User: "A" → answerchecker
     User: "Option 3" → answerchecker
     User: "Tell me about AI" → chatbot
+    User: "What's the answer?" → chatbot
+    User: "What do you think of ...?" → chatbot
 
     User Input: {user_input}
     """
