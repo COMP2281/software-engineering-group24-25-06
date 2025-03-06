@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://d2vdxmwicnjhs" path="res://scenes/prefabs/alert_indicator.tscn" id="3_afela"]
 [ext_resource type="Script" path="res://scripts/ui/alert_indicator.gd" id="4_f7gb4"]
 
-[node name="Player" type="Node3D"]
+[node name="Player" type="Node3D" groups=["Player"]]
 script = ExtResource("1_m78fg")
 
 [node name="ProtoController3P" parent="." instance=ExtResource("2_c4b32")]

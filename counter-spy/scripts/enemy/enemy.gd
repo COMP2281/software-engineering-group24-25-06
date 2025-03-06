@@ -72,7 +72,7 @@ func _process(delta: float) -> void:
 	# Check if we should begin battle
 	var player_distance: float = (StealthManager.player_position - global_position).length()
 	
-	if currently_seeing_player and player_distance < enemy_resource.battle_begin_proximity and suspicion_level == 1.0:
+	if currently_seeing_player and player_distance < enemy_resource.battle_begin_proximity and suspicion_level > 0.95:
 		# TODO: pass whatever additional data required
 		#	what enemy took us to combat, etc.
 		# TODO: very temporary, just make it so we can transition back to this scene

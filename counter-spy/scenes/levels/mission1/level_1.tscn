@@ -1,16 +1,43 @@
-[gd_scene load_steps=15 format=3 uid="uid://2vcswfkcqgta"]
+[gd_scene load_steps=24 format=3 uid="uid://2vcswfkcqgta"]
 
 [ext_resource type="Script" path="res://scripts/level/Mission1Level1.gd" id="1_3sgl5"]
 [ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/prefabs/player.tscn" id="2_r5ah1"]
+[ext_resource type="Script" path="res://scripts/enemy/path_follow_3d.gd" id="2_rybds"]
 [ext_resource type="PackedScene" uid="uid://cunvtysmndrr0" path="res://scenes/levels/mission1/level_1-model.tscn" id="4_7ojdb"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/levels/hub/transition_screen.tscn" id="4_wkyt1"]
 [ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://scenes/prefabs/enemy.tscn" id="5_8yhfp"]
 [ext_resource type="Script" path="res://scripts/utility/enemy_resource.gd" id="6_v0ydf"]
 [ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="7_4ng78"]
+[ext_resource type="PackedScene" uid="uid://bp2kqx6gewi8t" path="res://scenes/prefabs/security_cam.tscn" id="9_hoihy"]
+
+[sub_resource type="Curve3D" id="Curve3D_2olmd"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -13.15, 10, -34.168, 0, 0, 0, 0, 0, 0, -8.592, 10, -35.407, 0, 0, 0, 0, 0, 0, -6.441, 10, -38.215, 0, 0, 0, 0, 0, 0, -5.967, 10, -42.335, 0, 0, 0, 0, 0, 0, -7.973, 10, -46.273, 0, 0, 0, 0, 0, 0, -11.947, 10, -47.914, 0, 0, 0, 0, 0, 0, -16.541, 10, -47.403, 0, 0, 0, 0, 0, 0, -19.02, 10, -44.851, 0, 0, 0, 0, 0, 0, -19.713, 10, -41.533, 0, 0, 0, 0, 0, 0, -18.255, 10, -37.413, 0, 0, 0, 0, 0, 0, -13.15, 10, -34.168),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 11
+
+[sub_resource type="Resource" id="Resource_ftlsv"]
+resource_local_to_scene = true
+script = ExtResource("7_4ng78")
+detection_speed = 0.5
+fov = 1.39626
+close_radius = 0.0
+view_radius = 7.0
+decay_rate = 0.2
+communication_range = 20.0
+hearing_modifier = 0.0
+
+[sub_resource type="Curve3D" id="Curve3D_3cbqg"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -0.46, 1, -19.663, 0, 0, 0, 0, 0, 0, -5.009, 1, -19.913, 0, 0, 0, 0, 0, 0, -8.595, 1, -20.11, 0, 0, 0, 0, 0, 0, -8.861, 1, -15.169, 0, 0, 0, 0, 0, 0, -15.954, 1, -15.219, 0, 0, 0, 0, 0, 0, -15.905, 1, -26.579, 0, 0, 0, 0, 0, 0, -8.315, 1, -26.529, 0, 0, 0, 0, 0, 0, -0.46, 1, -19.663),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 8
 
 [sub_resource type="Curve3D" id="Curve3D_sc70j"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 10.3, 3, -32.472, 0, 0, 0, 0, 0, 0, 16.519, 3, -32.547, 0, 0, 0, 0, 0, 0, 16.544, 3, -24.9, 0, 0, 0, 0, 0, 0, 10.3, 3, -25.422, 0, 0, 0, 0, 0, 0, 10.3, 3, -32.472),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -18.962, 1, -18.214, 0, 0, 0, 0, 0, 0, -19.338, 1, -30.365, 0, 0, 0, 0, 0, 0, -12.774, 1, -30.484, 0, 0, 0, 0, 0, 0, -15.712, 1, -25.013, 0, 0, 0, 0, 0, 0, -18.962, 1, -18.214),
 "tilts": PackedFloat32Array(0, 0, 0, 0, 0)
 }
 point_count = 5
@@ -57,7 +84,65 @@ viewzone_resource = SubResource("Resource_jsvyj")
 enemy_name = "Standard"
 health = 100
 weakness = "fire"
-battle_begin_proximity = 1.0
+battle_begin_proximity = 3.0
+move_speed = 5.0
+hunt_speed = 7.5
+max_rotation_speed = 3.14159
+investigate_begin_threshold = 0.4
+investigation_time = 2.0
+fov_scan = 1.5708
+scan_times = 1.5
+hunting_begin_threshold = 0.9
+hunting_end_threshold = 0.5
+
+[sub_resource type="Resource" id="Resource_ohn83"]
+resource_local_to_scene = true
+script = ExtResource("7_4ng78")
+detection_speed = 1.0
+fov = 1.0472
+close_radius = 1.0
+view_radius = 8.0
+decay_rate = 0.2
+communication_range = 20.0
+hearing_modifier = 1.0
+
+[sub_resource type="Resource" id="Resource_frqbv"]
+resource_local_to_scene = true
+script = ExtResource("6_v0ydf")
+viewzone_resource = SubResource("Resource_ohn83")
+enemy_name = "Standard"
+health = 100
+weakness = "fire"
+battle_begin_proximity = 3.0
+move_speed = 5.0
+hunt_speed = 7.5
+max_rotation_speed = 3.14159
+investigate_begin_threshold = 0.4
+investigation_time = 2.0
+fov_scan = 1.5708
+scan_times = 1.5
+hunting_begin_threshold = 0.9
+hunting_end_threshold = 0.5
+
+[sub_resource type="Resource" id="Resource_hkrpr"]
+resource_local_to_scene = true
+script = ExtResource("7_4ng78")
+detection_speed = 0.5
+fov = 0.523599
+close_radius = 1.0
+view_radius = 10.0
+decay_rate = 0.2
+communication_range = 20.0
+hearing_modifier = 1.0
+
+[sub_resource type="Resource" id="Resource_tkpqr"]
+resource_local_to_scene = true
+script = ExtResource("6_v0ydf")
+viewzone_resource = SubResource("Resource_hkrpr")
+enemy_name = "SnipeyMan"
+health = 80
+weakness = "fire"
+battle_begin_proximity = 3.0
 move_speed = 5.0
 hunt_speed = 7.5
 max_rotation_speed = 3.14159
@@ -71,14 +156,32 @@ hunting_end_threshold = 0.5
 [node name="Level1" type="Node3D"]
 script = ExtResource("1_3sgl5")
 
+[node name="PathCamera" type="Path3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+curve = SubResource("Curve3D_2olmd")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="PathCamera"]
+transform = Transform3D(0.262312, 0, -0.964982, 0, 1, 0, 0.964982, 0, 0.262312, -13.15, 10, -34.168)
+script = ExtResource("2_rybds")
+
+[node name="SecurityCam" parent="PathCamera/PathFollow3D" instance=ExtResource("9_hoihy")]
+transform = Transform3D(-0.262312, 0.482492, -0.8357, 0, 0.866025, 0.5, 0.964984, 0.131156, -0.227169, -0.0055275, -0.0576448, -0.0349293)
+viewzone_resource = SubResource("Resource_ftlsv")
+
+[node name="Path3D2" type="Path3D" parent="."]
+curve = SubResource("Curve3D_3cbqg")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="Path3D2"]
+transform = Transform3D(0.0548737, 0, 0.998477, 0, 0.999988, 0, -0.998481, 0, 0.0548735, -0.46, 1, -19.663)
+
 [node name="Path3D" type="Path3D" parent="."]
 curve = SubResource("Curve3D_sc70j")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
-transform = Transform3D(0.012059, 0, -0.999914, 0, 0.999988, 0, 0.999918, 0, 0.012059, 10.3, 3, -32.472)
+transform = Transform3D(0.99951, 0, 0.0309286, 0, 0.999988, 0, -0.0309288, 0, 0.999506, -18.962, 1, -18.214)
 
-[node name="Player" parent="." groups=["Player"] instance=ExtResource("2_r5ah1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.7821, 5.3639, -18.8788)
+[node name="Player" parent="." instance=ExtResource("2_r5ah1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.77491, 3.71851, 11.4041)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_k77qr")
@@ -143,6 +246,15 @@ transform = Transform3D(0.84326, 0.134281, -0.520462, 3.38231e-09, 0.968292, 0.2
 spot_range = 74.3521
 
 [node name="Enemy" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("5_8yhfp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.7636, 5.76454, -23.9483)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.854, 1.74509, -15.4038)
 enemy_resource = SubResource("Resource_2q1f0")
 patrol_path = NodePath("../Path3D")
+
+[node name="Enemy2" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("5_8yhfp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.37683, -19)
+enemy_resource = SubResource("Resource_frqbv")
+patrol_path = NodePath("../Path3D2")
+
+[node name="Enemy3" parent="." instance=ExtResource("5_8yhfp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.64719, 4.08214, -14.8412)
+enemy_resource = SubResource("Resource_tkpqr")

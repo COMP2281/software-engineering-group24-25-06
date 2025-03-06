@@ -61,8 +61,7 @@ func physics_update(delta: float) -> void:
 	# If we don't have a patrol path, don't calculate it
 	if not enemy.patrol_path: return
 
-	print("Distance to target: ", enemy.navigation_agent_3d.distance_to_target())
-	if enemy.navigation_agent_3d.distance_to_target() < 3.0:
-		print("Setting new destination?")
+	# TODO: don't use a constant if possible
+	if enemy.navigation_agent_3d.distance_to_target() < 2.0:
 		enemy.patrol_path.get_child(0).progress += enemy.current_speed * delta * 2
 		enemy.set_destination(enemy.patrol_path.get_child(0).global_position)

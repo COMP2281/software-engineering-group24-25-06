@@ -94,8 +94,6 @@ func in_detection_range(player_position: Vector3) -> DetectionManifold:
 	if relative_direction_angle > view_fov or manifold.distance > view_radius:
 		return manifold
 		
-	print("In viewzone!")
-	
 	# Send a raycast to see if there's something blocking our view of the player
 	var space_state := get_world_3d().direct_space_state
 	# TODO: read some proper value for the mask ("1"), instead of magic number

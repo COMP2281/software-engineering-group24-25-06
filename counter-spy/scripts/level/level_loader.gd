@@ -19,12 +19,13 @@ func entered_from_encounter(data: Dictionary) -> void:
 	enemy.die()
 	
 func load_level(level_name) -> void:
-	# If a different level was loaded
-	if loaded_level != null and loaded_level_name != level_name:
+	# If attempting to load the same level, return
+	if loaded_level != null and loaded_level_name == level_name: return
+		
+	if loaded_level != null:
 		remove_child(loaded_level)
 		loaded_level.queue_free()
-		loaded_level = null
-		
+	
 	var packed_scene := load(level_name)
 	loaded_level_name = level_name
 	loaded_level = packed_scene.instantiate()

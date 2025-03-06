@@ -27,7 +27,7 @@ func get_scene_enum(scene: String) -> SceneType.Name:
 	# Default to mission scene
 	return SceneType.Name.MISSION
 
-func log_scene_change(scene: SceneType.Name, metadata: Dictionary) -> void:
+func log_scene_change(scene: SceneType.Name, _metadata: Dictionary) -> void:
 	print("Scene transition to ", scene, " named ", get_scene_name(scene))
 
 func _process(_delta: float) -> void:
