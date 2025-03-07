@@ -45,11 +45,17 @@ func set_destination(destination: Vector3) -> void:
 	if destination == Vector3.INF: return
 	
 	# TODO: also ignore call if made before first map synchronisation
-	
 	var closest_point: Vector3 = NavigationServer3D.map_get_closest_point(
 		navigation_agent_3d.get_navigation_map(),
 		destination
 	)
+	
+	# TODO: better system
+	#	currently just tries to path to 0,0 immediately
+	if closest_point == Vector3.ZERO:
+		navigation_agent_3d.set_target_position(global_position)
+		return
+	
 	navigation_agent_3d.set_target_position(closest_point)
 
 func _process(delta: float) -> void:
@@ -66,7 +72,7 @@ func _process(delta: float) -> void:
 	# Check if we should begin battle
 	var player_distance: float = (StealthManager.player_position - global_position).length()
 	
-	if currently_seeing_player and player_distance < enemy_resource.battle_begin_proximity and suspicion_level == 1.0:
+	if currently_seeing_player and player_distance < enemy_resource.battle_begin_proximity and suspicion_level > 0.95:
 		# TODO: pass whatever additional data required
 		#	what enemy took us to combat, etc.
 		# TODO: very temporary, just make it so we can transition back to this scene

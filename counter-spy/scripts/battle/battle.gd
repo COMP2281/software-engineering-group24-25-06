@@ -51,6 +51,7 @@ func prepare_enter() -> void:
 	
 func prepare_exit() -> void:
 	$CanvasLayer.hide()
+	
 	if $Camera3D.current:
 		$Camera3D.clear_current(true)
 
