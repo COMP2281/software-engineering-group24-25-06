@@ -29,7 +29,7 @@ func _on_request_completed(result, response_code, headers, body):
 func _on_LineEdit_text_entered(text):
 	print("Typed message: ", text)
 	
-	var url = "http://127.0.0.1:8000/"
+	var url = "http://127.0.0.1:8000/" #"http://ai_int.skyecarroll.com"
 	var headers = ["Content-Type: application/json"]
 	var json_data = JSON.stringify({"content": text})
 	
@@ -55,6 +55,6 @@ func _input(event):
 		$DisplayBoardText.modulate = Color.BLACK
 
 func _on_button_pressed():
-	var url = "http://127.0.0.1:8000/"
+	var url = "http://127.0.0.1:8000/" #"http://ai_int.skyecarroll.com"
 	var headers = ["Content-Type: application/json"]
 	http_request.request(url, headers, HTTPClient.METHOD_GET)

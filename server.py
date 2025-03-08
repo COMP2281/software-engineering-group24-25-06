@@ -1,8 +1,10 @@
 from fastapi import FastAPI, requests
 from fastapi.middleware.cors import CORSMiddleware
+from AI_MODEL import answering
 from pydantic import BaseModel
 from typing import Union, Any
 import uvicorn
+
 
 #Built on async patterns, works well with Uvicron to serve 😩 (ASGI server)
 #Dont have to manually jsonify the response, FastAPI automaticaally handles the conversion of Python dictionaries to JSON responses.
@@ -48,7 +50,9 @@ async def receive_message(data: MessageData):
     print(f"Received message: {data.content}")
     content = data.content
 
-    return { "status": "success", "received": content }
+    ai_response = answering(content)
+
+    return { "status": "success", "received": ai_response}
 
 if __name__ == "__main__":
     print("Starting server")

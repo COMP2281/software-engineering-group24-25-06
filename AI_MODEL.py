@@ -24,11 +24,11 @@ from pymongo import MongoClient
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url": "https://eu-gb.ml.cloud.ibm.com",
-    "apikey": "JOzHijjg6zn8G9hfkZxY34kJ_jHTXo4pzFLAjoTnzdIw"
+    "url": "https://us-south.ml.cloud.ibm.com",
+    "apikey": os.getenv("WATSONX_APIKEY")
 }
 
-project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
+project_id = os.getenv("WATSONX_PROJECT_ID")
 model_id = "granite3.1-dense"
 
 mongodb_uri = "mongodb+srv://jacob:progprog4@se-project.xg1tx.mongodb.net/?retryWrites=true&w=majority&appName=SE-Project"
@@ -629,6 +629,7 @@ def answering(user_input):
     print('DEBUG : Conversation Summary: ', final_state.values["conversation_summary"])
     
     print('AI:', assistant_response)
+    return assistant_response
 
 # png_data = graph.get_graph().draw_mermaid_png()
 
@@ -637,10 +638,11 @@ def answering(user_input):
 #     f.write(png_data)
 
 # Start chatbot loop
-print("Start chatting with the AI! Type '!exit' to quit.")
-while True:
-    query = input("You: ")
-    if query.lower() == "!exit":
-        print("Byebye")
-        break
-    answering(query)
+if __name__ == "__main__":
+    print("Start chatting with the AI! Type '!exit' to quit.")
+    while True:
+        query = input("You: ")
+        if query.lower() == "!exit":
+            print("Byebye")
+            break
+        answering(query)
