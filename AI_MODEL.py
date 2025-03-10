@@ -24,11 +24,11 @@ from pymongo import MongoClient
 #EU = "https://eu-gb.ml.cloud.ibm.com"
 #NA = "https://us-south.ml.cloud.ibm.com"
 credentials = {
-    "url": "https://us-south.ml.cloud.ibm.com",
-    "apikey": os.getenv("WATSONX_APIKEY")
+    "url": "https://eu-gb.ml.cloud.ibm.com",
+    "apikey": "JOzHijjg6zn8G9hfkZxY34kJ_jHTXo4pzFLAjoTnzdIw"
 }
 
-project_id = os.getenv("WATSONX_PROJECT_ID")
+project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
 model_id = "granite3.1-dense"
 
 mongodb_uri = "mongodb+srv://jacob:progprog4@se-project.xg1tx.mongodb.net/?retryWrites=true&w=majority&appName=SE-Project"
@@ -96,33 +96,62 @@ def save_user_profile(profile: UserProfile):
 
     return result.acknowledged
 
+
 missions = {
     "Silent Strike": {
-        "description": "Eliminate 10 high-value targets and extract encrypted intel from the vault.",
+        "name": "Silent Strike",
+        "description": "Retrieve the security key from the back of the warehouse, and escape from the large hatch.",
         "objectives": [
-            "Neutralize all 10 targets.",
-            "Retrieve the encryption keys.",
-            "Evade enemy detection."
+            "Evade enemy detection",
+            "Retrieve the security key",
+            "Optionally neutralize the 3 enemy targets"
         ],
-        "keywords": ["Cyber Security", "Security", "Encryption"]
+        "setting": "An abandoned warehouse, full of advanced technology beyond your comprehension",
+        "topic": "AI",
+        "keywords": ["stealth", "security", "encryption", "covert ops"],
+        "enemyList": [
+            {"name": "Cpt. Sniper", "weakness": "fire", "enemyID": 0},
+            {"name": "James Scout", "weakness": "water", "enemyID": 1},
+            {"name": "Grunty Grunt", "weakness": "plant", "enemyID": 2}
+        ]
     },
     "Cyber Heist": {
+        "name": "Cyber Heist",
         "description": "Infiltrate the mainframe, extract classified documents, and escape unnoticed.",
         "objectives": [
-            "Hack the bank's security system.",
-            "Download confidential files.",
-            "Exit through the safehouse."
+            "Hack into the bank's security system",
+            "Download confidential files",
+            "Exit through the safehouse undetected"
+        ],
+        "setting": "A high-security financial district, crawling with guards and security drones",
+        "topic": "Cybersecurity",
+        "keywords": ["hacking", "encryption", "data breach", "cybersecurity"],
+        "enemyList": [
+            {"name": "Mr. Firewall", "weakness": "brute force attack", "enemyID": 0},
+            {"name": "Intrusion Guard", "weakness": "social engineering", "enemyID": 1},
+            {"name": "Silent Tracker", "weakness": "stealth bypass", "enemyID": 2}
         ]
     },
     "Operation Blackout": {
+        "name": "Operation Blackout",
         "description": "Disable the city’s power grid to create a diversion for your team’s entry.",
         "objectives": [
-            "Locate the power station control room.",
-            "Disable critical generators.",
-            "Escape before the backup systems activate."
+            "Locate the power station control room",
+            "Disable critical generators",
+            "Escape before the backup systems activate"
+        ],
+        "setting": "An underground power facility surrounded by elite security forces",
+        "topic": "Infrastructure Security",
+        "keywords": ["power grid", "electrical systems", "EMP", "infrastructure hacking"],
+        "enemyList": [
+            {"name": "Voltage Viper", "weakness": "EMP attacks", "enemyID": 0},
+            {"name": "Grid Guardian", "weakness": "short-circuiting", "enemyID": 1},
+            {"name": "Power Phantom", "weakness": "darkness and stealth", "enemyID": 2}
         ]
     }
 }
+
+
 
 ## --- Mission Selection --- ##
 ## ------------------------- ##
@@ -252,6 +281,9 @@ def summarize_conversation(state: "State"):
         Extend the summary by taking into account the latest messages given to you above.
         
         Create a concise summary that accurately captures the key points of this conversation.
+
+        Focus on recording the most important details mentioned by the user.
+        
         DO NOT include any information that wasn't explicitly mentioned in the conversation.
         """
     else:
@@ -260,6 +292,8 @@ def summarize_conversation(state: "State"):
 
         DO NOT include any information that wasn't explicitly mentioned in the conversation.
         DO NOT speculate about the nature of the conversation or mention anything about AI models.
+
+        Make sure to record any details mentioned by the user
         """
 
     # Generate the new summary
@@ -288,8 +322,24 @@ def chatbot(state: "State"):
 
     user_input = state["messages"][-1].content
 
+    mission_name = state.get("mission_name", "Silent Strike")  # Retrieve mission name
+    mission_description = missions[mission_name].get("description", "No description found")
+    mission_setting = missions[mission_name].get("setting", "No setting found")
+    mission_objectives = missions[mission_name].get("objectives", ["No objectives found"])
+    mission_enemies = missions[mission_name].get("enemyList", [])
+
+    enemy_info = "\n".join([f"💀 {enemy['name']} (Weakness: {enemy['weakness']})" for enemy in mission_enemies])
+    mission_context = {
+        "name": mission_name,
+        "description": mission_description,
+        "setting": mission_setting,
+        "objectives": "\n".join([f"🎯 {objective}" for objective in mission_objectives]),
+        "enemies": enemy_info
+    }
+
     conversation_summary = state.get("conversation_summary", "")
     summary_prefix = ""
+
     if conversation_summary:
         summary_prefix = f"""
         Previous Conversation Summary:
@@ -298,9 +348,11 @@ def chatbot(state: "State"):
 
     system_message = f"""
     {summary_prefix}
+    {mission_context}
 
     You are BONSAI, a highly classified, AI-powered field companion.
     Your protocols dictate that you provide mission intel, strategic insights, and top-tier banter.
+    Your responses but be short and precise with a touch of humor. Dont make them lengthy
 
     These are example responses you can use as guidance:
     - "Greetings Agent, I detect a 98% probability you need my expertise. What's the mission?"
@@ -392,7 +444,14 @@ def answer_checker(state: "State"):
     User Input: {user_input}
     """
 
+    # clear summary so it can answer properly
+
+    stored_summary = state.get("conversation_summary", "")
+    state["conversation_summary"] = ""
+
     response = model.invoke(extraction_prompt).strip()
+
+    state["conversation_summary"] = stored_summary
 
     print("\nDEBUG: Extracted answer:", response)  # Debugging Line
         
@@ -408,20 +467,22 @@ def answer_checker(state: "State"):
             "correct_answer": ""
         }
 
-    is_correct = response.lower() == correct_answer.lower()
+    extracted_ans = model.invoke(extraction_prompt).strip().upper()
+    is_correct = extracted_ans.upper() == correct_answer.upper()
 
     print("\nDEBUG: Correct Answer :", correct_answer)  # Debugging Line
     print("\nDEBUG: is_correct :", is_correct)  # Debugging Line
 
     if is_correct:
         prompt = """
-        The agent got the answer right! Give a short, enthusiastic congratulation.
+        The user's answer is CORRECT. Give a short, enthusiastic congratulation.
         Example:
         - "Correct! Keep it up!"
         - "Nice work! You're on fire!"
         - "Absolutely right! Keep going!"
 
         DO NOT INCLUDE "" around your response as it will be considered as part of the response.
+        DO NOT PROVIDE EXTRA EXPLANATION!!!!!!!!!
         """
 
         feedback = model.invoke(prompt)
@@ -459,7 +520,8 @@ def answer_checker(state: "State"):
     
     else:
         prompt = f"""
-        The Users's answer is incorrect. The correct choice is {correct_answer}.
+        The Users's answer is WRONG!!!!!!!!!!!!!!
+        The correct choice is {correct_answer}.
         Explanation: {choices[ord(correct_answer) - 65]}.
         Keep the response concise. Do **not** add examples or unrelated context.
         """
@@ -485,14 +547,14 @@ def router(state: "State"):
     Return only one word: either 'chatbot', 'database' or 'answerchecker' and nothing else.
 
     Classify as 'database' if:
-    - The user asks for a question.
+    - The user asks for you to give a question.
 
     Classify as 'answerchecker' if:
     - The user provides an answer choice (A, B, C, or D).
     - The user mentions numbers like "1st choice" or "second option."
     - It is clear the user is responding to a question option previously given.
 
-    Classify as 'chatbot' for everything else.
+    Classify as 'chatbot' for everything else. Especially if user asks about anything mission related (setting, objective, enemies)
 
     Examples:
     User: "Give me a question" → database
