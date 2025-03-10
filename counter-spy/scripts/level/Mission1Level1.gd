@@ -11,7 +11,16 @@ func _ready() -> void:
 	SceneTransitionAnimation.play("fade_out_to_level")
 	await $TransitionScreen/AnimationPlayer.animation_finished
 	transition_screen.visible = false
-
+	
+	var level_metadata: LevelMetadata = LevelMetadataLoader.load_level_metadata("res://settings/level/level1.json")
+	
+	# TODO: technically unnecessary, we can set properties in the editor to be the same
+	#	as the level description
+	for enemy_node in get_tree().get_nodes_in_group("enemy"):
+		var id = str(enemy_node.enemy_level_id)
+		enemy_node.enemy_resource.enemy_name = level_metadata.enemies_by_id[id].name
+		enemy_node.enemy_resource.weakness = level_metadata.enemies_by_id[id].weakness
+		
 func prepare_enter() -> void:
 	$Player.show_ui()
 	

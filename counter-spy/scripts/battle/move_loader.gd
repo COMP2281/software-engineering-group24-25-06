@@ -1,26 +1,26 @@
 extends Node
 
-var loadedMoves : Array[Move]
-var movesByType : Dictionary
+var loaded_moves : Array[Move]
+var moves_by_type : Dictionary
 var rng : RandomNumberGenerator = RandomNumberGenerator.new()
 
 func _ready() -> void:
-	var movesDict = JSON.parse_string(FileAccess.get_file_as_string("res://settings/moves/moves.json"))
-	var movesList = movesDict["moves"]
+	var moves_dict = JSON.parse_string(FileAccess.get_file_as_string("res://settings/moves/moves.json"))
+	var moves_list = moves_dict["moves"]
 	
-	for move in movesList:
-		var moveObject : Move = Move.new()
-		moveObject.name = move["moveName"]
-		moveObject.type = move["type"]
-		moveObject.difficulty = move["difficulty"]
-		moveObject.damage = move["damage"]
+	for move in moves_list:
+		var move_object : Move = Move.new()
+		move_object.name = move["moveName"]
+		move_object.type = move["type"]
+		move_object.difficulty = move["difficulty"]
+		move_object.damage = move["damage"]
 		
-		loadedMoves.append(moveObject)
+		loaded_moves.append(move_object)
 		
-		if moveObject.type not in movesByType:
-			movesByType[moveObject.type] = []
+		if move_object.type not in moves_by_type:
+			moves_by_type[move_object.type] = []
 			
-		movesByType[moveObject.type].append(moveObject)
+		moves_by_type[move_object.type].append(move_object)
 		
 func shuffle(list : Array) -> Array:
 	var out: Array = list.duplicate(false)
@@ -38,18 +38,18 @@ func shuffle(list : Array) -> Array:
 ## NOTE: Might not give all moves if excessive number requested (>20)
 # TODO: should select moves based on weights of ultimates/etc. where possible
 func selectMove(numMoves : int) -> Array[Move]:
-	var selectedMoves: Array[Move] = []
-	var typesToSelect: Array[String] = ["generic", "fire", "water", "plant"]
-	var typesSelected: int = 0;
+	var selected_moves: Array[Move] = []
+	var types_to_select: Array[String] = ["generic", "fire", "water", "plant"]
+	var typed_selected: int = 0;
 	
-	for type in typesToSelect:
-		var movesOfType: Array[Move] = shuffle(movesByType[type]) as Array[Move]
+	for type in types_to_select:
+		var moves_of_type: Array[Move] = shuffle(moves_by_type[type]) as Array[Move]
 		
-		var leftToSelect: int = numMoves - len(selectedMoves)
-		var selectFromType: int = leftToSelect / (len(typesToSelect) / typesSelected)
-		typesSelected += 1
+		var left_to_select: int = numMoves - len(selected_moves)
+		var select_from_type: int = left_to_select / (len(types_to_select) / typed_selected)
+		typed_selected += 1
 		
-		for i in range(min(selectFromType, len(movesOfType))):
-			selectedMoves.append(movesOfType[i])
+		for i in range(min(select_from_type, len(moves_of_type))):
+			selected_moves.append(moves_of_type[i])
 		
-	return selectedMoves
+	return selected_moves

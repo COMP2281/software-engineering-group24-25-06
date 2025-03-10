@@ -1,0 +1,21 @@
+{
+	"setting": "An abandoned warehouse, full of advanced technology beyond your comprehension",
+	"topic": "AI",
+	"enemyList": [
+		{
+			"name": "Cpt. Sniper",
+			"weakness": "fire",
+			"enemyID": 0
+		},
+		{
+			"name": "James Scout",
+			"weakness": "water",
+			"enemyID": 1
+		},
+		{
+			"name": "Grunty Grunt",
+			"weakness": "plant",
+			"enemyID": 2
+		}
+	]
+}

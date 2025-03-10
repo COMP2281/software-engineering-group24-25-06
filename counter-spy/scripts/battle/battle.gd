@@ -258,7 +258,7 @@ func game_over(player_won: bool) -> void:
 	# TODO: Timer after victory (probably should be some animation that plays that we await?)
 	await get_tree().create_timer(1.0).timeout
 	
-	SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought })
+	SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought, "reset_level": not player_won })
 
 func _on_player_health_changed(new_health: float):
 	player_health.value = new_health

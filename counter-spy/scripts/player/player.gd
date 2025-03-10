@@ -6,27 +6,25 @@ class_name Player extends Node3D
 ## The range enemies can hear player movement from
 @export var player_movement_range: float = 5.0
 
-const MOVEMENT_EPSILON: float = 0.1;
 const SNEAKING_SCALE: float = 0.75
+const MOVEMENT_EPSILON: float = 0.1;
 
 # TODO: rename
 func hide_ui():
-	$SuspicionView.hide()
-	$AlertIndicator.hide()
+	$CanvasLayer.hide()
 	
 	if $ProtoController3P.camera.current:
 		$ProtoController3P.camera.clear_current(true)
 	
 func show_ui():
-	$SuspicionView.show()
-	$AlertIndicator.show()
+	$CanvasLayer.show()
 	
 	$ProtoController3P.camera.make_current()
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	StealthManager.player_position = $ProtoController3P.global_position
 	
 	# Advanced sneaking model
