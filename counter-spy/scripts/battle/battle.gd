@@ -19,6 +19,9 @@ var current_attack: String = ""
 var enemy_being_fought: Enemy = null
 var current_question: Question = null
 
+var attack_multiplier: float = 1.0
+var attack_boost_turns_remaining: int = 0
+
 #ADDING TEMP ITEM
 var player_items = {
 	"Health Potion": {"count": 3, "heal_amount": 30},
@@ -85,28 +88,24 @@ func _on_answer_selected(answer: int) -> void:
 	
 	if correct:
 		match current_attack:
-			"ATTACK1":
+			"ATTACK":
 				execute_attack(10)
 			"ATTACK2":
 				execute_attack(20)
 			"ATTACK3":
 				execute_attack(30)
-			"WEAKNESS":
-				reveal_weakness()
 	else:
 		start_enemy_turn()
 
 # TODO(minor): should be enum
 func _on_option_selected(option: String) -> void:
 	match option:
-		"ATTACK1", "ATTACK2", "ATTACK3":
+		"ATTACK", "ATTACK2", "ATTACK3":
 			current_attack = option
 			show_question_for_action()
-		"ITEM":
+		"ITEMS":
 			show_items()
-		"WEAKNESS":
-			current_attack = "WEAKNESS"
-			show_question_for_action()
+
 
 func show_question_for_action() -> void:
 	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_AI, 0.5)
@@ -123,6 +122,8 @@ func execute_attack(damage: float = 15.0) -> void:
 	start_enemy_turn()
 	
 func show_items() -> void:
+	print("Showing items")
+	
 	var item_panel = $CanvasLayer/UI/Itempanel
 	var item_list = $CanvasLayer/UI/Itempanel/Itemlist
 	
@@ -168,38 +169,14 @@ func use_item(item_name: String) -> void:
 			player.health_change.emit(player_health_value)
 			item.count -= 1
 		"Attack Boost":
-			# Implement attack boost logic
+			attack_multiplier = item.boost_amount
+			attack_boost_turns_remaining = 3
 			item.count -= 1
+			print("Used Attack Boost, attacks increased by ", attack_multiplier, " for ", attack_boost_turns_remaining, " turns")
+
 
 	$CanvasLayer/UI/Itempanel.hide()
 	battle_menu.show_menu()
-	
-func reveal_weakness() -> void:
-	var weakness_panel = $CanvasLayer/UI/Weaknesspanel
-	var weakness_list = $CanvasLayer/UI/Weaknesspanel/Weaknesslist
-	for child in weakness_list.get_children():
-		child.queue_free()
-	
-	#TEMPORARY WEAKNESS IMPLEMENTATION
-	var weaknesses = enemy.enemy_resource.weaknesses if enemy.enemy_resource.has("weaknesses") else {
-		"fire": true,
-		"water": false,
-		"earth": false,
-	}
-	
-	for type in weaknesses:
-		var label = Label.new()
-		var is_weak = weaknesses[type]
-		label.text = type.capitalize() + ": " + ("WEAK" if is_weak else "Resist")
-		label.add_theme_color_override("font_color", 
-		Color(1, 0, 0) if is_weak else Color(0, 1, 0))
-		weakness_list.add_child(label)
-	weakness_panel.show()
-	
-	# Auto-hide after 2 seconds
-	await get_tree().create_timer(2.0).timeout
-	weakness_panel.hide()
-	start_enemy_turn()
 
 func start_enemy_turn() -> void:
 	await get_tree().create_timer(1.0).timeout

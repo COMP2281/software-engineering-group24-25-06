@@ -2,7 +2,7 @@ extends Control
 
 signal option_selected(option)
 
-var options = ["ATTACK", "ATTACK3", "ITEMS", "ATTACK2", "WEAKNESS"]
+var options = ["ATTACK", "ATTACK3", "ITEMS", "ATTACK2"]
 var menu_visible = false
 var selected_index = 0
 var buttons = []  # Store button references
@@ -96,5 +96,5 @@ func hide_menu():
 	hide()
 
 func _on_option_pressed(index):
-	var options = ["ATTACK", "ATTACK3", "ITEMS", "ATTACK2", "WEAKNESS"]
+	var options = ["ATTACK", "ATTACK3", "ITEMS", "ATTACK2"]
 	emit_signal("option_selected", options[index])
