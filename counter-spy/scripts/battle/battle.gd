@@ -7,6 +7,7 @@ class_name EncounterNode extends Node3D
 @onready var battle_menu = $CanvasLayer/UI/Battlemenu
 @onready var question_panel = $CanvasLayer/UI/Questionpanel
 @onready var ui = $CanvasLayer/UI
+@onready var move_loader = $Moveloader
 
 var player_health_value: float = 0.0
 var enemy_health_value: float = 0.0
@@ -14,10 +15,15 @@ var enemy_max_health: float = 0.0
 # If the player is defending
 var player_defense: bool = false
 var current_turn: String = "player"
-var current_attack: String = ""
+var current_attack = null
 
 var enemy_being_fought: Enemy = null
 var current_question: Question = null
+
+var attack_multiplier: float = 1.0
+var attack_boost_turns_remaining: int = 0
+
+var current_attack_option: Array[Move] = []
 
 #ADDING TEMP ITEM
 var player_items = {
@@ -78,36 +84,67 @@ func setup_battle() -> void:
 		$CanvasLayer/UI/Weaknesspanel.hide()
 	
 func start_turn() -> void:
+	if attack_boost_turns_remaining > 0:
+		attack_boost_turns_remaining = -1
+		print("Attack boost: ", attack_boost_turns_remaining, " turns remaining")
+	
+		if attack_boost_turns_remaining <= 0:
+			attack_multiplier = 1.0
+			print("Attack boost has worn off")
+			
+	select_random_attack_options()
+	
 	battle_menu.show_menu()
+
+func select_random_attack_options() -> void:
+	current_attack_option = move_loader.selectMove(3)
+	
+	update_battle_menu_options()
+	
+func update_battle_menu_options() -> void:
+	
+	var options = []
+	
+	for i in range(3):
+		if i < current_attack_option.size():
+			var move = current_attack_option[i]
+			options.append(move.name + " (" + str(move.damage) + " " + move.type + ")")
+		else:
+			options.append("ATTACK" + str(i + 1))
+			
+	options.append("ITEMS")
+	
+	battle_menu.update_options(options)
 
 ## Given an answer index 1-4, check if answer is correct
 func _on_answer_selected(answer: int) -> void:
 	var correct: bool = QuestionSelector.markQuestion(current_question, [answer])
 	
 	if correct:
-		match current_attack:
-			"ATTACK1":
-				execute_attack(10)
-			"ATTACK2":
-				execute_attack(20)
-			"ATTACK3":
-				execute_attack(30)
-			"WEAKNESS":
-				reveal_weakness()
+		if typeof(current_attack) == TYPE_OBJECT:
+			execute_attack(current_attack.damage)
 	else:
 		start_enemy_turn()
 
 # TODO(minor): should be enum
 func _on_option_selected(option: String) -> void:
-	match option:
-		"ATTACK1", "ATTACK2", "ATTACK3":
-			current_attack = option
+	var move_name = option
+	var damage_start = option.find("(")
+	if damage_start != -1:
+		move_name = option.substr(0, damage_start)
+		
+	for move in current_attack_option:
+		if move.name == move_name:
+			current_attack = move
 			show_question_for_action()
-		"ITEM":
-			show_items()
-		"WEAKNESS":
-			current_attack = "WEAKNESS"
-			show_question_for_action()
+			return
+		
+	if option == "ITEMS":
+		show_items()
+		
+	else:
+		print("Error: cant find move")
+
 
 func show_question_for_action() -> void:
 	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_AI, 0.5)
@@ -119,11 +156,18 @@ func show_question_for_action() -> void:
 
 func execute_attack(damage: float = 15.0) -> void:
 	# TODO: should read out value from move settings/list
-	apply_damage_to_enemy(damage)
+	var boosted_damage = damage * attack_multiplier
+	apply_damage_to_enemy(boosted_damage)
+	
+	if attack_multiplier > 1.0:
+		print("Attack boosted! Dealt ", boosted_damage, " damage instead of", damage)
+
 	battle_menu.hide_menu()
 	start_enemy_turn()
 	
 func show_items() -> void:
+	print("Showing items")
+	
 	var item_panel = $CanvasLayer/UI/Itempanel
 	var item_list = $CanvasLayer/UI/Itempanel/Itemlist
 	
@@ -169,38 +213,14 @@ func use_item(item_name: String) -> void:
 			player.health_change.emit(player_health_value)
 			item.count -= 1
 		"Attack Boost":
-			# Implement attack boost logic
+			attack_multiplier = item.boost_amount
+			attack_boost_turns_remaining = 3
 			item.count -= 1
+			print("Used Attack Boost, attacks increased by ", attack_multiplier, " for ", attack_boost_turns_remaining, " turns")
+
 
 	$CanvasLayer/UI/Itempanel.hide()
 	battle_menu.show_menu()
-	
-func reveal_weakness() -> void:
-	var weakness_panel = $CanvasLayer/UI/Weaknesspanel
-	var weakness_list = $CanvasLayer/UI/Weaknesspanel/Weaknesslist
-	for child in weakness_list.get_children():
-		child.queue_free()
-	
-	#TEMPORARY WEAKNESS IMPLEMENTATION
-	var weaknesses = enemy.enemy_resource.weaknesses if enemy.enemy_resource.has("weaknesses") else {
-		"fire": true,
-		"water": false,
-		"earth": false,
-	}
-	
-	for type in weaknesses:
-		var label = Label.new()
-		var is_weak = weaknesses[type]
-		label.text = type.capitalize() + ": " + ("WEAK" if is_weak else "Resist")
-		label.add_theme_color_override("font_color", 
-		Color(1, 0, 0) if is_weak else Color(0, 1, 0))
-		weakness_list.add_child(label)
-	weakness_panel.show()
-	
-	# Auto-hide after 2 seconds
-	await get_tree().create_timer(2.0).timeout
-	weakness_panel.hide()
-	start_enemy_turn()
 
 func start_enemy_turn() -> void:
 	await get_tree().create_timer(1.0).timeout
