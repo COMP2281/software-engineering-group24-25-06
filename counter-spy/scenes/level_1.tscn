@@ -10,7 +10,7 @@
 [node name="Level1" type="Node3D"]
 script = ExtResource("1_qlc8u")
 
-[node name="Level1" type="StaticBody3D" parent="." instance=ExtResource("1_osymi")]
+[node name="Level1" parent="." instance=ExtResource("1_osymi")]
 
 [node name="ProtoController" parent="." instance=ExtResource("2_4q1tt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.22161, 3.0646, 10.6769)

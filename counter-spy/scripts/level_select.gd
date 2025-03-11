@@ -6,7 +6,7 @@ var lvl1 = preload("res://scenes/level_1.tscn")
 
 @export var area: Area3D
 
-@onready var tooltip = $"../LevelSelectionArea/Tooltip" # Adjust this path if needed
+@onready var tooltip = $"../../LevelSelectionArea/Tooltip" # Adjust this path if needed
 
 func _ready():
 	$AnimationPlayer.play('RESET')
