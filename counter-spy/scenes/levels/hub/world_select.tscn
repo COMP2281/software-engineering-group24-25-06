@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://sxwm712fxj0e"]
 
 [ext_resource type="Script" path="res://Scripts/world_select.gd" id="1_vvqx2"]
-[ext_resource type="PackedScene" uid="uid://c8lj4bah1i8a0" path="res://Scenes/ProgressTracking/cyber_security.tscn" id="2_rxjkf"]
-[ext_resource type="PackedScene" uid="uid://b7sfm2q3v08v3" path="res://Scenes/level_1.tscn" id="3_dqr3s"]
+[ext_resource type="PackedScene" path="res://Scenes/ProgressTracking/cyber_security.tscn" id="2_rxjkf"]
+[ext_resource type="PackedScene" uid="uid://2vcswfkcqgta" path="res://scenes/levels/mission1/level_1.tscn" id="3_dqr3s"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7bsfj"]
 

@@ -26,6 +26,7 @@ LevelMetadataLoader="*res://scripts/utility/level_metadata_loader.gd"
 [global_group]
 
 Player=""
+security_cameras=""
 
 [input]
 

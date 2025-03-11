@@ -1,5 +1,13 @@
 {
+	"name": "Silent Strike",
+	"description": "Retrieve the security key from the back of the warehouse, and escape from the large hatch",
+	"objectives": [
+		"Evade enemy detection",
+		"Retrieve the security key",
+		"Optionally neutralise the 3 enemy targets"
+	],
 	"setting": "An abandoned warehouse, full of advanced technology beyond your comprehension",
+	"keywords": ["Artifical Intelligence", "AI", "Machine Learning"],
 	"topic": "AI",
 	"enemyList": [
 		{

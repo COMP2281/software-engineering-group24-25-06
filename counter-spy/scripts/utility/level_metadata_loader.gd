@@ -5,6 +5,15 @@ func load_level_metadata(metadata_path: String) -> LevelMetadata:
 	# TODO: level data loading should be abstracted to a script
 	var level_dict = JSON.parse_string(FileAccess.get_file_as_string(metadata_path))
 	var level_metadata: LevelMetadata = LevelMetadata.new()
+	level_metadata.description = level_dict["description"]
+	level_metadata.name = level_dict["name"]
+	level_metadata.objectives = []
+	level_metadata.keywords = []
+	for objective in level_dict["objectives"]:
+		level_metadata.objectives.append(objective as String)
+	for keyword in level_dict["keywords"]:
+		level_metadata.keywords.append(keyword as String)
+	
 	level_metadata.setting = level_dict["setting"]
 	level_metadata.topic = level_dict["topic"]
 	

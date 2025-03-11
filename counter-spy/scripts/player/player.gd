@@ -47,6 +47,21 @@ func _process(delta: float) -> void:
 		
 		if result:
 			StealthManager.player_makes_sound(result.position, coin_toss_range)
+			
+	# Check if facing any security cameras
+	for cam in get_tree().get_nodes_in_group("security_cameras"):
+		var security_camera: SecurityCamera = cam as SecurityCamera
+		
+		# TODO: get player to send raycast to camera
+		# Send a raycast to see if there's something blocking our view of the player
+		var space_state := get_world_3d().direct_space_state
+		# TODO: read some proper value for the mask ("1"), instead of magic number
+		var query := PhysicsRayQueryParameters3D.create($ProtoController3P.global_position, security_camera.position, 1)
+		query.collide_with_areas = true
+	
+		var result := space_state.intersect_ray(query)
+		
+		print(result)
 	
 func _physics_process(_delta: float):
 	# If the player is moving (check velocity vector if of non-zero length)
