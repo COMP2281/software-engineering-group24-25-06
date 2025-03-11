@@ -10,6 +10,8 @@ var is_inside_completion_area = false  # Flag to track if the player is inside t
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	world_menu.visible = false
+	cyber_menu.visible = false
 	transition_screen.visible = true
 	update_blocks()
 	var color_rect = $TransitionScreen/ColorRect  # Adjust path as needed
@@ -21,8 +23,7 @@ func _ready() -> void:
 	
 	#world_completions_label.visible = false
 	
-	world_menu.visible = false
-	cyber_menu.visible = false
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
