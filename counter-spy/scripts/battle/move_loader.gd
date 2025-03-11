@@ -43,10 +43,14 @@ func selectMove(numMoves : int) -> Array[Move]:
 	var typesSelected: int = 0;
 	
 	for type in typesToSelect:
-		var movesOfType: Array[Move] = shuffle(movesByType[type]) as Array[Move]
+		var movesOfType = shuffle(movesByType[type])
 		
 		var leftToSelect: int = numMoves - len(selectedMoves)
-		var selectFromType: int = leftToSelect / (len(typesToSelect) / typesSelected)
+		var selectFromType: int
+		if typesSelected > 0:
+			selectFromType = leftToSelect / (len(typesToSelect) / typesSelected)
+		else:
+			selectFromType = leftToSelect
 		typesSelected += 1
 		
 		for i in range(min(selectFromType, len(movesOfType))):
