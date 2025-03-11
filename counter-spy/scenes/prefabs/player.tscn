@@ -13,13 +13,9 @@ script = ExtResource("1_m78fg")
 collision_layer = 2
 collision_mask = 5
 
-[node name="SuspicionView" parent="." instance=ExtResource("2_uw33c")]
-visible = false
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="AlertIndicator" parent="." instance=ExtResource("3_afela")]
-visible = false
-offset_left = 395.0
-offset_top = 2.0
-offset_right = 395.0
-offset_bottom = 2.0
+[node name="AlertIndicator" parent="CanvasLayer" instance=ExtResource("3_afela")]
 script = ExtResource("4_f7gb4")
+
+[node name="SuspicionView" parent="CanvasLayer" instance=ExtResource("2_uw33c")]

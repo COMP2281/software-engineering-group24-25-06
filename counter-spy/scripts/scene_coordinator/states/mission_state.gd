@@ -8,8 +8,13 @@ func _ready() -> void:
 	child_scene = get_tree().get_first_node_in_group("mission_group")
 	
 func enter(previous_state_path: String, data := {}) -> void:
-	# TODO: for whatever fucked up reason, state machine is doign this shit
-	child_scene.load_level("res://scenes/levels/mission1/level_1.tscn")
+	if data != {}:
+		if data["reset_level"] == true:
+			child_scene.reset_level()
+		else:
+			child_scene.load_level("res://scenes/levels/mission1/level_1.tscn")
+	else:
+		child_scene.load_level("res://scenes/levels/mission1/level_1.tscn")
 	
 	# We expect the data passed to contain the "enemy_defeated field"
 	# TODO: maybe dedicated structures for EncounterToMission (etc.)

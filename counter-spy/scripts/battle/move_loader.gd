@@ -37,16 +37,22 @@ func shuffle(list : Array) -> Array:
 		
 ## NOTE: Might not give all moves if excessive number requested (>20)
 # TODO: should select moves based on weights of ultimates/etc. where possible
+# TODO: select moves on damage instead of randomly on type
+# TODO: always select set amount of attacks?
 func selectMove(numMoves : int) -> Array[Move]:
 	var selectedMoves: Array[Move] = []
 	var typesToSelect: Array[String] = ["generic", "fire", "water", "plant"]
 	var typesSelected: int = 0;
 	
 	for type in typesToSelect:
-		var movesOfType: Array[Move] = shuffle(movesByType[type]) as Array[Move]
+		var movesOfType = shuffle(movesByType[type])
 		
 		var leftToSelect: int = numMoves - len(selectedMoves)
-		var selectFromType: int = leftToSelect / (len(typesToSelect) / typesSelected)
+		var selectFromType: int
+		if typesSelected > 0:
+			selectFromType = leftToSelect / (len(typesToSelect) / typesSelected)
+		else:
+			selectFromType = leftToSelect
 		typesSelected += 1
 		
 		for i in range(min(selectFromType, len(movesOfType))):

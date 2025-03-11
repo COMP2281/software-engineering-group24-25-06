@@ -1,4 +1,4 @@
-extends Node3D
+class_name SecurityCamera extends Node3D
 
 @export var viewzone_resource: ViewzoneResource
 

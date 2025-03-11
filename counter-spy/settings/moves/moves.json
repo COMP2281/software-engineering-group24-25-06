@@ -3,115 +3,115 @@
 		{
 			"moveName": "Throw bug",
 			"damage": 10,
-			"difficulty": 1,
+			"difficulty": 0.2,
 			"type": "plant"
 		},
 		{
 			"moveName": "Protocol poison",
 			"damage": 20,
-			"difficulty": 2,
+			"difficulty": 0.4,
 			"type": "plant"
 		},
 		{
 			"moveName": "Vine deadlock",
 			"damage": 30,
-			"difficulty": 3,
+			"difficulty": 0.6,
 			"type": "plant"
 		},
 		{
 			"moveName": "Heap overgrwoth",
 			"damage": 40,
-			"difficulty": 4,
+			"difficulty": 0.8,
 			"type": "plant"
 		},
 		{
 			"moveName": "Tree of recursive life",
 			"damage": 50,
-			"difficulty": 5,
+			"difficulty": 1.0,
 			"type": "plant"
 		},
 		{
 			"moveName": "Liquid cooling",
 			"damage": 10,
-			"difficulty": 1,
+			"difficulty": 0.2,
 			"type": "water"
 		},
 		{
 			"moveName": "Frozen screen",
 			"damage": 20,
-			"difficulty": 2,
+			"difficulty": 0.4,
 			"type": "water"
 		},
 		{
 			"moveName": "Stack overflow",
 			"damage": 40,
-			"difficulty": 4,
+			"difficulty": 0.6,
 			"type": "water"
 		},
 		{
 			"moveName": "Quantum Wave Function Collapse",
 			"damage": 50,
-			"difficulty": 5,
+			"difficulty": 1.0,
 			"type": "water"
 		},
 		{
 			"moveName": "Thermal throttling",
 			"damage": 10,
-			"difficulty": 1,
+			"difficulty": 0.2,
 			"type": "fire"
 		},
 		{
 			"moveName": "Recursive flame",
 			"damage": 20,
-			"difficulty": 2,
+			"difficulty": 0.4,
 			"type": "fire"
 		},
 		{
 			"moveName": "Firewall breach",
 			"damage": 30,
-			"difficulty": 3,
+			"difficulty": 0.6,
 			"type": "fire"
 		},
 		{
 			"moveName": "AI meltdown",
 			"damage": 40,
-			"difficulty": 4,
+			"difficulty": 0.8,
 			"type": "fire"
 		},
 		{
 			"moveName": "Big O explosion",
 			"damage": 50,
-			"difficulty": 5,
+			"difficulty": 1.0,
 			"type": "fire"
 		},
 		{
 			"moveName": "DoS Dagger",
 			"damage": 10,
-			"difficulty": 1,
+			"difficulty": 0.2,
 			"type": "generic"
 		},
 		{
 			"moveName": "Hash hijack",
 			"damage": 20,
-			"difficulty": 2,
+			"difficulty": 0.4,
 			"type": "generic"
 		},
 		{
 			"moveName": "Catastrophic crack",
 			"damage": 30,
-			"difficulty": 3,
+			"difficulty": 0.6,
 			"type": "generic"
 		},
 		{
 			"moveName": "Kernel krusher",
 			"damage": 40,
-			"difficulty": 4,
+			"difficulty": 0.8,
 			"type": "generic"
 		},
 		{
 			"moveName": "Turing test",
 			"damage": 50,
-			"difficulty": 5,
+			"difficulty": 1.0,
 			"type": "generic"
 		}
 	]

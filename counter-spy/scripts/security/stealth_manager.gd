@@ -13,6 +13,10 @@ var global_alertness_level: float = BASELINE_GLOBAL_ALERTNESS
 var suspicion_level: float = 0.0
 var player_position: Vector3 = Vector3.ZERO
 var stealth_modifier: float = 1.0
+# Whether or not the player can be seen
+var can_be_seen: bool = true
+var player_grace_elapsed: float = 0.0
+const player_grace_period: float = 1.5
 
 var player_observed_position: Vector3 = Vector3.INF
 var player_observed_elapsed: float = 0.0
@@ -31,6 +35,7 @@ var in_encounter: bool = false
 signal change_suspicion_level(new_level: float)
 signal change_stealth_level(new_stealth: float)
 signal change_global_alertness(new_level: float)
+signal set_all_suspicion_level(new_level: float)
 
 func _ready() -> void:
 	# TODO: use anonymous functions/lambdas instead, better
@@ -38,6 +43,7 @@ func _ready() -> void:
 	change_suspicion_level.connect(update_suspicion_level)
 	change_stealth_level.connect(update_stealth_modifier)
 	change_global_alertness.connect(update_global_alertness)
+	set_all_suspicion_level.connect(func(new_level: float): suspicion_level = new_level)
 	
 func observe_player(observed_player_position: Vector3, security_position: Vector3):
 	player_observed_elapsed = 0.0
@@ -72,6 +78,8 @@ func _process(delta: float) -> void:
 	calculate_global_alertness()
 	
 	player_observed_elapsed += delta
+	player_grace_elapsed += delta
+	can_be_seen = player_grace_elapsed > player_grace_period
 	
 	var security: Array[Security] = get_security()
 	if not security: return

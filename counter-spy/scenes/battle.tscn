@@ -1,15 +1,16 @@
-[gd_scene load_steps=16 format=3 uid="uid://c7f4ajlxoh1vx"]
+[gd_scene load_steps=17 format=3 uid="uid://c7f4ajlxoh1vx"]
 
 [ext_resource type="Script" path="res://scripts/battle/battle.gd" id="1_w45sv"]
 [ext_resource type="Script" path="res://scripts/battle/camera.gd" id="2_3jjtx"]
 [ext_resource type="Script" path="res://scripts/enemy/ui.gd" id="3_wuvo2"]
 [ext_resource type="Script" path="res://scripts/battle/questionpanel.gd" id="4_1c0xn"]
-[ext_resource type="Texture2D" uid="uid://bb2inajn643ld" path="res://images/matrix_image.png" id="4_qea6b"]
+[ext_resource type="Texture2D" uid="uid://bxvondkoi4cf5" path="res://images/matrix_image.png" id="4_qea6b"]
 [ext_resource type="Script" path="res://scripts/battle/battlemenu.gd" id="4_s4v5x"]
 [ext_resource type="Shader" path="res://shaders/lightning.gdshader" id="5_p6kgc"]
 [ext_resource type="Shader" path="res://shaders/battle_bg.gdshader" id="6_4wttv"]
 [ext_resource type="PackedScene" uid="uid://dt6vqsik07l1m" path="res://scenes/enemy.tscn" id="8_203gs"]
 [ext_resource type="PackedScene" uid="uid://djve8htdyo25c" path="res://scenes/player.tscn" id="9_jmbyx"]
+[ext_resource type="Script" path="res://scripts/battle/move_loader.gd" id="11_dl58h"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_h20yi"]
 render_priority = 0
@@ -218,3 +219,6 @@ offset_bottom = 40.0
 [node name="enemy" parent="." instance=ExtResource("8_203gs")]
 
 [node name="player" parent="." instance=ExtResource("9_jmbyx")]
+
+[node name="Moveloader" type="Node" parent="."]
+script = ExtResource("11_dl58h")
