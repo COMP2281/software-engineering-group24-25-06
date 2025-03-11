@@ -11,7 +11,7 @@ class_name EnemyResource extends Resource
 @export var weakness: String = "fire"
 
 @export_group("Behaviour Properties")
-@export var battle_begin_proximity: float = 2.0
+@export var battle_begin_proximity: float = 3.0
 
 @export_subgroup("Movement")
 @export var move_speed: float = 5.0

@@ -2,14 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bypvkny88p5sa"
+uid="uid://b2cbrg3pdorw7"
 path.s3tc="res://.godot/imported/Mission1Level1-v2_Box2_normal.png-2e9017c679a9086f5c0a6f01d09335f2.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
-}
-generator_parameters={
-"md5": "90fa69a96b133374d5e8deba34337991"
 }
 
 [deps]
@@ -27,8 +24,8 @@ compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=1
-roughness/src_normal="res://Assets/Models/Mission1Level1-v2_Box2_normal.png"
+roughness/mode=0
+roughness/src_normal=""
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false

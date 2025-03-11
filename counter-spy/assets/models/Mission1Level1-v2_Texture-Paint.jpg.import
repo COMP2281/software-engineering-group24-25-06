@@ -2,14 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://doj7mn67ikwnn"
+uid="uid://dir5nw5kohade"
 path.s3tc="res://.godot/imported/Mission1Level1-v2_Texture-Paint.jpg-cd77f96522ca5332a7dfa5f2c4f91a2c.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
-}
-generator_parameters={
-"md5": "6b5123f25da02f52f18f12230d45a5b6"
 }
 
 [deps]

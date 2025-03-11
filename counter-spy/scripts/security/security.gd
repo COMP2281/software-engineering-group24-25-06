@@ -42,6 +42,7 @@ func _ready() -> void:
 	await get_parent().ready
 	update_properties(1.0)
 	StealthManager.change_stealth_level.connect(update_properties)
+	StealthManager.set_all_suspicion_level.connect(func(new_level: float): suspicion_level = new_level)
 
 func _process(delta: float) -> void:
 	# Set the view direction each frame since it likely changes every frame
@@ -78,6 +79,9 @@ func in_detection_range(player_position: Vector3) -> DetectionManifold:
 	manifold.being_seen = false
 	manifold.within_close_range = false
 	
+	if not StealthManager.can_be_seen:
+		return manifold
+	
 	# If they're within the close radius
 	if manifold.distance < close_radius:
 		manifold.being_seen = true
@@ -94,8 +98,6 @@ func in_detection_range(player_position: Vector3) -> DetectionManifold:
 	if relative_direction_angle > view_fov or manifold.distance > view_radius:
 		return manifold
 		
-	print("In viewzone!")
-	
 	# Send a raycast to see if there's something blocking our view of the player
 	var space_state := get_world_3d().direct_space_state
 	# TODO: read some proper value for the mask ("1"), instead of magic number
@@ -120,6 +122,9 @@ func process_distraction(location: Vector3, hearing_range: float) -> void:
 		new_distraction.emit(location)
 		
 func guess_player_position() -> Vector3:
+	if not StealthManager.can_be_seen:
+		return Vector3.INF
+	
 	if currently_seeing_player:
 		return StealthManager.player_position
 	

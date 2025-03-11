@@ -13,6 +13,7 @@ enum {
 	TOPIC_LOW_BITS 			= 0x00_FF,
 }
 
+## NOTE: Can use these bits for selecting a specific type of question
 enum {
 	QUESTION_TYPE_SINGLE = 0x01_00,
 	QUESTION_TYPE_MULTIPLE = 0x02_00,
@@ -23,6 +24,7 @@ enum {
 # TODO: should be using packed array so data is contiguous?
 var _seenQuestionIDMap : Array[bool];
 var _answeredCorrectlyQuestionIDMap : Array[bool];
+# TODO: should be serialised? or reset on level
 var _playerSkill : float = 0.5;
 
 # TODO: probably not the best format for storing this table data?
@@ -32,10 +34,14 @@ var _questionTable : Array[TableEntry];
 var _questions : Array[Question];
 var _maxQuestionID : int = 0;
 
+var _rng : RandomNumberGenerator;
+
 const DEFAULT_QUESTION_ANSWER_TIME : float = 10.0;
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	_rng = RandomNumberGenerator.new();
+	
 	var questionsFile := FileAccess.open("res://questions/SkillsBuildQs.csv", FileAccess.READ);
 	
 	# Ignore headers
@@ -213,8 +219,15 @@ func _relativeDifficulty(question : Question) -> float:
 	return clamp(question.difficulty * playerSkillModifier, 0.0, 1.0);
 	
 func _calculateAnsweringTime(_question : Question) -> float:
-	# TODO: generate answering time from relative question difficulty, question length, etc.
-	return DEFAULT_QUESTION_ANSWER_TIME;
+	# Based off the player's perceived difficulty of question
+	# TODO: could be time per word, might be more accurate
+	const timePerCharacter: float = 0.1;
+	var perceivedDifficulty: float = _relativeDifficulty(_question);
+	
+	var baselineTime: float = timePerCharacter * len(_question.text);
+	baselineTime *= (perceivedDifficulty + 0.5);
+	
+	return baselineTime;
 	
 # Given a certain topic, and requesting a certain difficulty of question [0..1],
 #	try to find the most appropriate question
@@ -226,6 +239,8 @@ func selectQuestion(topicMask : int, requestedDifficulty : float) -> Question:
 	const totalWeight : float = topicMatchingWeight + seenWeight + difficultyWeight;
 	const inverseTotalWeight : float = 1.0 / totalWeight;
 	
+	const randomVariance : float = 0.2;
+	
 	var bestQuestionScore : float = 0;
 	var bestQuestion : Question = Question.new();
 	
@@ -234,6 +249,7 @@ func selectQuestion(topicMask : int, requestedDifficulty : float) -> Question:
 			int(_doesTopicMatch(question.topic, topicMask)) * topicMatchingWeight +
 			(1 - int(_seenBefore(question))) * seenWeight + # Note, negatively weighted
 			(1.0 - abs(_relativeDifficulty(question) - requestedDifficulty)) * difficultyWeight
+			+ _rng.randf_range(-randomVariance, randomVariance)
 		);
 		
 		if questionScore > bestQuestionScore:

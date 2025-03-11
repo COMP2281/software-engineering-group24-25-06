@@ -2,6 +2,7 @@ class_name Enemy extends CharacterBody3D
 
 @export_group("Enemy properties")
 @export var enemy_resource: EnemyResource
+@export var enemy_level_id: int
 
 @export_group("Patrol behaviours")
 ## The path about which this unit patrols
@@ -45,11 +46,17 @@ func set_destination(destination: Vector3) -> void:
 	if destination == Vector3.INF: return
 	
 	# TODO: also ignore call if made before first map synchronisation
-	
 	var closest_point: Vector3 = NavigationServer3D.map_get_closest_point(
 		navigation_agent_3d.get_navigation_map(),
 		destination
 	)
+	
+	# TODO: better system
+	#	currently just tries to path to 0,0 immediately
+	if closest_point == Vector3.ZERO:
+		navigation_agent_3d.set_target_position(global_position)
+		return
+	
 	navigation_agent_3d.set_target_position(closest_point)
 
 func _process(delta: float) -> void:
@@ -66,12 +73,12 @@ func _process(delta: float) -> void:
 	# Check if we should begin battle
 	var player_distance: float = (StealthManager.player_position - global_position).length()
 	
-	if currently_seeing_player and player_distance < enemy_resource.battle_begin_proximity and suspicion_level == 1.0:
-		# TODO: pass whatever additional data required
-		#	what enemy took us to combat, etc.
-		# TODO: very temporary, just make it so we can transition back to this scene
-		#	without instantly being thrown into another encounter
-		$Security.new_suspicion_level.emit(0.0, false) # TODO: should be in enter
+	if StealthManager.can_be_seen \
+		and currently_seeing_player \
+		and player_distance < enemy_resource.battle_begin_proximity \
+		and suspicion_level > 0.95:
+		# TODO: reset all suspicion levels
+		# TODO: grace period sent to player
 		SceneCoordinator.change_scene.emit(SceneType.Name.BATTLE, {"enemy_encountered": self})
 	
 func _physics_process(delta: float) -> void:

@@ -6,20 +6,16 @@
 [ext_resource type="PackedScene" uid="uid://d2vdxmwicnjhs" path="res://scenes/prefabs/alert_indicator.tscn" id="3_afela"]
 [ext_resource type="Script" path="res://scripts/ui/alert_indicator.gd" id="4_f7gb4"]
 
-[node name="Player" type="Node3D"]
+[node name="Player" type="Node3D" groups=["Player"]]
 script = ExtResource("1_m78fg")
 
 [node name="ProtoController3P" parent="." instance=ExtResource("2_c4b32")]
 collision_layer = 2
 collision_mask = 5
 
-[node name="SuspicionView" parent="." instance=ExtResource("2_uw33c")]
-visible = false
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="AlertIndicator" parent="." instance=ExtResource("3_afela")]
-visible = false
-offset_left = 395.0
-offset_top = 2.0
-offset_right = 395.0
-offset_bottom = 2.0
+[node name="AlertIndicator" parent="CanvasLayer" instance=ExtResource("3_afela")]
 script = ExtResource("4_f7gb4")
+
+[node name="SuspicionView" parent="CanvasLayer" instance=ExtResource("2_uw33c")]

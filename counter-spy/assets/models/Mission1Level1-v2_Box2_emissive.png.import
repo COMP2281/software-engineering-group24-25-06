@@ -2,14 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgl1g83sj1ic4"
+uid="uid://cd8i2hnfqgeow"
 path.s3tc="res://.godot/imported/Mission1Level1-v2_Box2_emissive.png-3e0af70b099d9dc92d2d7ad11bb0a3af.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
-}
-generator_parameters={
-"md5": "703419043bd4959f9a615a99161cd020"
 }
 
 [deps]
