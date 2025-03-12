@@ -5,3 +5,5 @@
 /android/
 .DS_Store
 .env
+__pycache__
+*.import
