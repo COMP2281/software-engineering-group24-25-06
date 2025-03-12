@@ -57,6 +57,9 @@ var freeflying : bool = false
 
 @onready var camera = $Head/CamYaw/CamPitch/SpringArm3D/Camera3D
 
+func get_look_vector() -> Vector3:
+	return -camera.global_basis.z.normalized()
+
 func _ready() -> void:
 	stale_yaw = rotation_degrees.y
 	check_input_mappings()

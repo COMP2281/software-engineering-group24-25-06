@@ -12,12 +12,14 @@ const MOVEMENT_EPSILON: float = 0.1;
 # TODO: rename
 func hide_ui():
 	$CanvasLayer.hide()
+	$BonsAI.hide_ui()
 	
 	if $ProtoController3P.camera.current:
 		$ProtoController3P.camera.clear_current(true)
 	
 func show_ui():
 	$CanvasLayer.show()
+	$BonsAI.show_ui()
 	
 	$ProtoController3P.camera.make_current()
 
@@ -64,6 +66,10 @@ func _process(delta: float) -> void:
 		print(result)
 	
 func _physics_process(_delta: float):
+	# TODO: ignore my goofy ahh code
+	global_position = $ProtoController3P.global_position
+	$ProtoController3P.global_position = global_position
+	
 	# If the player is moving (check velocity vector if of non-zero length)
 	if $ProtoController3P.get_real_velocity().length() > MOVEMENT_EPSILON:
 		StealthManager.player_makes_sound($ProtoController3P.global_position, player_movement_range)

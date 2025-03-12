@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bhhyrcyu5vw0e"]
+[gd_scene load_steps=7 format=3 uid="uid://bhhyrcyu5vw0e"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_m78fg"]
+[ext_resource type="PackedScene" uid="uid://bdf84pes20lt4" path="res://scenes/prefabs/bons_ai.tscn" id="2_5un72"]
 [ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://scenes/prefabs/player/proto_controller_3p.tscn" id="2_c4b32"]
 [ext_resource type="PackedScene" uid="uid://bannoqagwsw7o" path="res://scenes/prefabs/suspicion_hud.tscn" id="2_uw33c"]
 [ext_resource type="PackedScene" uid="uid://d2vdxmwicnjhs" path="res://scenes/prefabs/alert_indicator.tscn" id="3_afela"]
@@ -8,6 +9,10 @@
 
 [node name="Player" type="Node3D" groups=["Player"]]
 script = ExtResource("1_m78fg")
+
+[node name="BonsAI" parent="." node_paths=PackedStringArray("proto_controller") instance=ExtResource("2_5un72")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21381, 1.64284, -3.08985)
+proto_controller = NodePath("../ProtoController3P")
 
 [node name="ProtoController3P" parent="." instance=ExtResource("2_c4b32")]
 collision_layer = 2
