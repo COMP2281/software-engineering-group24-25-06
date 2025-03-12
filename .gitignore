@@ -6,4 +6,6 @@
 __pycache__/
 .env
 *.translation
+.DS_Store
+.env
 *.import
