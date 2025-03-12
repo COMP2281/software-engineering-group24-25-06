@@ -42,6 +42,8 @@ func selectMove(numMoves : int) -> Array[Move]:
 	var typesToSelect: Array[String] = ["generic", "fire", "water", "plant"]
 	var typesSelected: int = 0;
 	
+	typesToSelect = shuffle(typesToSelect)
+	
 	for type in typesToSelect:
 		var movesOfType = shuffle(movesByType[type])
 		
