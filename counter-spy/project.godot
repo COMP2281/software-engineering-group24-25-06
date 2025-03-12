@@ -22,10 +22,12 @@ StealthManager="*res://scripts/security/stealth_manager.gd"
 SceneCoordinator="*res://scripts/scene_coordinator/scene_coordinator.gd"
 MoveLoader="*res://scripts/battle/move_loader.gd"
 LevelMetadataLoader="*res://scripts/utility/level_metadata_loader.gd"
+Global="*res://scripts/Global.gd"
 
 [global_group]
 
 Player=""
+security_cameras=""
 
 [input]
 

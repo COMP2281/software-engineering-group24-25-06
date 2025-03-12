@@ -30,8 +30,6 @@ func _transition_to_next_state(target_state_path: String, data: Dictionary = {})
 	# Do not attempt to transition to self
 	if state.name == target_state_path: return
 		
-	print("Invoking a transition between ", state.name, " and ", target_state_path)
-
 	var previous_state_path := state.name
 	state.exit(data)
 	state = get_node(target_state_path)

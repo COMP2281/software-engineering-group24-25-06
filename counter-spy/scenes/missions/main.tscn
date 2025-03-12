@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/utility/state_machine.gd" id="3_1sp55"]
 [ext_resource type="PackedScene" uid="uid://c7f4ajlxoh1vx" path="res://scenes/battle.tscn" id="3_064rh"]
 [ext_resource type="Script" path="res://scripts/scene_coordinator/states/mission_state.gd" id="4_2jaig"]
-[ext_resource type="PackedScene" uid="uid://cwj82duxudtse" path="res://scenes/levels/hub/hub-2.tscn" id="4_5dj3d"]
+[ext_resource type="PackedScene" uid="uid://cwj82duxudtse" path="res://scenes/hub.tscn" id="4_5dj3d"]
 [ext_resource type="PackedScene" uid="uid://difkpp3pf4fgx" path="res://scenes/prefabs/level/level_loader.tscn" id="5_h07l5"]
 [ext_resource type="Script" path="res://scripts/scene_coordinator/states/encounter_state.gd" id="5_oicvy"]
 [ext_resource type="Script" path="res://scripts/scene_coordinator/states/hub_state.gd" id="6_dyaaw"]

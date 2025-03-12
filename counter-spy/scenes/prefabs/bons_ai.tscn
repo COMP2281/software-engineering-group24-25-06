@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bdf84pes20lt4"]
+
+[node name="BonsAI" type="Node3D"]
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="."]
+radius = 1.0
