@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://b28g55r8vqb04"]
+
+[ext_resource type="Script" path="res://scripts/ui/option_node.gd" id="1_ryx5s"]
+
+[node name="OptionNode" type="Control"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_ryx5s")
+background_color = Color(0.233925, 0.233925, 0.233925, 1)
+background_hover_color = Color(0.589096, 0.589096, 0.589096, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="InputName" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Placeholder"
+vertical_alignment = 1
+
+[node name="Container" type="PanelContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/Container"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.625597, 0.625597, 0.625597, 1)
+
+[node name="Keybind" type="Label" parent="HBoxContainer/Container"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+text = "Placeholder"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="focus_entered" from="." to="." method="_on_focus_entered"]
+[connection signal="focus_exited" from="." to="." method="_on_focus_exited"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
