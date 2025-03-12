@@ -1,6 +1,22 @@
-[gd_scene format=3 uid="uid://bdf84pes20lt4"]
+[gd_scene load_steps=2 format=3 uid="uid://bdf84pes20lt4"]
+
+[ext_resource type="Script" path="res://scripts/player/bons_ai.gd" id="1_3bndy"]
 
 [node name="BonsAI" type="Node3D"]
+script = ExtResource("1_3bndy")
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="."]
-radius = 1.0
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(0.686504, 0, -0.727126, 0, 1, 0, 0.727126, 0, 0.686504, -0.467785, 0, 0.709525)
+text = "[E] To interact"
+
+[node name="Response" type="Label3D" parent="."]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 0, 1, 0)
+text = "Hi, I'm BonsAI"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer"]
+offset_right = 67.0625
+offset_bottom = 31.0

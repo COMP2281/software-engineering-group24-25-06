@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://d1xlbq7duckvl"]
+
+[ext_resource type="PackedScene" uid="uid://hhjcinawealq" path="res://models/banana/item-banana.glb" id="1_65ewq"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wlhjw"]
+radius = 0.213326
+
+[node name="Banana" type="Node3D"]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0571766, 0)
+shape = SubResource("SphereShape3D_wlhjw")
+
+[node name="item-banana2" parent="StaticBody3D" instance=ExtResource("1_65ewq")]

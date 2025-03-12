@@ -3,3 +3,7 @@
 *.tmp
 .DS_STORE
 /android/
+.DS_Store
+.env
+__pycache__
+*.import
