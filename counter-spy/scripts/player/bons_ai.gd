@@ -34,6 +34,7 @@ func _on_request_completed(result, response_code, headers, body):
 		response.text = json["message"]
 	elif json.has("status") and json.has("received"): #For POST
 		print("Server received our message: ", json["received"])
+		response.text = json["received"]
 	
 func _on_LineEdit_text_entered(text):
 	print("Typed message: ", text)
