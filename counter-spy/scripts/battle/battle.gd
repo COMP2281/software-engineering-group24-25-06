@@ -133,8 +133,15 @@ func _on_option_selected(option: String) -> void:
 	if damage_start != -1:
 		move_name = option.substr(0, damage_start)
 		
+	print("Extracted move name: ", move_name)
+	print("Number of moves to be extracted: ", current_attack_option.size())
+	
+	for i in range(current_attack_option.size()):
+		print("Move ", i, ": ", current_attack_option[i].name)
+
 	for move in current_attack_option:
-		if move.name == move_name:
+		print("Comparing [", move_name, "] with [", move.name, "]")
+		if move.name.strip_edges() == move_name.strip_edges():
 			current_attack = move
 			show_question_for_action()
 			return
