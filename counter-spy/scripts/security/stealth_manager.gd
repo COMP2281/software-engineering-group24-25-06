@@ -99,6 +99,14 @@ func _process(delta: float) -> void:
 	# Update suspicion level if changed
 	if suspicion_level != max_sus_level:
 		change_suspicion_level.emit(max_sus_level)
+		
+	if global_alertness_level > 0.6:
+		print("Spawning reinforcements!")
+		
+		for reinforcement in get_tree().get_nodes_in_group("reinforcement_group"):
+			var reinforcement_point: ReinforcementPoint = reinforcement as ReinforcementPoint
+			
+			reinforcement_point.activate()
 
 func update_suspicion_level(new_level: float):
 	suspicion_level = new_level

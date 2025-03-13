@@ -28,6 +28,7 @@ Global="*res://scripts/Global.gd"
 
 Player=""
 security_cameras=""
+reinforcement_group=""
 
 [input]
 

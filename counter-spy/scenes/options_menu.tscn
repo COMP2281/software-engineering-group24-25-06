@@ -82,7 +82,7 @@ layout_mode = 2
 focus_neighbor_top = NodePath("../MoveLeft")
 focus_previous = NodePath("../MoveLeft")
 focus_mode = 2
-option_name = "Sneak"
+option_name = "Sneak - for stealth"
 option_default = "Shift"
 input_map_name = "sneak"
 
@@ -91,7 +91,7 @@ layout_mode = 2
 focus_neighbor_top = NodePath("../MoveLeft")
 focus_previous = NodePath("../MoveLeft")
 focus_mode = 2
-option_name = "Interact"
+option_name = "Interact - for game interactions"
 option_default = "E"
 input_map_name = "interact"
 
