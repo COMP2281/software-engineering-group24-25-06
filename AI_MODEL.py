@@ -31,7 +31,7 @@ credentials = {
 project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
 model_id = "granite3.1-dense"
 
-mongodb_uri = "mongodb+srv://jacob:progprog4@se-project.xg1tx.mongodb.net/?retryWrites=true&w=majority&appName=SE-Project"
+mongodb_conn_string = "mongodb+srv://jacob:progprog4@se-project.xg1tx.mongodb.net/?retryWrites=true&w=majority&appName=SE-Project"
 db_name = "SE-prog"
 
 class UserProfile(BaseModel):
@@ -46,7 +46,7 @@ class UserProfile(BaseModel):
 def get_mongodb_connection():
     """Get MongoDB connection"""
     try:
-        client = MongoClient(mongodb_uri)
+        client = MongoClient(mongodb_conn_string)
         client.admin.command('ping')
         print("Connected to MongoDB")
         return client
