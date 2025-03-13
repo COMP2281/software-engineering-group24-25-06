@@ -24,6 +24,10 @@ MoveLoader="*res://scripts/battle/move_loader.gd"
 LevelMetadataLoader="*res://scripts/utility/level_metadata_loader.gd"
 Global="*res://scripts/Global.gd"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [global_group]
 
 Player=""
