@@ -14,6 +14,8 @@ func _ready() -> void:
 	color_rect.color = Color(0, 0, 0, 1)  # Fully opaque black
 	SceneTransitionAnimation.play("fade_out_to_level")
 	await SceneTransitionAnimation.animation_finished
+	
+	$Player/CanvasLayer.hide()
 
 func prepare_enter() -> void:
 	$Player/ProtoController3P.camera.make_current()

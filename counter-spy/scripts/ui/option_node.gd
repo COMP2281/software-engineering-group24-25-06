@@ -9,11 +9,13 @@ extends Control
 
 # TODO: functionality
 var is_hovering: bool = false
+var displayed_value: String = ""
 
 func _ready() -> void:
 	$HBoxContainer/InputName.text = option_name
 	$HBoxContainer/Container/Keybind.text = option_default
 	$HBoxContainer/Container/ColorRect.color = background_color
+	displayed_value = option_default
 	
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_hovering: return
@@ -26,19 +28,26 @@ func _unhandled_input(event: InputEvent) -> void:
 			InputMap.action_add_event(input_map_name, event)
 			
 			$HBoxContainer/Container/Keybind.text = key_name
+			displayed_value = key_name
+			
+func on_hover_enter() -> void:
+	is_hovering = true
+	$HBoxContainer/Container/ColorRect.color = background_hover_color
+	$HBoxContainer/Container/Keybind.text = "Press key..."
+	
+func on_hover_exit() -> void:
+	is_hovering = false
+	$HBoxContainer/Container/ColorRect.color = background_color
+	$HBoxContainer/Container/Keybind.text = displayed_value
 
 func _on_mouse_entered() -> void:
-	$HBoxContainer/Container/ColorRect.color = background_hover_color
-	is_hovering = true
+	on_hover_enter()
 
 func _on_mouse_exited() -> void:
-	is_hovering = false
-	$HBoxContainer/Container/ColorRect.color = background_color
+	on_hover_exit()
 
 func _on_focus_entered() -> void:
-	$HBoxContainer/Container/ColorRect.color = background_hover_color
-	is_hovering = true
+	on_hover_enter()
 
 func _on_focus_exited() -> void:
-	is_hovering = false
-	$HBoxContainer/Container/ColorRect.color = background_color
+	on_hover_exit()

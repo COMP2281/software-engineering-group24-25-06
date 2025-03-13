@@ -11,8 +11,8 @@ var yaw_sensitivity : float = 0.07
 var pitch_sensitivity : float = 0.07
 var yaw_acceleration : float = 15
 var pitch_acceleration : float = 15
-var pitch_max : float = 20
-var pitch_min : float = -60
+var pitch_max : float = 60
+var pitch_min : float = -80
 var tween : Tween
 var position_offset : Vector3 = Vector3(0, 1.3, 0)
 var position_offset_target : Vector3 = Vector3(0, 1.3, 0)

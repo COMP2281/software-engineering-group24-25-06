@@ -5,6 +5,7 @@ class_name Player extends Node3D
 @export var coin_toss_range: float = 35.0
 ## The range enemies can hear player movement from
 @export var player_movement_range: float = 5.0
+@export var hacking_range: float = 25.0
 
 const SNEAKING_SCALE: float = 0.75
 const MOVEMENT_EPSILON: float = 0.1;
@@ -54,16 +55,16 @@ func _process(delta: float) -> void:
 	for cam in get_tree().get_nodes_in_group("security_cameras"):
 		var security_camera: SecurityCamera = cam as SecurityCamera
 		
-		# TODO: get player to send raycast to camera
-		# Send a raycast to see if there's something blocking our view of the player
-		var space_state := get_world_3d().direct_space_state
-		# TODO: read some proper value for the mask ("1"), instead of magic number
-		var query := PhysicsRayQueryParameters3D.create($ProtoController3P.global_position, security_camera.position, 1)
-		query.collide_with_areas = true
-	
-		var result := space_state.intersect_ray(query)
+		var look_dir: Vector3 = $ProtoController3P.get_look_vector()
+		var camera_dir: Vector3 = (security_camera.global_position - global_position)
 		
-		print(result)
+		if look_dir.dot(camera_dir.normalized()) > 0.9 and camera_dir.length() < hacking_range:
+			security_camera.enter_hack_range()
+			
+			if Input.is_action_just_pressed("interact"):
+				security_camera.hack_camera()
+		else:
+			security_camera.exit_hack_range()
 	
 func _physics_process(_delta: float):
 	# TODO: ignore my goofy ahh code

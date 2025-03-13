@@ -13,6 +13,7 @@ var close_radius: float = 0.0
 var detection_speed: float = 0.0
 var heard_sound_vector: Vector2 = Vector2(0.0, 0.0)
 var heard_sound_elapsed: float = 0.0
+var enabled: bool = true
 
 var suspicion_level: float = 0.0
 var currently_seeing_player: bool = false
@@ -79,7 +80,7 @@ func in_detection_range(player_position: Vector3) -> DetectionManifold:
 	manifold.being_seen = false
 	manifold.within_close_range = false
 	
-	if not StealthManager.can_be_seen:
+	if not StealthManager.can_be_seen or not enabled:
 		return manifold
 	
 	# If they're within the close radius

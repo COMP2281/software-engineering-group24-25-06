@@ -20,8 +20,8 @@ offset_bottom = 40.0
 [node name="InputName" type="Label" parent="HBoxContainer"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-size_flags_vertical = 1
 text = "Placeholder"
+horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Container" type="PanelContainer" parent="HBoxContainer"]

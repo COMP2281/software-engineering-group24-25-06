@@ -15,6 +15,11 @@ transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 0, 0)
 script = ExtResource("1_85dlm")
 viewzone_resource = ExtResource("2_ar836")
 
+[node name="HackText" type="Label3D" parent="."]
+transform = Transform3D(-0.998027, 0, -0.0627905, 0, 1, 0, 0.0627905, 0, -0.998027, 0, 0.565286, -0.979104)
+visible = false
+text = "[E] Interact to hack!"
+
 [node name="Security" parent="." instance=ExtResource("3_kxi3s")]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]

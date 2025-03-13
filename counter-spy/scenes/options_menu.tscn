@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://bgo0582ikmijd"]
+[gd_scene load_steps=4 format=3 uid="uid://bgo0582ikmijd"]
 
 [ext_resource type="PackedScene" uid="uid://b28g55r8vqb04" path="res://scenes/option_node.tscn" id="1_322ms"]
+[ext_resource type="Script" path="res://scripts/scene_coordinator/start_game.gd" id="2_60s1i"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_wc8ku"]
+font_size = 40
 
 [node name="OptionsMenu" type="Control"]
 layout_mode = 3
@@ -21,6 +25,17 @@ offset_left = -20.0
 offset_right = 20.0
 offset_bottom = 40.0
 grow_horizontal = 2
+
+[node name="GameTitle" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "CounterTime"
+label_settings = SubResource("LabelSettings_wc8ku")
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Options Menu"
+horizontal_alignment = 1
 
 [node name="ForwardOption" parent="VBoxContainer" instance=ExtResource("1_322ms")]
 layout_mode = 2
@@ -61,3 +76,28 @@ focus_mode = 2
 option_name = "Move right"
 option_default = "D"
 input_map_name = "move_right"
+
+[node name="Sneak" parent="VBoxContainer" instance=ExtResource("1_322ms")]
+layout_mode = 2
+focus_neighbor_top = NodePath("../MoveLeft")
+focus_previous = NodePath("../MoveLeft")
+focus_mode = 2
+option_name = "Sneak"
+option_default = "Shift"
+input_map_name = "sneak"
+
+[node name="Interact" parent="VBoxContainer" instance=ExtResource("1_322ms")]
+layout_mode = 2
+focus_neighbor_top = NodePath("../MoveLeft")
+focus_previous = NodePath("../MoveLeft")
+focus_mode = 2
+option_name = "Interact"
+option_default = "E"
+input_map_name = "interact"
+
+[node name="StartGame" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Start game"
+script = ExtResource("2_60s1i")
+
+[connection signal="pressed" from="VBoxContainer/StartGame" to="VBoxContainer/StartGame" method="_on_pressed"]
