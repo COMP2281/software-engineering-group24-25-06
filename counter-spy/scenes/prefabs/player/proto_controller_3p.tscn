@@ -1,21 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://s3tlavdof7ey"]
+[gd_scene load_steps=6 format=3 uid="uid://s3tlavdof7ey"]
 
 [ext_resource type="Script" path="res://scripts/player/proto_controller.gd" id="1_x0abh"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2_gl6vu"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
-albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_ucva2"]
-radius = 0.4
-height = 1.8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_38mre"]
-specular_mode = 1
-albedo_color = Color(0.0397879, 0.353417, 0.466401, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_asvcc"]
-size = Vector3(0.4, 0.1, 0.1)
+[ext_resource type="PackedScene" uid="uid://bj2w0lxgkh5lf" path="res://assets/models/spi.fbx" id="2_myvyc"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iof21"]
 radius = 0.4
@@ -32,18 +19,8 @@ input_forward = "move_forward"
 input_back = "move_backward"
 input_jump = "move_jump"
 
-[node name="Mesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-material_override = SubResource("StandardMaterial3D_iof21")
-cast_shadow = 0
-mesh = SubResource("CapsuleMesh_ucva2")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Mesh"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.485712, -0.386314)
-material_override = SubResource("StandardMaterial3D_38mre")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_asvcc")
-skeleton = NodePath("../..")
+[node name="Mesh" parent="." instance=ExtResource("2_myvyc")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 
 [node name="Collider" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
