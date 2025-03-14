@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://c8lj4bah1i8a0"]
 
-[ext_resource type="Script" path="res://scripts/cybersecurity.gd" id="1_vqflq"]
+[ext_resource type="Script" uid="uid://ge576f1sihr3" path="res://scripts/cybersecurity.gd" id="1_vqflq"]
 [ext_resource type="Texture2D" uid="uid://iv1ph4q46hlf" path="res://resources/tick.png" id="2_cwxqi"]
 [ext_resource type="Texture2D" uid="uid://egd1l82rgyk0" path="res://resources/trophy.webp" id="3_1b5o4"]
 

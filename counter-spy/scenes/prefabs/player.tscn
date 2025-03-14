@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://bhhyrcyu5vw0e"]
 
-[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_m78fg"]
+[ext_resource type="Script" uid="uid://csth77jdg61gt" path="res://scripts/player/player.gd" id="1_m78fg"]
 [ext_resource type="PackedScene" uid="uid://bdf84pes20lt4" path="res://scenes/prefabs/bons_ai.tscn" id="2_5un72"]
 [ext_resource type="PackedScene" uid="uid://s3tlavdof7ey" path="res://scenes/prefabs/player/proto_controller_3p.tscn" id="2_c4b32"]
 [ext_resource type="PackedScene" uid="uid://bannoqagwsw7o" path="res://scenes/prefabs/suspicion_hud.tscn" id="2_uw33c"]
 [ext_resource type="PackedScene" uid="uid://d2vdxmwicnjhs" path="res://scenes/prefabs/alert_indicator.tscn" id="3_afela"]
-[ext_resource type="Script" path="res://scripts/ui/alert_indicator.gd" id="4_f7gb4"]
+[ext_resource type="Script" uid="uid://c8hled6jchcit" path="res://scripts/ui/alert_indicator.gd" id="4_f7gb4"]
 
 [node name="Player" type="Node3D" groups=["Player"]]
 script = ExtResource("1_m78fg")

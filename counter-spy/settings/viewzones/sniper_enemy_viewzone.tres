@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ViewzoneResource" load_steps=2 format=3 uid="uid://c5kx2gemjwxk1"]
 
-[ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="1_wmdkb"]
+[ext_resource type="Script" uid="uid://c12mqxfnrv3b" path="res://scripts/utility/viewzone_resources.gd" id="1_wmdkb"]
 
 [resource]
 resource_local_to_scene = true
@@ -10,5 +10,5 @@ fov = 0.523599
 close_radius = 1.0
 view_radius = 10.0
 decay_rate = 0.2
-distraction_range = 15.0
 communication_range = 20.0
+hearing_modifier = 1.0

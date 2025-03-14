@@ -21,9 +21,15 @@ func _ready() -> void:
 	# TODO: technically unnecessary, we can set properties in the editor to be the same
 	#	as the level description
 	for enemy_node in get_tree().get_nodes_in_group("enemy"):
-		var id = str(enemy_node.enemy_level_id)
-		enemy_node.enemy_resource.enemy_name = level_metadata.enemies_by_id[id].name
-		enemy_node.enemy_resource.weakness = level_metadata.enemies_by_id[id].weakness
+		var enemy: Enemy = enemy_node as Enemy
+		var enemy_id_string: String = str(float(enemy.enemy_level_id))
+		var enemy_map_data: EnemyMetadata = level_metadata.enemies_by_id.get(enemy_id_string)
+		
+		if enemy_map_data != null:
+			enemy_node.enemy_resource.enemy_name = enemy_map_data.name
+			enemy_node.enemy_resource.weakness = enemy_map_data.weakness
+		else:
+			print("Failed to load metadata!")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://h3k27ga3iolj"]
 
-[ext_resource type="Script" path="res://scripts/world_select.gd" id="1_vvqx2"]
+[ext_resource type="Script" uid="uid://c00un3t468jof" path="res://scripts/world_select.gd" id="1_vvqx2"]
 [ext_resource type="PackedScene" uid="uid://c8lj4bah1i8a0" path="res://scenes/cyber_security.tscn" id="2_rxjkf"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7bsfj"]
@@ -61,8 +61,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1h6xb"]
 _data = {
-"RESET": SubResource("Animation_6loav"),
-"fade_in": SubResource("Animation_rw0nf")
+&"RESET": SubResource("Animation_6loav"),
+&"fade_in": SubResource("Animation_rw0nf")
 }
 
 [node name="WorldSelect" type="Control"]

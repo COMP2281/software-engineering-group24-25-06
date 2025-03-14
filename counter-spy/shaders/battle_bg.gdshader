@@ -54,9 +54,14 @@ void fragment() {
 	float depth = texture(depth_texture, SCREEN_UV).x;
 	// Normalized device coordinates
 	//	-1.0 to 1.0 in XY, 0.0 to 1.0 in Z, for whatever reason...
+	#if CURRENT_RENDERER == RENDERER_COMPATIBILITY
+	vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
+	#else
 	vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, depth);
+	#endif
 	// Unproject from camera
-	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 10);
+	// TODO: on forward+ this value was 10, consider?
+	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
 	view.xyz /= view.w;
 	float linear_depth = -view.z;
 	

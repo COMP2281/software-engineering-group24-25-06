@@ -29,4 +29,6 @@ func load_level_metadata(metadata_path: String) -> LevelMetadata:
 		level_metadata.enemy_list.append(enemy_metadata)
 		level_metadata.enemies_by_id[enemy_metadata.id] = enemy_metadata
 		
+		print(level_metadata.enemies_by_id)
+		
 	return level_metadata

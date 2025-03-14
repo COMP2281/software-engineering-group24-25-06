@@ -1,11 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://bdf84pes20lt4"]
+[gd_scene load_steps=3 format=3 uid="uid://bdf84pes20lt4"]
 
-[ext_resource type="Script" path="res://scripts/player/bons_ai.gd" id="1_3bndy"]
+[ext_resource type="Script" uid="uid://cpqc3r7gattkq" path="res://scripts/player/bons_ai.gd" id="1_3bndy"]
+[ext_resource type="PackedScene" uid="uid://dchohyi1ekr5s" path="res://assets/models/bonsai.fbx" id="2_rqyi3"]
 
 [node name="BonsAI" type="Node3D"]
 script = ExtResource("1_3bndy")
 
-[node name="CSGSphere3D" type="CSGSphere3D" parent="."]
+[node name="bonsai" parent="." instance=ExtResource("2_rqyi3")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 
 [node name="Label3D" type="Label3D" parent="."]
 transform = Transform3D(0.686504, 0, -0.727126, 0, 1, 0, 0.727126, 0, 0.686504, -0.467785, 0, 0.709525)

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ViewzoneResource" load_steps=2 format=3 uid="uid://cgmw082vs1qwk"]
 
-[ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="1_ogihh"]
+[ext_resource type="Script" uid="uid://c12mqxfnrv3b" path="res://scripts/utility/viewzone_resources.gd" id="1_ogihh"]
 
 [resource]
 resource_local_to_scene = true

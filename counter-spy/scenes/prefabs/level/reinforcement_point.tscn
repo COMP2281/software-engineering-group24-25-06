@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://ctljtgp7kc6vw"]
 
-[ext_resource type="Script" path="res://scripts/enemy/reinforcement_point.gd" id="1_3cbmb"]
+[ext_resource type="Script" uid="uid://cnho1kpfiw4or" path="res://scripts/enemy/reinforcement_point.gd" id="1_3cbmb"]
 [ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://scenes/prefabs/enemy.tscn" id="1_7e8vd"]
-[ext_resource type="Script" path="res://scripts/utility/enemy_resource.gd" id="2_r0wqr"]
-[ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="3_1oiai"]
+[ext_resource type="Script" uid="uid://5ah2sdokwiec" path="res://scripts/utility/enemy_resource.gd" id="2_r0wqr"]
+[ext_resource type="Script" uid="uid://c12mqxfnrv3b" path="res://scripts/utility/viewzone_resources.gd" id="3_1oiai"]
 
 [sub_resource type="Resource" id="Resource_t25hq"]
 resource_local_to_scene = true

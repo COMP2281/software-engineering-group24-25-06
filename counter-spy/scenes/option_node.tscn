@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b28g55r8vqb04"]
 
-[ext_resource type="Script" path="res://scripts/ui/option_node.gd" id="1_ryx5s"]
+[ext_resource type="Script" uid="uid://dhbpu4ok8btf2" path="res://scripts/ui/option_node.gd" id="1_ryx5s"]
 
 [node name="OptionNode" type="Control"]
 custom_minimum_size = Vector2(300, 50)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://bh4isvd8ogmtk"]
 
 [ext_resource type="PackedScene" uid="uid://tl8vean5e8tn" path="res://scenes/lvl1graybox.tscn" id="1_osymi"]
-[ext_resource type="Script" path="res://scripts/level_1.gd" id="1_qlc8u"]
+[ext_resource type="Script" uid="uid://b8yqirr086sb0" path="res://scripts/level_1.gd" id="1_qlc8u"]
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="2_4q1tt"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_wkyt1"]
 

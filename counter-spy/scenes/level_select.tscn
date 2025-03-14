@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://b1xb7mbig4isg"]
 
-[ext_resource type="Script" path="res://scripts/level_select.gd" id="1_udoeg"]
+[ext_resource type="Script" uid="uid://drwynaw8egm0b" path="res://scripts/level_select.gd" id="1_udoeg"]
 
 [sub_resource type="Animation" id="Animation_tcb3k"]
 length = 0.001
@@ -35,8 +35,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_aw20y"]
 _data = {
-"RESET": SubResource("Animation_tcb3k"),
-"load_select_level": SubResource("Animation_va672")
+&"RESET": SubResource("Animation_tcb3k"),
+&"load_select_level": SubResource("Animation_va672")
 }
 
 [node name="LevelSelect" type="Control"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://di4y1547ra656"]
 
-[ext_resource type="Shader" path="res://shaders/fire_move.gdshader" id="1_qbuxf"]
-[ext_resource type="Shader" path="res://shaders/water_move.gdshader" id="2_wv80g"]
+[ext_resource type="Shader" uid="uid://dim0p7yviv13t" path="res://shaders/fire_move.gdshader" id="1_qbuxf"]
+[ext_resource type="Shader" uid="uid://c3qoufqo2a4mr" path="res://shaders/water_move.gdshader" id="2_wv80g"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_710p1"]
 shader = ExtResource("1_qbuxf")

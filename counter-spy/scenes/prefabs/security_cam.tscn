@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bp2kqx6gewi8t"]
 
-[ext_resource type="Script" path="res://scripts/enemy/security_cam.gd" id="1_85dlm"]
+[ext_resource type="Script" uid="uid://cwbsr0nqw6xcp" path="res://scripts/enemy/security_cam.gd" id="1_85dlm"]
 [ext_resource type="Resource" uid="uid://cgmw082vs1qwk" path="res://settings/viewzones/camera_enemy_viewzone.tres" id="2_ar836"]
 [ext_resource type="PackedScene" uid="uid://cwedyk8jko048" path="res://scenes/prefabs/security.tscn" id="3_kxi3s"]
 

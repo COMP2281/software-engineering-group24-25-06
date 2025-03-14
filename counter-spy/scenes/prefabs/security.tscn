@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cwedyk8jko048"]
 
-[ext_resource type="Script" path="res://scripts/security/security.gd" id="1_f8qnf"]
-[ext_resource type="Shader" path="res://shaders/view_zone.gdshader" id="2_25wtn"]
+[ext_resource type="Script" uid="uid://nlf2fdui2d25" path="res://scripts/security/security.gd" id="1_f8qnf"]
+[ext_resource type="Shader" uid="uid://c01u5rakj6gtp" path="res://shaders/view_zone.gdshader" id="2_25wtn"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_br0jy"]
 resource_local_to_scene = true

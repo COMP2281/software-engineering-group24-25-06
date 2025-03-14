@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyResource" load_steps=3 format=3 uid="uid://cdkefl5j0ejf7"]
 
-[ext_resource type="Script" path="res://scripts/utility/enemy_resource.gd" id="1_sxvyc"]
+[ext_resource type="Script" uid="uid://5ah2sdokwiec" path="res://scripts/utility/enemy_resource.gd" id="1_sxvyc"]
 [ext_resource type="Resource" uid="uid://b2x5u7k5tcw7h" path="res://settings/viewzones/scout_enemy_viewzone.tres" id="2_6f8qe"]
 
 [resource]

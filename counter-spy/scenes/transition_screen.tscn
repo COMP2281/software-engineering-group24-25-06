@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://b1ajpn8hqx5vh"]
 
-[ext_resource type="Script" path="res://scripts/transition_screen.gd" id="1_5t0ky"]
+[ext_resource type="Script" uid="uid://c045nsg037qkd" path="res://scripts/transition_screen.gd" id="1_5t0ky"]
 
 [sub_resource type="Animation" id="Animation_rf256"]
 length = 0.001
@@ -87,9 +87,9 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yvodb"]
 _data = {
-"RESET": SubResource("Animation_rf256"),
-"fade_in_to_loading_screen": SubResource("Animation_bhb21"),
-"fade_out_to_level": SubResource("Animation_t5wdi")
+&"RESET": SubResource("Animation_rf256"),
+&"fade_in_to_loading_screen": SubResource("Animation_bhb21"),
+&"fade_out_to_level": SubResource("Animation_t5wdi")
 }
 
 [node name="TransitionScreen" type="Control"]

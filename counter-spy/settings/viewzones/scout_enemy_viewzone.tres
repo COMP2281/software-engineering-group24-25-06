@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ViewzoneResource" load_steps=2 format=3 uid="uid://b2x5u7k5tcw7h"]
 
-[ext_resource type="Script" path="res://scripts/utility/viewzone_resources.gd" id="1_tr8tv"]
+[ext_resource type="Script" uid="uid://c12mqxfnrv3b" path="res://scripts/utility/viewzone_resources.gd" id="1_tr8tv"]
 
 [resource]
 script = ExtResource("1_tr8tv")
