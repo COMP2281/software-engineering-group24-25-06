@@ -44,17 +44,24 @@ func setup_menu():
 	
 	for child in wheel.get_children():
 		child.queue_free()
+		
+	var player = get_tree().get_root().get_node("Battle/player")  # Adjust path as needed
+	var player_pos = Vector2(400, 400)  
 	
-	# TODO: ideally keep the wheel-based positioning system
-	#	but also allow it to scale nicely
+	if player:
+		var viewport = get_viewport()
+		var camera = viewport.get_camera_3d()
+		if camera:
+			player_pos = camera.unproject_position(player.global_position)
+		
 	var initial_angle: float = PI / 4.0
 	var angle_change: float = (2.0* PI) / float(options.size())
+	var radius = 150
 	
 	for i in range(options.size()):
 		var button = Button.new()
 		var angle = (i * angle_change) + initial_angle
 		
-		var radius = 150
 		var pos = Vector2(
 			cos(angle) * radius + 200,
 			sin(angle) * radius + 200
@@ -64,15 +71,43 @@ func setup_menu():
 		button.custom_minimum_size = Vector2(120, 40)
 		button.position = pos - button.custom_minimum_size/2
 		
+		var btn_style = StyleBoxFlat.new()
+		btn_style.bg_color = Color(0, 0, 0, 0.9)
+		btn_style.border_color = Color(1, 0, 0)
+		btn_style.corner_radius_top_left = 10
+		btn_style.corner_radius_bottom_right = 10
+		button.add_theme_stylebox_override("normal", btn_style)
+		
 		button.connect("pressed", _on_option_pressed.bind(i))
 		
-		# TODO: this control label doesn't have the same positioning as the regular text
 		var control_label = Label.new()
 		control_label.text = "○ " if i == 0 else "□ " if i == 1 else "△ " if i == 2 else "× "
 		control_label.add_theme_color_override("font_color", Color(1, 0, 0))
 		button.add_child(control_label)
 		wheel.add_child(button)
 		buttons.append(button)
+	
+	if not is_connected("draw", _draw):
+		connect("draw", _draw)
+		
+
+func _draw():
+	if not visible:
+		return
+		
+	var player = get_tree().get_root().get_node("Battle/player")
+	if not player:
+		return
+		
+	var player_pos = Vector2(400, 400)
+	var viewport = get_viewport()
+	var camera = viewport.get_camera_3d()
+	if camera:
+		player_pos = camera.unproject_position(player.global_position)
+   
+	for button in buttons:
+		var button_center = button.position + button.custom_minimum_size/2
+		draw_line(player_pos, button_center, Color(1, 0, 0), 2)
 
 func show_menu():
 	menu_visible = true
