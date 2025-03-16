@@ -7,7 +7,7 @@ class_name EncounterNode extends Node3D
 @onready var battle_menu = $CanvasLayer/UI/Battlemenu
 @onready var question_panel = $CanvasLayer/UI/Questionpanel
 @onready var ui = $CanvasLayer/UI
-@onready var move_loader = $Moveloader
+@onready var timer_label = $CanvasLayer/UI/Timerlabel
 
 var player_health_value: float = 0.0
 var enemy_health_value: float = 0.0
@@ -19,6 +19,7 @@ var current_attack = null
 
 var enemy_being_fought: Enemy = null
 var current_question: Question = null
+var question_time_left: float = INF
 
 var attack_multiplier: float = 1.0
 var attack_boost_turns_remaining: int = 0
@@ -30,6 +31,25 @@ var player_items = {
 	"Health Potion": {"count": 3, "heal_amount": 30},
 	"Attack Boost": {"count": 2, "boost_amount": 1.5}
 }
+
+func update_question_time(delta: float) -> void:
+	if question_time_left == INF: return
+	
+	question_time_left = max(question_time_left - delta, 0.0)
+	
+	# Ran out of time!
+	if question_time_left == 0.0:
+		# TODO: insanely hacky
+		question_panel.answer_selected.emit(-2)
+		question_panel.hide()
+		question_time_left = INF
+	
+	# Display time in minutes/seconds
+	var time: float = question_time_left
+	var minutes: int = floor(time / 60.0)
+	var seconds: int = time - minutes * 60.0
+	
+	timer_label.text = "Time left: %02d:%02d" % [minutes, seconds]
 
 func entered_from_mission(data: Dictionary) -> void:
 	if data == {}: return
@@ -73,6 +93,9 @@ func _ready() -> void:
 	if player and enemy:
 		player.health_change.connect(_on_player_health_changed)
 		enemy.health_change.connect(_on_enemy_health_changed)
+		
+func _process(delta: float) -> void:
+	update_question_time(delta)
 
 func setup_battle() -> void:
 	question_panel.hide()
@@ -97,7 +120,7 @@ func start_turn() -> void:
 	battle_menu.show_menu()
 
 func select_random_attack_options() -> void:
-	current_attack_option = move_loader.selectMove(3)
+	current_attack_option = MoveLoader.selectMove(3)
 	
 	update_battle_menu_options()
 	
@@ -118,9 +141,16 @@ func update_battle_menu_options() -> void:
 
 ## Given an answer index 1-4, check if answer is correct
 func _on_answer_selected(answer: int) -> void:
-	var correct: bool = QuestionSelector.markQuestion(current_question, [answer])
+	mark_question([answer])
+		
+func mark_question(answers: Array[int]) -> void:
+	# NOTE: if -2 is in the answers, we timed out
+	var correct: bool = QuestionSelector.markQuestion(current_question, answers, current_question.answeringTime - question_time_left)
+	timer_label.hide()
 	
 	if correct:
+		# TODO: comment this condition?
+		#	is it possible to instead check current_attack != null?
 		if typeof(current_attack) == TYPE_OBJECT:
 			execute_attack(current_attack.damage)
 	else:
@@ -154,7 +184,10 @@ func _on_option_selected(option: String) -> void:
 
 
 func show_question_for_action() -> void:
-	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_AI, 0.5)
+	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_AI | QuestionSelector.QUESTION_TYPE_SINGLE, 0.5)
+	question_time_left = current_question.answeringTime
+	timer_label.show()
+	
 	if current_question:
 		question_panel.show_question(current_question)
 		battle_menu.hide_menu()
@@ -224,7 +257,6 @@ func use_item(item_name: String) -> void:
 			attack_boost_turns_remaining = 3
 			item.count -= 1
 			print("Used Attack Boost, attacks increased by ", attack_multiplier, " for ", attack_boost_turns_remaining, " turns")
-
 
 	$CanvasLayer/UI/Itempanel.hide()
 	battle_menu.show_menu()

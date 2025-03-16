@@ -140,16 +140,24 @@ func _createQuestionFromEntry(entry : TableEntry) -> Question:
 # Returns whether or not you got the question correct
 #	Additionally marks that question as seen, whether it was answered correctly
 #	and adjusts the player's perceived skill on some number of factors
-func markQuestion(question : Question, answer : Array[int]) -> bool:
+func markQuestion(question : Question, answer : Array[int], timeSpent : float = 0.0) -> bool:
 	var isCorrect : bool = _isCorrectAnswer(question, answer);
+	
+	# What percentage of their answering time did they use
+	var answeringPercentageUsed : float = timeSpent / question.answeringTime
+		
+	# Assume they used half the answering time if not provided
+	if timeSpent == 0.0:
+		answeringPercentageUsed = 0.5
 	
 	# Weight of the factors in our adjustment to player skill
 	# 	"The question difficulty is 10x more important than whether the player's seen it before"
-	const relativeDifficultyWeight : float = 10; # TODO: this is difference between player skill and difficulty, more appropriate name?
-	const seenWeight : float = 1;
-	const correctWeight : float = 3;
+	const relativeDifficultyWeight : float = 10.0; # TODO: this is difference between player skill and difficulty, more appropriate name?
+	const seenWeight : float = 1.0;
+	const correctWeight : float = 3.0;
+	const timeWeight : float = 1.0;
 	
-	const totalWeight : float = relativeDifficultyWeight + seenWeight + correctWeight;
+	const totalWeight : float = relativeDifficultyWeight + seenWeight + correctWeight + timeWeight;
 	const inverseTotalWeight : float = 1.0 / totalWeight;
 
 	# TODO: Could consider a couple extra things for this algorithm
@@ -159,7 +167,7 @@ func markQuestion(question : Question, answer : Array[int]) -> bool:
 	
 	# Temperature might not be the right word,
 	#	"How aggressive is the algorithm in adjusting player skill?"
-	const temperature : float = 0.05; # Value... fresh from my ass
+	const temperature : float = 0.1; # Value... fresh from my ass
 
 	# Ideally we want the user to answer correctly ~80% of the time?
 	#	so adjust how we correct player skill such that getting
@@ -175,6 +183,13 @@ func markQuestion(question : Question, answer : Array[int]) -> bool:
 	#	 Seen && !Correct -> big change
 	# Hence the XOR operation (!=)
 	
+	# Logic for answering percentage
+	#	notably attempting to disincentivise a quick guess
+	#	low answer && correct -> big change
+	# 	high answer && correct -> small change
+	# 	high answer && !correct -> small change
+	#	low answer && !correct -> big change
+	
 	_playerSkill += (int(isCorrect) + bias) * temperature * inverseTotalWeight * (
 		# TODO: this relative difficulty weight is pretty dodgy
 		# TODO: at the very least, this should be linearly scaled to the range [0, 1]
@@ -185,7 +200,8 @@ func markQuestion(question : Question, answer : Array[int]) -> bool:
 		#	- if player skill exactly matches question difficulty, less dramatic change (around e^-1)
 		(exp(-(_playerSkill - question.difficulty) - 1.0) * relativeDifficultyWeight) +
 		(int(_seenBefore(question) != isCorrect) * seenWeight) +
-		(int(_correctBefore(question) != isCorrect) * correctWeight)
+		(int(_correctBefore(question) != isCorrect) * correctWeight) +
+		((1.0 - answeringPercentageUsed) * timeWeight)
 	);
 	
 	_playerSkill = clamp(_playerSkill, 0.0, 1.0);
@@ -241,13 +257,13 @@ func selectQuestion(topicMask : int, requestedDifficulty : float) -> Question:
 	
 	const randomVariance : float = 0.2;
 	
-	var bestQuestionScore : float = 0;
-	var bestQuestion : Question = Question.new();
+	var bestQuestionScore : float = 0.0;
+	var bestQuestion : Question = null;
 	
 	for question in _questions:
 		var questionScore : float = inverseTotalWeight * (
 			int(_doesTopicMatch(question.topic, topicMask)) * topicMatchingWeight +
-			(1 - int(_seenBefore(question))) * seenWeight + # Note, negatively weighted
+			(1.0 - int(_seenBefore(question))) * seenWeight + # Note, negatively weighted
 			(1.0 - abs(_relativeDifficulty(question) - requestedDifficulty)) * difficultyWeight
 			+ _rng.randf_range(-randomVariance, randomVariance)
 		);

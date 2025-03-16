@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c7f4ajlxoh1vx"]
+[gd_scene load_steps=16 format=3 uid="uid://c7f4ajlxoh1vx"]
 
 [ext_resource type="Script" uid="uid://cred43culgyvt" path="res://scripts/battle/battle.gd" id="1_w45sv"]
 [ext_resource type="Script" uid="uid://dnho0bf1218nx" path="res://scripts/battle/camera.gd" id="2_3jjtx"]
@@ -10,7 +10,6 @@
 [ext_resource type="Shader" uid="uid://bux7q4nxmvd3j" path="res://shaders/battle_bg.gdshader" id="6_4wttv"]
 [ext_resource type="PackedScene" uid="uid://dt6vqsik07l1m" path="res://scenes/enemy.tscn" id="8_203gs"]
 [ext_resource type="PackedScene" uid="uid://djve8htdyo25c" path="res://scenes/player.tscn" id="9_jmbyx"]
-[ext_resource type="Script" uid="uid://bu4iisjx2hswt" path="res://scripts/battle/move_loader.gd" id="11_dl58h"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_h20yi"]
 render_priority = 0
@@ -216,9 +215,18 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="Timerlabel" type="Label" parent="CanvasLayer/UI"]
+visible = false
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -68.0
+offset_bottom = 23.0
+grow_horizontal = 0
+text = "Time left"
+
 [node name="enemy" parent="." instance=ExtResource("8_203gs")]
 
 [node name="player" parent="." instance=ExtResource("9_jmbyx")]
-
-[node name="Moveloader" type="Node" parent="."]
-script = ExtResource("11_dl58h")

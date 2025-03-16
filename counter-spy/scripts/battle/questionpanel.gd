@@ -27,7 +27,6 @@ func style_panel():
 	$Optionscontainer.add_theme_constant_override("seperation", 20)
 	
 func show_question(question: Question):
-	
 	show()
 	print("Showing question in question_panel:", question.text)
 	$Questionlabel.text = question.text
