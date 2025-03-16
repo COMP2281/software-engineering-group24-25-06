@@ -20,9 +20,9 @@ func entered_from_encounter(data: Dictionary) -> void:
 	
 	StealthManager.set_all_suspicion_level.emit(0.0)
 	
-func load_level(level_name) -> void:
+func load_level(level_name: String, with_reset: bool) -> void:
 	# If attempting to load the same level, return
-	if loaded_level != null and loaded_level_name == level_name: return
+	if loaded_level != null and loaded_level_name == level_name and not with_reset: return
 		
 	if loaded_level != null:
 		remove_child(loaded_level)
@@ -30,16 +30,6 @@ func load_level(level_name) -> void:
 	
 	var packed_scene := load(level_name)
 	loaded_level_name = level_name
-	loaded_level = packed_scene.instantiate()
-	add_child(loaded_level)
-	
-func reset_level() -> void:
-	if loaded_level != null:
-		remove_child(loaded_level)
-		loaded_level.queue_free()
-		loaded_level = null
-	
-	var packed_scene := load(loaded_level_name)
 	loaded_level = packed_scene.instantiate()
 	add_child(loaded_level)
 	
