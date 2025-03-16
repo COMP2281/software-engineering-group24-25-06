@@ -36,6 +36,7 @@ var player_items = {
 	"Attack Boost": {"count": 2, "boost_amount": 1.5}
 }
 
+
 func update_question_time(delta: float) -> void:
 	if question_time_left == INF: return
 	
@@ -98,6 +99,25 @@ func _ready() -> void:
 		player.health_change.connect(_on_player_health_changed)
 		enemy.health_change.connect(_on_enemy_health_changed)
 		
+	if not has_node("CanvasLayer/FlashOverlay"):
+		var flash_overlay = ColorRect.new()
+		flash_overlay.name = "FlashOverlay"
+		flash_overlay.color = Color(1, 0, 0, 0)
+		flash_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+		flash_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		$CanvasLayer.add_child(flash_overlay)
+		
+func flash_screen(correct: bool):
+	var flash_overlay = $CanvasLayer/FlashOverlay
+	
+	if correct:
+		flash_overlay.color = Color(0, 1, 0, 0.3)
+	else:
+		flash_overlay.color = Color(1, 0, 0, 0.3)
+		
+	var tween = create_tween()
+	tween.tween_property(flash_overlay, "color:a", 0.0, 0.5)
+
 func _process(delta: float) -> void:
 	update_question_time(delta)
 
@@ -151,6 +171,8 @@ func mark_question(answers: Array[int]) -> void:
 	# NOTE: if -2 is in the answers, we timed out
 	var correct: bool = QuestionSelector.markQuestion(current_question, answers, current_question.answeringTime - question_time_left)
 	timer_label.hide()
+	
+	flash_screen(correct)
 	
 	if correct:
 		# TODO: comment this condition?
