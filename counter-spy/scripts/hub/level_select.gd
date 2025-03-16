@@ -2,9 +2,9 @@ extends Control
 
 var is_in_area = false
 var menu_open = false  # Track menu state
-var lvl1 = preload("res://Scenes/Levels/Mission1/level_1.tscn")
+#var lvl1 = preload("res://Scenes/Levels/Mission1/level_1.tscn")
 
-@onready var tooltip = $"../LevelSelectionArea/Tooltip" # Adjust this path if needed
+@onready var tooltip = $"../../LevelSelectionArea/Tooltip" # Adjust this path if needed
 
 
 
@@ -17,7 +17,7 @@ func _ready():
 		tooltip.visible = false
 	
 	# Connect the signals for the area3D
-	var area = get_node_or_null("../LevelSelectionArea")
+	var area = get_node_or_null("../../LevelSelectionArea")
 	if area:
 		area.connect("body_entered", Callable(self, "_on_area_3d_body_entered"))
 		area.connect("body_exited", Callable(self, "_on_area_3d_body_exited"))
@@ -49,12 +49,12 @@ func _on_back_btn_pressed() -> void:
 	close_levels()
 
 func _on_level_1_pressed() -> void:
-	var transition_screen = get_node("../CanvasLayer/TransitionScreen")
+	var transition_screen = $"../TransitionScreen"
 	
 	transition_screen.visible = true
 	print("Starting transition animation...")
 	# Play the fade-out animation
-	$"../CanvasLayer/TransitionScreen/AnimationPlayer".play("fade_in_to_loading_screen")
+	$"../TransitionScreen/AnimationPlayer".play("fade_in_to_loading_screen")
 	# Wait for the animation to finish before changing the scene
 	# TODO: shoudl await the animation rather than set timer
 	await get_tree().create_timer(1).timeout
@@ -69,18 +69,23 @@ func _process(_delta):
 	on_interact()
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	if body.name == "ProtoController":  # Ensure it's the player
+	if body.name == "ProtoController3P":  # Ensure it's the player
 		#print("Player entered the area.")
 		is_in_area = true
 		if tooltip:
 			tooltip.show()  # Show tooltip
+	else:
+		print(body.name)
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
-	if body.name == "ProtoController":  # Ensure it's the player
+	if body.name == "ProtoController3P":  # Ensure it's the player
 		#print("Player exited the area.")
 		is_in_area = false
 		if tooltip:
 			tooltip.hide()  # Hide tooltip
+			
+
+	
 
 ## ---------------------------
 ## Helper functions
@@ -96,7 +101,7 @@ func _capture_mouse():
 
 # Enable/Disable player movement
 func _enable_player_controls(enable: bool):
-	var player = get_node_or_null("../ProtoController")  # Adjust path if needed
+	var player = $"../../Player/ProtoController3P"  # Adjust path if needed
 	if player:
 		player.can_move = enable
 		player.can_jump = enable

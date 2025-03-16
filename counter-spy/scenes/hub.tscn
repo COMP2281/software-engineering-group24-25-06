@@ -62,6 +62,7 @@ text = "[E] to Select Level
 
 [node name="Level1Block" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.56232, 0.787391, -1.04508)
+visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level1Block"]
 shape = SubResource("BoxShape3D_l2gmx")
@@ -92,13 +93,12 @@ tooltip = NodePath("../../WorldCompletionsArea/Label3D")
 [node name="CyberSecurity" parent="CanvasLayer" instance=ExtResource("7_uq2mt")]
 visible = false
 
+[node name="LevelSelect" parent="CanvasLayer" instance=ExtResource("3_7xwqd")]
+visible = false
+
 [node name="TransitionScreen" parent="CanvasLayer" instance=ExtResource("4_ahie3")]
 visible = false
 mouse_filter = 1
-
-[node name="LevelSelect" parent="CanvasLayer" node_paths=PackedStringArray("area") instance=ExtResource("3_7xwqd")]
-visible = false
-area = NodePath("../../LevelSelectionArea")
 
 [connection signal="body_entered" from="LevelSelectionArea" to="CanvasLayer/LevelSelect" method="_on_level_selection_area_body_entered"]
 [connection signal="body_entered" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_entered"]
