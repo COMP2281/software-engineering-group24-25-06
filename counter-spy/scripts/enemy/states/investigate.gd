@@ -11,6 +11,10 @@ func enter(_previous_state_path: String, _data := {}) -> void:
 	enemy.new_investigation_point = Vector3.INF
 	enemy.investigate_time_left = enemy.enemy_resource.investigation_time
 
+func exit(_data := {}) -> void:
+	enemy.new_investigation_point = Vector3.INF
+	enemy.investigate_time_left = 0.0
+
 func physics_update(delta: float) -> void:
 	if enemy.suspicion_level > enemy.enemy_resource.hunting_begin_threshold:
 		finished.emit(HUNTING)
@@ -25,15 +29,16 @@ func physics_update(delta: float) -> void:
 		enemy.new_investigation_point = Vector3.INF
 		enemy.investigate_time_left = enemy.enemy_resource.investigation_time
 	
+	# Immediately begin decreasing in case we can't get to the investigation point
+	# Begin decreasing the investigation time
+	enemy.investigate_time_left = clamp(enemy.investigate_time_left - delta, 0.0, enemy.enemy_resource.investigation_time)
+	
 	# Check if we've arrived at the location
 	if enemy.navigation_agent_3d.is_target_reached():
 		# Reset velocity so we don't just glide in the same direction
 		enemy.velocity.x = 0.0
 		enemy.velocity.z = 0.0
 		
-		# Begin decreasing the investigation time
-		enemy.investigate_time_left = clamp(enemy.investigate_time_left - delta, 0.0, enemy.enemy_resource.investigation_time)
-	
 		# If we see player during investigation, try to follow them with the camera
 		if enemy.currently_seeing_player:
 			var towards_player: Vector3 = (StealthManager.player_position - enemy.global_position).normalized()

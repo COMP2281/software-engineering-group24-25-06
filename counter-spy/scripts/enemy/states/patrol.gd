@@ -39,22 +39,15 @@ func physics_update(delta: float) -> void:
 	if enemy.player_position_guess != Vector3.INF:
 		# If we are already suspicious of the player
 		#	let this enemy join in on the search
-		if StealthManager.suspicion_level > enemy.enemy_resource.investigate_begin_threshold:
+		if StealthManager.suspicion_level >= enemy.enemy_resource.investigate_begin_threshold:
 			enemy.suspicion_level = max(enemy.enemy_resource.investigate_begin_threshold, enemy.suspicion_level)
 			enemy.new_investigation_point = enemy.player_position_guess
 			
 			finished.emit(INVESTIGATE)
 			return
-	
-	if enemy.suspicion_level >= enemy.enemy_resource.investigate_begin_threshold:
-		# Investigate the player's current position
-		#	TODO: maybe go to last observation instead?
-		enemy.new_investigation_point = StealthManager.player_position
-		finished.emit(INVESTIGATE)
-		return
 		
 	# We have some distraction/trail to investigate
-	if enemy.new_investigation_point:
+	if enemy.new_investigation_point != Vector3.INF:
 		finished.emit(INVESTIGATE)
 		return
 

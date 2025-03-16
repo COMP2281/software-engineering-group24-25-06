@@ -15,6 +15,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21381, 1.64284, -3.08985)
 proto_controller = NodePath("../ProtoController3P")
 
 [node name="ProtoController3P" parent="." instance=ExtResource("2_c4b32")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 collision_layer = 2
 collision_mask = 5
 

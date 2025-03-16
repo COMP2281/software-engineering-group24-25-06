@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_tr8tv")
-detection_speed = 1.0
+detection_speed = 0.5
 fov = 1.5708
 close_radius = 1.0
 view_radius = 3.0

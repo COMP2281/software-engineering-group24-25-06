@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cxokey404267j" path="res://scripts/player/proto_controller.gd" id="1_x0abh"]
 [ext_resource type="Script" uid="uid://cpvcb3vixbrar" path="res://scripts/player/camera_controller.gd" id="2_gl6vu"]
-[ext_resource type="PackedScene" uid="uid://bj2w0lxgkh5lf" path="res://assets/models/spi.fbx" id="2_myvyc"]
+[ext_resource type="PackedScene" uid="uid://cc5ockv1p75w" path="res://scenes/spi.tscn" id="2_jy36w"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iof21"]
 radius = 0.4
@@ -13,14 +13,13 @@ radius = 0.07
 
 [node name="ProtoController3P" type="CharacterBody3D" groups=["Player"]]
 script = ExtResource("1_x0abh")
-input_left = "move_left"
-input_right = "move_right"
-input_forward = "move_forward"
-input_back = "move_backward"
+input_left = "move_right"
+input_right = "move_left"
+input_forward = "move_backward"
+input_back = "move_forward"
 input_jump = "move_jump"
 
-[node name="Mesh" parent="." instance=ExtResource("2_myvyc")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+[node name="Mesh" parent="." instance=ExtResource("2_jy36w")]
 
 [node name="Collider" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)

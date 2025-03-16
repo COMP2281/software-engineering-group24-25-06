@@ -8,7 +8,7 @@
 [sub_resource type="Resource" id="Resource_t25hq"]
 resource_local_to_scene = true
 script = ExtResource("3_1oiai")
-detection_speed = 1.0
+detection_speed = 0.5
 fov = 1.0472
 close_radius = 1.0
 view_radius = 8.0
@@ -28,7 +28,7 @@ move_speed = 5.0
 hunt_speed = 7.5
 max_rotation_speed = 3.14159
 investigate_begin_threshold = 0.4
-investigation_time = 2.0
+investigation_time = 4.0
 fov_scan = 1.5708
 scan_times = 1.5
 hunting_begin_threshold = 0.9

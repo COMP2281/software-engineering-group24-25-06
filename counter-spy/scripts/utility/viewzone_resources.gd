@@ -1,7 +1,7 @@
 class_name ViewzoneResource extends Resource
 
 ## How quickly a player will get detected, 1 / time
-@export var detection_speed: float = 1.0
+@export var detection_speed: float = 0.5
 ## The FOV of the enemy
 @export_range(0.0, 180.0, 0.5, "radians_as_degrees") var fov: float = 75.0
 ## The close-range circle around which the player will be detected

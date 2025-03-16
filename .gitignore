@@ -9,3 +9,4 @@ __pycache__/
 .DS_Store
 .env
 *.import
+counter-spy/web_build/

@@ -5,7 +5,7 @@
 [resource]
 resource_local_to_scene = true
 script = ExtResource("1_bq1l8")
-detection_speed = 1.0
+detection_speed = 0.5
 fov = 1.0472
 close_radius = 1.0
 view_radius = 8.0

@@ -22,8 +22,8 @@ class_name EnemyResource extends Resource
 @export_group("Investigate behaviours")
 ## At what suspicion level do we stop patrolling to investigate the player position
 @export_range(0.0, 1.0) var investigate_begin_threshold: float = 0.4
-## How long to stay in the investigation location
-@export var investigation_time: float = 2.0
+## How long to go to, and stay in the investigation location
+@export var investigation_time: float = 4.0
 ## What FOV to scan during investigation
 @export_range(0.0, 360.0, 0.5, "radians_as_degrees") var fov_scan: float = 0.5 * PI
 # NOTE: unless we have a desired rotation speed (max_rotation_speed? although that might be too fast)

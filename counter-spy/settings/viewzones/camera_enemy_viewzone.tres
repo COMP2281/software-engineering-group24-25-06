@@ -5,7 +5,7 @@
 [resource]
 resource_local_to_scene = true
 script = ExtResource("1_ogihh")
-detection_speed = 0.5
+detection_speed = 0.25
 fov = 1.39626
 close_radius = 0.0
 view_radius = 7.0
