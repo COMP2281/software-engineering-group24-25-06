@@ -2,7 +2,7 @@ class_name Player extends Node3D
 
 @export_group("Modifiable Parameters")
 ## The range enemies should hear the coin toss from
-@export var coin_toss_range: float = 35.0
+@export var coin_toss_range: float = 25.0
 ## The range enemies can hear player movement from
 @export var player_movement_range: float = 5.0
 @export var hacking_range: float = 25.0

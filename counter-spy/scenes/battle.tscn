@@ -43,14 +43,15 @@ roughness = 0.7
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rcek2"]
 render_priority = 0
 shader = ExtResource("5_p6kgc")
-shader_parameter/tint = Color(0.3744, 0.44272, 0.96, 1)
-shader_parameter/speed = 1.209
-shader_parameter/density = 6.605
+shader_parameter/tint = Color(0.3, 0.3, 0.8, 1)
+shader_parameter/speed = 1.2
+shader_parameter/density = 6.6
 shader_parameter/random_influence = 0.0
-shader_parameter/gamma_correction = 4.846
-shader_parameter/value_multiplier = 3.96
-shader_parameter/traversal_distance = 1.962
-shader_parameter/traversal_speed = 0.126
+shader_parameter/gamma_correction = 3.738
+shader_parameter/value_multiplier = 4.0
+shader_parameter/traversal_distance = 2.0
+shader_parameter/traversal_speed = 0.1
+shader_parameter/direction = 1.0
 shader_parameter/octaves = 3
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ebnrg"]
@@ -59,6 +60,8 @@ height = 5.0
 
 [node name="Battle" type="Node3D"]
 script = ExtResource("1_w45sv")
+lightning_player_color = Color(0.372549, 0.443137, 0.960784, 1)
+lightning_enemy_color = Color(0.643137, 0.0627451, 0.133333, 1)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.702153, 0.143173, -0.697483, 0, 0.979575, 0.201078, 0.712026, -0.141187, 0.687812, -6, 3, 6)
@@ -80,6 +83,7 @@ material = SubResource("StandardMaterial3D_b5i7k")
 
 [node name="LightningTube" type="MeshInstance3D" parent="."]
 transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0.746088, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_ebnrg")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

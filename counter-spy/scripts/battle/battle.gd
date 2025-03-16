@@ -8,6 +8,10 @@ class_name EncounterNode extends Node3D
 @onready var question_panel = $CanvasLayer/UI/Questionpanel
 @onready var ui = $CanvasLayer/UI
 @onready var timer_label = $CanvasLayer/UI/Timerlabel
+@onready var lightning_tube : MeshInstance3D = $LightningTube
+
+@export_color_no_alpha var lightning_player_color: Color
+@export_color_no_alpha var lightning_enemy_color: Color
 
 var player_health_value: float = 0.0
 var enemy_health_value: float = 0.0
@@ -195,6 +199,10 @@ func show_question_for_action() -> void:
 		print("No question found!")
 
 func execute_attack(damage: float = 15.0) -> void:
+	lightning_tube.show()
+	lightning_tube.mesh.material.set_shader_parameter("tint", lightning_player_color)
+	lightning_tube.mesh.material.set_shader_parameter("direction", 1.0)
+	
 	# TODO: should read out value from move settings/list
 	var boosted_damage = damage * attack_multiplier
 	apply_damage_to_enemy(boosted_damage)
@@ -267,9 +275,13 @@ func start_enemy_turn() -> void:
 	
 func execute_enemy_attack() -> void:
 	var enemy_damage: float = 10.0
+	
+	lightning_tube.mesh.material.set_shader_parameter("tint", lightning_enemy_color)
+	lightning_tube.mesh.material.set_shader_parameter("direction", -1.0)
 		
 	apply_damage_to_player(enemy_damage)
 	await get_tree().create_timer(1.0).timeout
+	lightning_tube.hide()
 	start_turn()
 	
 func apply_damage_to_player(damage: float) -> void:

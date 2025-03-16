@@ -1,13 +1,14 @@
 shader_type spatial;
 
-uniform vec3 tint : source_color = vec3(1.0, 0.0, 0.0);
-uniform float speed : hint_range(0.0, 100.0) = 1.0;
-uniform float density : hint_range(1.0, 10.0) = 8.0;
-uniform float random_influence : hint_range(0.0, 4.0) = 1.0;
-uniform float gamma_correction : hint_range(1.0, 10.0) = 3.0;
-uniform float value_multiplier : hint_range(1.0, 20.0) = 4.0;
-uniform float traversal_distance : hint_range(0.0, 100.0) = 10.0;
-uniform float traversal_speed : hint_range(0.0, 10.0) = 2.0;
+uniform vec3 tint : source_color = vec3(0.3, 0.3, 0.8);
+uniform float speed : hint_range(0.0, 100.0) = 1.2;
+uniform float density : hint_range(1.0, 10.0) = 6.6;
+uniform float random_influence : hint_range(0.0, 4.0) = 0.0;
+uniform float gamma_correction : hint_range(1.0, 10.0) = 3.5;
+uniform float value_multiplier : hint_range(1.0, 20.0) = 4.5;
+uniform float traversal_distance : hint_range(0.0, 100.0) = 2.0;
+uniform float traversal_speed : hint_range(0.0, 10.0) = 0.1;
+uniform float direction : hint_range(-1.0, 1.0) = 1.0;
 uniform int octaves : hint_range(1, 10) = 3;
 
 // Gold Noise ©2015 dcerisano@standard3d.com
@@ -123,7 +124,7 @@ float sample_fractal(vec2 uv, int n) {
 }
 
 void fragment() {
-	float sample = sample_fractal(UV + traversal_distance * fract(TIME * traversal_speed), octaves);
+	float sample = sample_fractal(UV + traversal_distance * sign(direction) * fract(TIME * traversal_speed), octaves);
 	sample = pow(sample, gamma_correction);
 	
 	vec3 hsv_color = rgb2hsv(tint);
