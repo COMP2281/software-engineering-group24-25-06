@@ -28,6 +28,9 @@ func _ready() -> void:
 	#	not the global suspicion level from the stealth manager
 	$Security.new_suspicion_level.connect(update_suspicion_level)
 	
+	print("Target angle: ", target_angle)
+	print("Rotation: ", global_rotation)
+	
 func die() -> void:
 	remove_child(self)
 	self.queue_free()
@@ -82,10 +85,14 @@ func _process(delta: float) -> void:
 		SceneCoordinator.change_scene.emit(SceneType.Name.BATTLE, {"enemy_encountered": self})
 	
 func _physics_process(delta: float) -> void:
-	var destination: Vector3 = navigation_agent_3d.get_next_path_position()
-	var local_destination: Vector3 = destination - global_position
-	var direction: Vector3 = local_destination.normalized()
-	var heading: float = atan2(direction.x, direction.z) - PI
+	var direction: Vector3 = Vector3.ZERO
+	var heading: float = target_angle
+	
+	if not navigation_agent_3d.is_navigation_finished():
+		var destination: Vector3 = navigation_agent_3d.get_next_path_position()
+		var local_destination: Vector3 = destination - global_position
+		direction = local_destination.normalized()
+		heading = atan2(direction.x, direction.z) - PI
 	
 	set_heading(heading)
 	velocity.x = direction.x * current_speed

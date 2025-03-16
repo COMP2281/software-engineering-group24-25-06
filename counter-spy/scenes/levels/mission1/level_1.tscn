@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://2vcswfkcqgta"]
+[gd_scene load_steps=25 format=3 uid="uid://2vcswfkcqgta"]
 
 [ext_resource type="Script" uid="uid://og5u4pd37pjw" path="res://scripts/level/Mission1Level1.gd" id="1_3sgl5"]
 [ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/prefabs/player.tscn" id="2_r5ah1"]
@@ -29,13 +29,6 @@ view_radius = 7.0
 decay_rate = 0.2
 communication_range = 20.0
 hearing_modifier = 0.0
-
-[sub_resource type="Curve3D" id="Curve3D_myrvq"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -2, 1, 0.067, 0, 0, 0, 0, 0, 0, 4, 1, 0.026, 0, 0, 0, 0, 0, 0, -2, 1, 0.067),
-"tilts": PackedFloat32Array(0, 0, 0)
-}
-point_count = 3
 
 [sub_resource type="Curve3D" id="Curve3D_2bh2k"]
 closed = true
@@ -94,7 +87,7 @@ enemy_name = "Standard"
 health = 100
 weakness = "fire"
 battle_begin_proximity = 3.0
-move_speed = 5.0
+move_speed = 2.0
 hunt_speed = 7.5
 max_rotation_speed = 3.14159
 investigate_begin_threshold = 0.4
@@ -123,7 +116,7 @@ enemy_name = "SnipeyMan"
 health = 80
 weakness = "fire"
 battle_begin_proximity = 3.0
-move_speed = 5.0
+move_speed = 2.0
 hunt_speed = 7.5
 max_rotation_speed = 3.14159
 investigate_begin_threshold = 0.4
@@ -150,13 +143,6 @@ script = ExtResource("2_rybds")
 [node name="SecurityCam" parent="PathCamera/PathFollow3D" instance=ExtResource("9_hoihy")]
 transform = Transform3D(-0.262312, 0.482492, -0.8357, 0, 0.866025, 0.5, 0.964984, 0.131156, -0.227169, -0.0055275, -0.0576448, -0.0349293)
 viewzone_resource = SubResource("Resource_ftlsv")
-
-[node name="PathSniper" type="Path3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.41804, 3.43362, -14.9388)
-curve = SubResource("Curve3D_myrvq")
-
-[node name="PathFollow3D" type="PathFollow3D" parent="PathSniper"]
-transform = Transform3D(0.00683332, 0, -0.999974, 0, 1, 0, 0.999974, 0, 0.00683332, -2, 1, 0.067)
 
 [node name="Path3D2" type="Path3D" parent="."]
 curve = SubResource("Curve3D_2bh2k")
@@ -245,10 +231,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.37683, -19)
 enemy_resource = ExtResource("10_vio4s")
 patrol_path = NodePath("../Path3D2")
 
-[node name="Enemy3" parent="." node_paths=PackedStringArray("patrol_path") instance=ExtResource("5_8yhfp")]
+[node name="Sniper" parent="." instance=ExtResource("5_8yhfp")]
 transform = Transform3D(-0.00560249, 0, -0.999984, 0, 1, 0, 0.999984, 0, -0.00560249, -5.6579, 4.08214, -14.8412)
 enemy_resource = SubResource("Resource_tkpqr")
-patrol_path = NodePath("../PathSniper")
 
 [node name="ReinforcementPoint" parent="." instance=ExtResource("11_e3b8r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.9703, 4.26042, -49.4439)
