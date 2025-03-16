@@ -24,6 +24,11 @@ MoveLoader="*res://scripts/battle/move_loader.gd"
 LevelMetadataLoader="*res://scripts/utility/level_metadata_loader.gd"
 Global="*res://scripts/Global.gd"
 
+[debug]
+
+shapes/navigation/enable_agent_paths=false
+shapes/navigation/enable_agent_paths_xray=false
+
 [display]
 
 window/stretch/mode="canvas_items"

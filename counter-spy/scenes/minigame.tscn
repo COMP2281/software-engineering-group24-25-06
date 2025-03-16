@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://cqbfnupvwmq8v"]
+
+[ext_resource type="Shader" uid="uid://cpvqu8al4f8k2" path="res://shaders/minigame.gdshader" id="1_5iev5"]
+[ext_resource type="Script" uid="uid://dc1wcqj21jgnj" path="res://scripts/ui/minigame.gd" id="1_hwsak"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hwsak"]
+shader = ExtResource("1_5iev5")
+shader_parameter/tint = Color(0.261317, 0.930298, 1.92523e-06, 1)
+shader_parameter/tint_selected = Color(0.705939, 3.53761e-06, 3.85046e-07, 1)
+shader_parameter/cursor_color = Color(0.12, 0.486667, 1, 1)
+shader_parameter/dot_radius = 0.027
+shader_parameter/dot_luminesence = 0.153
+shader_parameter/dot_gamma = 4.128
+shader_parameter/dot_gamma_variance = 1.174
+shader_parameter/dot_gamma_varying_frequency = 1.54
+shader_parameter/dot_count = 26.0
+shader_parameter/tolerance = 0.436
+shader_parameter/padding = 0.044
+shader_parameter/general_epsilon = 0.01
+shader_parameter/row = 1.074
+shader_parameter/cursor = 0.0
+shader_parameter/squircle_power = 3.0
+shader_parameter/squircle_radius = 0.038
+shader_parameter/squircle_luminesence = 0.234
+shader_parameter/squircle_gamma = 5.281
+shader_parameter/squircle_stretch = 0.404
+
+[node name="Minigame" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hwsak")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_hwsak")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
