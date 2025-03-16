@@ -45,17 +45,14 @@ func setup_menu():
 	for child in wheel.get_children():
 		child.queue_free()
 	
-	# Style the container like P5
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.8)
-	style.border_color = Color(1, 0, 0)
-	style.corner_radius_top_left = 10
-	
 	# TODO: ideally keep the wheel-based positioning system
 	#	but also allow it to scale nicely
+	var initial_angle: float = PI / 4.0
+	var angle_change: float = (2.0* PI) / float(options.size())
+	
 	for i in range(options.size()):
 		var button = Button.new()
-		var angle = (i * PI/2) - PI/4
+		var angle = (i * angle_change) + initial_angle
 		
 		var radius = 150
 		var pos = Vector2(
@@ -67,23 +64,15 @@ func setup_menu():
 		button.custom_minimum_size = Vector2(120, 40)
 		button.position = pos - button.custom_minimum_size/2
 		
-		var btn_style = StyleBoxFlat.new()
-		btn_style.bg_color = Color(0, 0, 0, 0.9)
-		btn_style.border_color = Color(1, 0, 0)
-		btn_style.corner_radius_top_left = 10
-		btn_style.corner_radius_bottom_right = 10
-		btn_style.skew = Vector2(0.2, 0)
-		
-		button.add_theme_stylebox_override("normal", btn_style)
 		button.connect("pressed", _on_option_pressed.bind(i))
 		
+		# TODO: this control label doesn't have the same positioning as the regular text
 		var control_label = Label.new()
 		control_label.text = "○ " if i == 0 else "□ " if i == 1 else "△ " if i == 2 else "× "
 		control_label.add_theme_color_override("font_color", Color(1, 0, 0))
 		button.add_child(control_label)
-		
 		wheel.add_child(button)
-		buttons.append(button)  
+		buttons.append(button)
 
 func show_menu():
 	menu_visible = true

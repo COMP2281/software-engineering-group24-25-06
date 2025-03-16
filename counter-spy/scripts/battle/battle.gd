@@ -306,14 +306,6 @@ func game_over(player_won: bool) -> void:
 	
 	var game_over_panel = $CanvasLayer/UI/Gameoverpanel
 	var result_label = $CanvasLayer/UI/Gameoverpanel/Resultlabel
-	
-	var panel_style = StyleBoxFlat.new()
-	panel_style.bg_color = Color(0, 0, 0, 0.9)
-	panel_style.border_color = Color(1, 0, 0)
-	panel_style.corner_radius_top_left = 15
-	panel_style.corner_radius_bottom_right = 15
-	game_over_panel.add_theme_stylebox_override("panel", panel_style)
-	game_over_panel.custom_minimum_size = Vector2(400, 200)
 
 	if player_won:
 		result_label.text = "VICTORY!"
@@ -321,7 +313,6 @@ func game_over(player_won: bool) -> void:
 	else:
 		result_label.text = "DEFEAT!"
 		result_label.add_theme_color_override("font_color", Color(1, 0, 0))  # Red
-	result_label.add_theme_font_size_override("font_size", 32)
 
 	game_over_panel.show() 
 	result_label.show()

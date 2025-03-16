@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://bgo0582ikmijd"]
+[gd_scene load_steps=5 format=3 uid="uid://bgo0582ikmijd"]
 
 [ext_resource type="PackedScene" uid="uid://b28g55r8vqb04" path="res://scenes/option_node.tscn" id="1_322ms"]
+[ext_resource type="Theme" uid="uid://c0juedfri1bbw" path="res://assets/options_theme.tres" id="1_hm4m4"]
 [ext_resource type="Script" uid="uid://c0ahxxyy1fhg4" path="res://scripts/scene_coordinator/start_game.gd" id="2_60s1i"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_wc8ku"]
@@ -15,6 +16,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("1_hm4m4")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
