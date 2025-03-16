@@ -34,9 +34,10 @@ func load_level(level_name) -> void:
 	add_child(loaded_level)
 	
 func reset_level() -> void:
-	remove_child(loaded_level)
-	loaded_level.queue_free()
-	loaded_level = null
+	if loaded_level != null:
+		remove_child(loaded_level)
+		loaded_level.queue_free()
+		loaded_level = null
 	
 	var packed_scene := load(loaded_level_name)
 	loaded_level = packed_scene.instantiate()

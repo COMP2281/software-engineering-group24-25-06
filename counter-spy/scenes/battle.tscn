@@ -101,6 +101,7 @@ visible = false
 mesh = SubResource("CapsuleMesh_ebnrg")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="UI" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -197,6 +198,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="Gameoverpanel" type="Panel" parent="CanvasLayer/UI"]
+visible = false
 custom_minimum_size = Vector2(400, 200)
 layout_mode = 1
 anchors_preset = 8
