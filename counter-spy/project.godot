@@ -24,6 +24,11 @@ MoveLoader="*res://scripts/battle/move_loader.gd"
 LevelMetadataLoader="*res://scripts/utility/level_metadata_loader.gd"
 Global="*res://scripts/Global.gd"
 
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep_width"
+
 [global_group]
 
 Player=""
