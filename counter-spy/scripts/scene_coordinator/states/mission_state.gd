@@ -10,11 +10,15 @@ func _ready() -> void:
 func enter(previous_state_path: String, data := {}) -> void:
 	# TODO: terrible code, data should also provide the level to load
 	if data != {}:
+		print("Attempting to load level with data: ", data)
+		
 		if data["reset_level"] == true:
-			child_scene.load_level("res://scenes/levels/mission1/level_1.tscn", true)
+			child_scene.load_level(data["level_name"], true)
 		else:
-			child_scene.load_level("res://scenes/levels/mission1/level_1.tscn", false)
+			child_scene.load_level(data["level_name"], false)
 	else:
+		push_warning("No data passed to level loader! Defaulting to level 1")
+		
 		child_scene.load_level("res://scenes/levels/mission1/level_1.tscn", false)
 	
 	# We expect the data passed to contain the "enemy_defeated field"

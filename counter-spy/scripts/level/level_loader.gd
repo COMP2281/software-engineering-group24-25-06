@@ -22,7 +22,8 @@ func entered_from_encounter(data: Dictionary) -> void:
 	
 func load_level(level_name: String, with_reset: bool) -> void:
 	# If attempting to load the same level, return
-	if loaded_level != null and loaded_level_name == level_name and not with_reset: return
+	# TODO: terrible if condition
+	if loaded_level != null and (loaded_level_name == level_name or level_name == null) and not with_reset: return
 		
 	if loaded_level != null:
 		remove_child(loaded_level)

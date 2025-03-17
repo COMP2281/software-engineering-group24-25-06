@@ -51,6 +51,8 @@ var look_rotation : Vector2
 var move_speed : float = 0.0
 var freeflying : bool = false
 
+var can_turn: bool = true
+
 ## IMPORTANT REFERENCES
 @onready var head: Node3D = $Head
 @onready var collider: CollisionShape3D = $Collider
@@ -59,6 +61,16 @@ var freeflying : bool = false
 
 func get_look_vector() -> Vector3:
 	return -camera.global_basis.z.normalized()
+	
+func set_all_inputs(enabled: bool) -> void:
+	can_move = enabled
+	can_jump = enabled
+	can_turn = enabled
+	
+	if enabled:
+		capture_mouse()
+	else:
+		release_mouse()
 
 func _ready() -> void:
 	stale_yaw = rotation_degrees.y
@@ -136,14 +148,14 @@ func _physics_process(delta: float) -> void:
 ## Base of controller rotates around y (left/right). Head rotates around x (up/down).
 ## Modifies look_rotation based on rot_input, then resets basis and rotates by look_rotation.
 func rotate_look(rot_input : Vector2):
-	look_rotation.x -= rot_input.y * look_speed
-	look_rotation.x = clamp(look_rotation.x, deg_to_rad(-85), deg_to_rad(85))
-	look_rotation.y -= rot_input.x * look_speed
-	transform.basis = Basis()
-	rotate_y(look_rotation.y)
-	head.transform.basis = Basis()
-	head.rotate_x(look_rotation.x)
-
+	if can_turn:
+		look_rotation.x -= rot_input.y * look_speed
+		look_rotation.x = clamp(look_rotation.x, deg_to_rad(-85), deg_to_rad(85))
+		look_rotation.y -= rot_input.x * look_speed
+		transform.basis = Basis()
+		rotate_y(look_rotation.y)
+		head.transform.basis = Basis()
+		head.rotate_x(look_rotation.x)
 
 func enable_freefly():
 	collider.disabled = true
