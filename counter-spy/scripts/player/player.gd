@@ -8,7 +8,7 @@ class_name Player extends Node3D
 @export var hacking_range: float = 25.0
 
 const SNEAKING_SCALE: float = 0.75
-const MOVEMENT_EPSILON: float = 0.1;
+const MOVEMENT_EPSILON: float = 0.5;
 
 # TODO: rename
 func hide_ui():
@@ -72,5 +72,6 @@ func _physics_process(_delta: float):
 	$ProtoController3P.global_position = global_position
 	
 	# If the player is moving (check velocity vector if of non-zero length)
-	if $ProtoController3P.get_real_velocity().length() > MOVEMENT_EPSILON:
+	if $ProtoController3P.velocity.length() > MOVEMENT_EPSILON:
 		StealthManager.player_makes_sound($ProtoController3P.global_position, player_movement_range)
+		
