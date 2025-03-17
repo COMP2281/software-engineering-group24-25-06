@@ -33,7 +33,7 @@ func _process(delta: float) -> void:
 	color_rect.material.set_shader_parameter("dot_position", current_dot_position)
 	color_rect.material.set_shader_parameter("tolerance", tolerance)
 	
-	$Label.text = "(Press any button) Score: %.2f" % score
+	$MarginContainer/ScoreLabel.text = "Score: %.0f" % score
 	
 	cursor_position += delta * speed * direction
 	
