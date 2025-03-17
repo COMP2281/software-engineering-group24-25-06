@@ -296,7 +296,7 @@ func start_enemy_turn() -> void:
 	execute_enemy_attack()
 	
 func execute_enemy_attack() -> void:
-	var enemy_damage: float = 10.0
+	var enemy_damage: float = 20.0
 	
 	lightning_tube.mesh.material.set_shader_parameter("tint", lightning_enemy_color)
 	lightning_tube.mesh.material.set_shader_parameter("direction", -1.0)
