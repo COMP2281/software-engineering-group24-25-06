@@ -1,0 +1,164 @@
+[gd_scene load_steps=2 format=3 uid="uid://dsqfgpihqk5v4"]
+
+[ext_resource type="PackedScene" uid="uid://bj5cegoldwem7" path="res://assets/models/hub4.glb" id="1_e2yh8"]
+
+[node name="hub4" instance=ExtResource("1_e2yh8")]
+
+[node name="StaticBody3D" parent="Sphere" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="Sphere_001" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="Cylinder" parent="." index="2"]
+visible = false
+
+[node name="StaticBody3D" parent="Cylinder" index="0"]
+visible = false
+collision_layer = 0
+collision_mask = 0
+
+[node name="StaticBody3D" parent="Cylinder_001" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="Cylinder_002" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="Cylinder_003" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="Cylinder_004" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="Cylinder_005" parent="." index="7"]
+visible = false
+
+[node name="StaticBody3D" parent="Cylinder_005" index="0"]
+visible = false
+collision_layer = 0
+collision_mask = 0
+
+[node name="Cylinder_006" parent="." index="8"]
+visible = false
+
+[node name="StaticBody3D" parent="Cylinder_006" index="0"]
+visible = false
+collision_layer = 0
+collision_mask = 0
+
+[node name="StaticBody3D" parent="warehouse_012" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_short_002" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_long_020" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_long_021" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_long_022" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_long_023" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_long_024" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_long_025" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_long_026" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="support_long_029" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="pillars_002" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="ceiling_015" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="Cylinder_007" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="Cylinder_015" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="ceiling_017" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="Cylinder_017" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="warehouse_016" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="warehouse_017" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_027" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_028" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_029" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_030" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_034" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_035" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_036" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_037" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="StaticBody3D" parent="panels_038" index="0"]
+visible = false
+collision_mask = 7
+
+[node name="warehouse_002" parent="." index="42"]
+visible = false

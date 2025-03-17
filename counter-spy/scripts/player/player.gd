@@ -4,7 +4,7 @@ class_name Player extends Node3D
 ## The range enemies should hear the coin toss from
 @export var coin_toss_range: float = 25.0
 ## The range enemies can hear player movement from
-@export var player_movement_range: float = 5.0
+@export var player_movement_range: float = 2.0
 @export var hacking_range: float = 25.0
 
 const SNEAKING_SCALE: float = 0.75
@@ -56,7 +56,7 @@ func _process(delta: float) -> void:
 		var security_camera: SecurityCamera = cam as SecurityCamera
 		
 		var look_dir: Vector3 = $ProtoController3P.get_look_vector()
-		var camera_dir: Vector3 = (security_camera.global_position - global_position)
+		var camera_dir: Vector3 = (security_camera.global_position - $ProtoController3P.head.global_position)
 		
 		if look_dir.dot(camera_dir.normalized()) > 0.9 and camera_dir.length() < hacking_range:
 			security_camera.enter_hack_range()

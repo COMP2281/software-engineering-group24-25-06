@@ -1,20 +1,21 @@
 extends Node3D
 
-@export var proto_controller: ProtoController
+@export var proto_controller: ProtoController = null
+@export var similarity_threshold: float = 0.9
+
 @onready var response: Label3D = $Response
 @onready var line_edit: LineEdit = $CanvasLayer/BonsUI/PanelContainer/LineEdit
 @onready var bons_ui: CanvasLayer = $CanvasLayer
 
 # TODO: make labels auto-face player
-# TODO: look-at code abstracted for security cameras
 
 var http_request: HTTPRequest
 
 func show_ui():
-	$CanvasLayer.show()
+	pass
 	
 func hide_ui():
-	$CanvasLayer.hide()
+	pass
 
 func _ready():
 	http_request = HTTPRequest.new()
@@ -46,23 +47,32 @@ func _on_LineEdit_text_entered(text):
 	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_data)
 	if error != OK:
 		print("An error has occured when sending the message")
+	
+	if proto_controller != null:
+		proto_controller.set_all_inputs(true)
 		
-	proto_controller.set_all_inputs(true)
 	bons_ui.hide()
 	line_edit.text = ""
+	response.text = "Processing..."
 	
 func _process(delta: float) -> void:
-	var vector_to_bonsai: Vector3 = (global_position - proto_controller.head.global_position).normalized()
-	var look_vector: Vector3 = proto_controller.get_look_vector()
+	var vector_to_bonsai: Vector3
+	var look_vector: Vector3
+	
+	if proto_controller != null:
+		vector_to_bonsai = (global_position - proto_controller.head.global_position).normalized()
+		look_vector = proto_controller.get_look_vector()
 	
 	var similarity: float = look_vector.dot(vector_to_bonsai)
 	
 	# Sufficiently high dot product means they're parallel (normalised)?
-	if similarity > 0.8:
+	if similarity >= similarity_threshold:
 		$Label3D.show()
 		
-		if Input.is_action_pressed("interact"):
-			proto_controller.set_all_inputs(false)
+		if Input.is_action_pressed("bonsai_talk"):
+			if proto_controller != null:
+				proto_controller.set_all_inputs(false)
+
 			bons_ui.show()
 			line_edit.grab_focus()
 			

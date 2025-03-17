@@ -5,6 +5,7 @@ class_name HubNode extends Node3D
 @onready var world_completions_label = $WorldCompletionsArea/Label3D  # Adjust the path as needed
 @onready var world_menu = $CanvasLayer/WorldSelect
 @onready var cyber_menu = $CanvasLayer/CyberSecurity
+@onready var proto_controller: ProtoController = $Player/ProtoController3P
 
 var is_inside_completion_area = false  # Flag to track if the player is inside the area
 
@@ -19,9 +20,12 @@ func _ready() -> void:
 
 func prepare_enter() -> void:
 	$Player/ProtoController3P.camera.make_current()
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 	$CanvasLayer.show()
+	$CanvasLayer/LevelSelect.hide()
+	$CanvasLayer/CyberSecurity.hide()
+	$CanvasLayer/WorldSelect.hide()
+	proto_controller.set_all_inputs(true)
 	
 func prepare_exit() -> void:
 	if $Player/ProtoController3P.camera.current:

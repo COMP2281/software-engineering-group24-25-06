@@ -1,7 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://cwj82duxudtse"]
+[gd_scene load_steps=13 format=3 uid="uid://cwj82duxudtse"]
 
-[ext_resource type="PackedScene" uid="uid://13xrbcp83u58" path="res://scenes/building.tscn" id="1_qkjko"]
 [ext_resource type="Script" uid="uid://bwb7x5ietwgtd" path="res://scripts/hub.gd" id="1_tlc0s"]
+[ext_resource type="PackedScene" uid="uid://dsqfgpihqk5v4" path="res://scenes/levels/hub/hub_model_new_new.tscn" id="2_3wyi3"]
 [ext_resource type="PackedScene" uid="uid://b1xb7mbig4isg" path="res://scenes/level_select.tscn" id="3_7xwqd"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_ahie3"]
 [ext_resource type="PackedScene" uid="uid://h3k27ga3iolj" path="res://scenes/world_select.tscn" id="6_2rv1e"]
@@ -23,32 +23,22 @@ glow_enabled = true
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_npv4g"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_l2gmx"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_r5oxx"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s5o4l"]
-albedo_color = Color(1, 0, 0, 1)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_dejmd"]
-size = Vector3(2, 2, 3.332)
+size = Vector3(5, 2, 5)
 
 [node name="Hub" type="Node3D"]
 script = ExtResource("1_tlc0s")
 
+[node name="hub4" parent="." instance=ExtResource("2_3wyi3")]
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_77kxt")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
-shadow_enabled = true
-
 [node name="Player" parent="." instance=ExtResource("7_m10od")]
-
-[node name="building" parent="." instance=ExtResource("1_qkjko")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.176978, -44.5677)
 
 [node name="LevelSelectionArea" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.7546, 1.1039, -0.0059804)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.180662, -1.37194, 0.135419)
 collision_mask = 7
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="LevelSelectionArea"]
@@ -60,23 +50,12 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.668
 text = "[E] to Select Level
 "
 
-[node name="Level1Block" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.56232, 0.787391, -1.04508)
-visible = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1Block"]
-shape = SubResource("BoxShape3D_l2gmx")
-
-[node name="CSGMesh3D" type="CSGMesh3D" parent="Level1Block"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.625143, 0.152002, 0.574427)
-mesh = SubResource("BoxMesh_r5oxx")
-material = SubResource("StandardMaterial3D_s5o4l")
-
 [node name="WorldCompletionsArea" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.14511, 0.903405, 0)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.0175543, -0.241888, -49.8741)
 collision_mask = 7
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WorldCompletionsArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.02864, 0, -8.75443e-08)
 shape = SubResource("BoxShape3D_dejmd")
 
 [node name="Label3D" type="Label3D" parent="WorldCompletionsArea"]

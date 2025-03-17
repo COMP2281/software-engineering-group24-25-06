@@ -12,15 +12,14 @@ func enter(previous_state_path: String, data := {}) -> void:
 	if data != {}:
 		print("Attempting to load level with data: ", data)
 		
-		if data["reset_level"] == true:
-			child_scene.load_level(data["level_name"], true)
-		else:
-			child_scene.load_level(data["level_name"], false)
-	else:
-		push_warning("No data passed to level loader! Defaulting to level 1")
+		if data["deload_level"] == true:
+			child_scene.deload_level()
 		
-		child_scene.load_level("res://scenes/levels/mission1/level_1.tscn", false)
-	
+		if data["level_name"]:
+			child_scene.load_level(data["level_name"])
+	else:
+		push_error("No data passed to level loader!")
+		
 	# We expect the data passed to contain the "enemy_defeated field"
 	# TODO: maybe dedicated structures for EncounterToMission (etc.)
 	if SceneCoordinator.get_scene_enum(previous_state_path) == SceneType.Name.BATTLE:

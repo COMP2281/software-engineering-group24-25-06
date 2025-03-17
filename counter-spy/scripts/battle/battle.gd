@@ -210,7 +210,7 @@ func _on_option_selected(option: String) -> void:
 
 
 func show_question_for_action() -> void:
-	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_AI | QuestionSelector.QUESTION_TYPE_SINGLE, 0.5)
+	current_question = QuestionSelector.selectQuestion(QuestionSelector.TOPIC_CYBERSECURITY | QuestionSelector.QUESTION_TYPE_SINGLE, 0.5)
 	question_time_left = current_question.answeringTime
 	timer_label.show()
 	
@@ -329,6 +329,9 @@ func game_over(player_won: bool) -> void:
 	var game_over_panel = $CanvasLayer/UI/Gameoverpanel
 	var result_label = $CanvasLayer/UI/Gameoverpanel/Resultlabel
 
+	game_over_panel.show()
+	result_label.show()
+
 	if player_won:
 		result_label.text = "VICTORY!"
 		result_label.add_theme_color_override("font_color", Color(0, 1, 0))  # Green
@@ -336,14 +339,14 @@ func game_over(player_won: bool) -> void:
 		result_label.text = "DEFEAT!"
 		result_label.add_theme_color_override("font_color", Color(1, 0, 0))  # Red
 		# TODO: go back to hub
-
-	game_over_panel.show() 
-	result_label.show()
 	
 	# TODO: Timer after victory (probably should be some animation that plays that we await?)
 	await get_tree().create_timer(1.0).timeout
-	
-	SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought, "reset_level": not player_won, "level_name": "res://scenes/levels/mission1/level_1.tscn" })
+
+	if player_won:	
+		SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "deload_level": false })
+	else:
+		SceneCoordinator.change_scene.emit(SceneType.Name.HUB, { "deload_level": true })
 
 func _on_player_health_changed(new_health: float):
 	player_health.value = new_health

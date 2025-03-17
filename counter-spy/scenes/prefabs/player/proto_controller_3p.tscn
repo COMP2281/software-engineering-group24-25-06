@@ -19,7 +19,8 @@ input_forward = "move_backward"
 input_back = "move_forward"
 input_jump = "move_jump"
 
-[node name="Mesh" parent="." instance=ExtResource("2_jy36w")]
+[node name="Mesh" parent="." node_paths=PackedStringArray("proto_controller") instance=ExtResource("2_jy36w")]
+proto_controller = NodePath("..")
 
 [node name="Collider" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
