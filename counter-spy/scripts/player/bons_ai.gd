@@ -2,7 +2,8 @@ extends Node3D
 
 @export var proto_controller: ProtoController
 @onready var response: Label3D = $Response
-@onready var line_edit: LineEdit = $CanvasLayer/LineEdit
+@onready var line_edit: LineEdit = $CanvasLayer/BonsUI/PanelContainer/LineEdit
+@onready var bons_ui: CanvasLayer = $CanvasLayer
 
 # TODO: make labels auto-face player
 # TODO: look-at code abstracted for security cameras
@@ -21,7 +22,6 @@ func _ready():
 	http_request.request_completed.connect(_on_request_completed) #signal emitted when request is done
 	
 	line_edit.text_submitted.connect(_on_LineEdit_text_entered)
-	line_edit.visible = false
 	response.text = "Hi, I'm BonsAI"
 	
 func _on_request_completed(result, response_code, headers, body):
@@ -47,12 +47,12 @@ func _on_LineEdit_text_entered(text):
 	if error != OK:
 		print("An error has occured when sending the message")
 		
-	proto_controller.can_move = true
-	line_edit.visible = false
+	proto_controller.set_all_inputs(true)
+	bons_ui.hide()
 	line_edit.text = ""
 	
 func _process(delta: float) -> void:
-	var vector_to_bonsai: Vector3 = (global_position - proto_controller.global_position).normalized()
+	var vector_to_bonsai: Vector3 = (global_position - proto_controller.head.global_position).normalized()
 	var look_vector: Vector3 = proto_controller.get_look_vector()
 	
 	var similarity: float = look_vector.dot(vector_to_bonsai)
@@ -62,11 +62,9 @@ func _process(delta: float) -> void:
 		$Label3D.show()
 		
 		if Input.is_action_pressed("interact"):
-			proto_controller.can_move = false
-			proto_controller.mouse_captured = false
-			line_edit.visible = true
-			if line_edit.visible:
-				line_edit.grab_focus()
+			proto_controller.set_all_inputs(false)
+			bons_ui.show()
+			line_edit.grab_focus()
 			
 	else:
 		$Label3D.hide()

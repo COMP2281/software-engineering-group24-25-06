@@ -9,11 +9,12 @@ uniform float dot_gamma : hint_range(0.0, 10.0) = 2.5;
 uniform float dot_gamma_variance : hint_range(0.0, 5.0) = 2.0;
 uniform float dot_gamma_varying_frequency : hint_range(0.0, 5.0) = 0.5; 
 uniform float dot_count : hint_range(10.0, 30.0) = 20.0;
-uniform float tolerance : hint_range(0.0, 5.0) = 2.0;
+uniform float tolerance : hint_range(0.0, 10.0) = 2.0;
 uniform float padding : hint_range(0.0, 0.5) = 0.1;
 uniform float general_epsilon = 0.005;
 uniform float row : hint_range(0.0, 10.0) = 0.0;
 uniform float cursor : hint_range(0.0, 1.0) = 0.0;
+uniform float dot_position : hint_range(0.0, 1.0) = 0.0;
 uniform float squircle_power : hint_range(1.0, 10.0) = 3.0;
 uniform float squircle_radius : hint_range(0.0, 1.0) = 0.3;
 uniform float squircle_luminesence : hint_range(0.0, 1.0) = 0.2;
@@ -48,7 +49,7 @@ void fragment() {
 	
 	float dist_to_lattice = distance(UV, lattice_point);
 	// TODO: adjust for padding
-	float rand_point = transform_01_range(gold_noise(vec2(row), 1.0));
+	float rand_point = transform_01_range(dot_position);
 	float rand_point_lattice = floor(rand_point * dot_count) / dot_count + 1.0 / dot_count * 0.5;
 	
 	if (abs(rand_point_lattice - lattice_point.x) < (1.0 / dot_count) * (tolerance + general_epsilon)) {

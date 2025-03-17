@@ -154,7 +154,7 @@ transform = Transform3D(0.999981, 0, 0.0024475, 0, 0.999988, 0, -0.00244751, 0, 
 curve = SubResource("Curve3D_sc70j")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
-transform = Transform3D(0.999507, 0, 0.0309285, 0, 0.999988, 0, -0.0309286, 0, 0.999503, -18.962, 1, -18.214)
+transform = Transform3D(0.999506, 0, 0.0309285, 0, 0.999988, 0, -0.0309286, 0, 0.999502, -18.962, 1, -18.214)
 
 [node name="Player" parent="." instance=ExtResource("2_r5ah1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.77491, 3.71851, 11.4041)
