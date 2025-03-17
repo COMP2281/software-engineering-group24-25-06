@@ -335,6 +335,7 @@ func game_over(player_won: bool) -> void:
 	else:
 		result_label.text = "DEFEAT!"
 		result_label.add_theme_color_override("font_color", Color(1, 0, 0))  # Red
+		# TODO: go back to hub
 
 	game_over_panel.show() 
 	result_label.show()
@@ -342,7 +343,7 @@ func game_over(player_won: bool) -> void:
 	# TODO: Timer after victory (probably should be some animation that plays that we await?)
 	await get_tree().create_timer(1.0).timeout
 	
-	SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought, "reset_level": not player_won, "level_name": null })
+	SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought, "reset_level": not player_won, "level_name": "res://scenes/levels/mission1/level_1.tscn" })
 
 func _on_player_health_changed(new_health: float):
 	player_health.value = new_health
