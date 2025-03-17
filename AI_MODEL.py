@@ -106,7 +106,7 @@ missions = {
             "Retrieve the security key",
             "Optionally neutralize the 3 enemy targets"
         ],
-        "setting": "An abandoned warehouse, full of advanced technology beyond your comprehension",
+        "setting": "An abandoned laboratory, full of advanced technology beyond your comprehension",
         "topic": "AI",
         "keywords": ["stealth", "security", "encryption", "covert ops"],
         "enemyList": [
@@ -530,7 +530,12 @@ def answer_checker(state: "State"):
         state["messages"].append(AIMessage(feedback))
 
         # Keep the state for retry
-        return state
+        return {
+            "messages": state["messages"],
+            "current_question": "",
+            "current_choices": [],
+            "correct_answer": ""
+        }
 
 # Define router function
 def router(state: "State"):
