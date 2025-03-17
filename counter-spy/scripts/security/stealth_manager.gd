@@ -43,7 +43,7 @@ func _ready() -> void:
 	change_suspicion_level.connect(update_suspicion_level)
 	change_stealth_level.connect(update_stealth_modifier)
 	change_global_alertness.connect(update_global_alertness)
-	set_all_suspicion_level.connect(func(new_level: float): suspicion_level = new_level)
+	set_all_suspicion_level.connect(_set_all_suspicion_level)
 	
 func observe_player(observed_player_position: Vector3, security_position: Vector3):
 	player_observed_elapsed = 0.0
@@ -56,6 +56,10 @@ func get_security() -> Array[Security]:
 	security.assign(security_group)
 	
 	return security
+	
+func _set_all_suspicion_level(new_level: float):
+	suspicion_level = new_level
+	change_suspicion_level.emit(new_level)
 
 func calculate_global_alertness() -> void:
 	var global_alertness: float = BASELINE_GLOBAL_ALERTNESS
@@ -84,8 +88,10 @@ func _process(delta: float) -> void:
 	var security: Array[Security] = get_security()
 	if not security: return
 	
+	print("Num security units: ", len(security))
+	
 	# Get maximum suspicion level of all enemies
-	var max_sus_level: float = security[0].suspicion_level
+	var max_sus_level: float = 0.0
 	observation_tracker = []
 	
 	for unit in security:

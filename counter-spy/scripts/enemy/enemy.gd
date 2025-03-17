@@ -28,12 +28,12 @@ func _ready() -> void:
 	#	not the global suspicion level from the stealth manager
 	$Security.new_suspicion_level.connect(update_suspicion_level)
 	
-	print("Target angle: ", target_angle)
-	print("Rotation: ", global_rotation)
-	
 func die() -> void:
 	remove_child(self)
 	self.queue_free()
+	
+	# TODO: hacky fix, but set all suspicion levels to 0
+	StealthManager.set_all_suspicion_level.emit(0.0)
 
 func update_distraction_point(location: Vector3) -> void:
 	new_investigation_point = location

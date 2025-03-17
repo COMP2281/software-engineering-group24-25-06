@@ -344,7 +344,7 @@ func game_over(player_won: bool) -> void:
 	await get_tree().create_timer(1.0).timeout
 
 	if player_won:	
-		SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "deload_level": false })
+		SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought, "deload_level": false, "level_name": "keep" })
 	else:
 		SceneCoordinator.change_scene.emit(SceneType.Name.HUB, { "deload_level": true })
 
