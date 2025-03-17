@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cbw82mbloj27i"]
 
-[ext_resource type="PackedScene" uid="uid://btiycto5j0i62" path="res://models/spi/spi_animations.glb" id="1_vlcyr"]
+[ext_resource type="PackedScene" uid="uid://br6cqpljpjgnh" path="res://models/spi/spi_animations.glb" id="1_vlcyr"]
 [ext_resource type="AnimationLibrary" uid="uid://cddjrmcleyiix" path="res://models/spi/spiAnims.res" id="2_4vwcg"]
 
 [node name="Setup" type="Node3D"]

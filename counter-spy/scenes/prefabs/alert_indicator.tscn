@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://d2vdxmwicnjhs"]
 
 [ext_resource type="Shader" uid="uid://587uu7a50p6c" path="res://shaders/alert_indicator.gdshader" id="1_ri4lw"]
-[ext_resource type="Texture2D" uid="uid://vccmctgq0cfu" path="res://images/alert_indicator.png" id="2_fyhhk"]
+[ext_resource type="Texture2D" uid="uid://vln0nnv70ifm" path="res://images/alert_indicator.png" id="2_fyhhk"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vbwsi"]
 shader = ExtResource("1_ri4lw")
