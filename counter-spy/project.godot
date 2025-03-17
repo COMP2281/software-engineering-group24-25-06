@@ -26,6 +26,7 @@ Global="*res://scripts/Global.gd"
 
 [debug]
 
+<<<<<<< Updated upstream
 shapes/navigation/enable_agent_paths=false
 shapes/navigation/enable_agent_paths_xray=false
 
@@ -33,6 +34,10 @@ shapes/navigation/enable_agent_paths_xray=false
 
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep_width"
+=======
+import/blender/enabled.android=true
+import/blender/enabled.web=true
+>>>>>>> Stashed changes
 
 [global_group]
 

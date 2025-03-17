@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://bcaf7cd5omh1o"]
 
-[ext_resource type="PackedScene" uid="uid://ba1dhn2aea580" path="res://assets/models/Mission1Level1.door.glb" id="1_g7th2"]
+[ext_resource type="PackedScene" uid="uid://coa4pfruqaaam" path="res://assets/models/Mission1Level1.door.glb" id="1_g7th2"]
 [ext_resource type="Script" uid="uid://bp8ubra53mx41" path="res://scripts/level/door.gd" id="1_hpjtm"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_wkm48"]

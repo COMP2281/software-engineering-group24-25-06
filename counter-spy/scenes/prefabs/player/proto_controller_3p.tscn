@@ -2,7 +2,11 @@
 
 [ext_resource type="Script" uid="uid://cxokey404267j" path="res://scripts/player/proto_controller.gd" id="1_x0abh"]
 [ext_resource type="Script" uid="uid://cpvcb3vixbrar" path="res://scripts/player/camera_controller.gd" id="2_gl6vu"]
+<<<<<<< Updated upstream
 [ext_resource type="PackedScene" uid="uid://cc5ockv1p75w" path="res://scenes/spi.tscn" id="2_jy36w"]
+=======
+[ext_resource type="PackedScene" uid="uid://c1u6vwvpga8ka" path="res://assets/models/spi.fbx" id="2_myvyc"]
+>>>>>>> Stashed changes
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iof21"]
 radius = 0.4

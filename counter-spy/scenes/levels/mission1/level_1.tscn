@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/prefabs/player.tscn" id="2_r5ah1"]
 [ext_resource type="Script" uid="uid://l7fy4tlscv0x" path="res://scripts/enemy/path_follow_3d.gd" id="2_rybds"]
 [ext_resource type="PackedScene" uid="uid://cunvtysmndrr0" path="res://scenes/levels/mission1/level_1-model.tscn" id="4_7ojdb"]
-[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_wkyt1"]
+[ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/levels/hub/transition_screen.tscn" id="4_wkyt1"]
 [ext_resource type="PackedScene" uid="uid://cr6oth1fbi3gy" path="res://scenes/prefabs/enemy.tscn" id="5_8yhfp"]
 [ext_resource type="Script" uid="uid://5ah2sdokwiec" path="res://scripts/utility/enemy_resource.gd" id="6_v0ydf"]
 [ext_resource type="Script" uid="uid://c12mqxfnrv3b" path="res://scripts/utility/viewzone_resources.gd" id="7_4ng78"]

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c77by5cnij6vh" path="res://scripts/ui/suspicion_hud.gd" id="1_3pud1"]
 [ext_resource type="Shader" uid="uid://uvvg6xm3egei" path="res://shaders/suspicion_hud.gdshader" id="2_iapd4"]
-[ext_resource type="Texture2D" uid="uid://dnuxm45hsykch" path="res://images/suspicion_level.png" id="3_0sdn8"]
+[ext_resource type="Texture2D" uid="uid://dnktj72iuw0q6" path="res://images/suspicion_level.png" id="3_0sdn8"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oi24o"]
 shader = ExtResource("2_iapd4")

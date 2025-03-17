@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bdf84pes20lt4"]
 
 [ext_resource type="Script" uid="uid://cpqc3r7gattkq" path="res://scripts/player/bons_ai.gd" id="1_3bndy"]
-[ext_resource type="PackedScene" uid="uid://dchohyi1ekr5s" path="res://assets/models/bonsai.fbx" id="2_rqyi3"]
+[ext_resource type="PackedScene" uid="uid://dq2jo5rllyq3o" path="res://assets/models/bonsai.fbx" id="2_rqyi3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t7wig"]
 bg_color = Color(0.281187, 0.281187, 0.281187, 1)
