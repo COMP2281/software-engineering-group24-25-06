@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dipbvseepvdun"]
+[gd_scene load_steps=11 format=3 uid="uid://dipbvseepvdun"]
 
 [ext_resource type="Script" uid="uid://brplej0bytmc1" path="res://scripts/utility/state_machine.gd" id="3_1sp55"]
 [ext_resource type="PackedScene" uid="uid://c7f4ajlxoh1vx" path="res://scenes/battle.tscn" id="3_064rh"]
@@ -6,8 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://cwj82duxudtse" path="res://scenes/hub.tscn" id="4_5dj3d"]
 [ext_resource type="PackedScene" uid="uid://difkpp3pf4fgx" path="res://scenes/prefabs/level/level_loader.tscn" id="5_h07l5"]
 [ext_resource type="Script" uid="uid://duls7yoe0n5d5" path="res://scripts/scene_coordinator/states/encounter_state.gd" id="5_oicvy"]
+[ext_resource type="PackedScene" uid="uid://cqbfnupvwmq8v" path="res://scenes/minigame.tscn" id="5_phsgc"]
 [ext_resource type="Script" uid="uid://cby3u3jcnkjgl" path="res://scripts/scene_coordinator/states/hub_state.gd" id="6_dyaaw"]
 [ext_resource type="Script" uid="uid://daa1rbbj05cje" path="res://scripts/level/level_loader.gd" id="6_u2px0"]
+[ext_resource type="Script" uid="uid://bq1rj3prjq570" path="res://scripts/mingame.gd" id="10_tgamu"]
 
 [node name="MainSceneNode" type="Node3D"]
 
@@ -22,6 +24,10 @@ process_mode = 4
 visible = false
 script = ExtResource("6_u2px0")
 
+[node name="Minigame" parent="." groups=["minigame_group"] instance=ExtResource("5_phsgc")]
+process_mode = 4
+visible = false
+
 [node name="SceneStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_1sp55")
 initial_state = NodePath("Hub")
@@ -34,3 +40,6 @@ script = ExtResource("4_2jaig")
 
 [node name="Encounter" type="Node" parent="SceneStateMachine"]
 script = ExtResource("5_oicvy")
+
+[node name="Minigame" type="Node" parent="SceneStateMachine"]
+script = ExtResource("10_tgamu")

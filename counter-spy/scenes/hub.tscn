@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://bwb7x5ietwgtd" path="res://scripts/hub.gd" id="1_tlc0s"]
 [ext_resource type="PackedScene" uid="uid://dsqfgpihqk5v4" path="res://scenes/levels/hub/hub_model_new_new.tscn" id="2_3wyi3"]
-[ext_resource type="PackedScene" uid="uid://b1xb7mbig4isg" path="res://scenes/level_select.tscn" id="3_7xwqd"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_ahie3"]
 [ext_resource type="PackedScene" uid="uid://h3k27ga3iolj" path="res://scenes/world_select.tscn" id="6_2rv1e"]
 [ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/prefabs/player.tscn" id="7_m10od"]
 [ext_resource type="PackedScene" uid="uid://c8lj4bah1i8a0" path="res://scenes/cyber_security.tscn" id="7_uq2mt"]
+[ext_resource type="PackedScene" uid="uid://bliep1hmrxmm1" path="res://scenes/levels/hub/level_select.tscn" id="8_441x5"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_k8blq"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -72,13 +72,12 @@ tooltip = NodePath("../../WorldCompletionsArea/Label3D")
 [node name="CyberSecurity" parent="CanvasLayer" instance=ExtResource("7_uq2mt")]
 visible = false
 
-[node name="LevelSelect" parent="CanvasLayer" instance=ExtResource("3_7xwqd")]
-visible = false
-
 [node name="TransitionScreen" parent="CanvasLayer" instance=ExtResource("4_ahie3")]
 visible = false
 mouse_filter = 1
 
-[connection signal="body_entered" from="LevelSelectionArea" to="CanvasLayer/LevelSelect" method="_on_level_selection_area_body_entered"]
+[node name="LevelSelect" parent="CanvasLayer" instance=ExtResource("8_441x5")]
+visible = false
+
 [connection signal="body_entered" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_entered"]
 [connection signal="body_exited" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_exited"]

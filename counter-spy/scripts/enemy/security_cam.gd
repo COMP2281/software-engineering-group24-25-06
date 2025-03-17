@@ -31,3 +31,6 @@ func hack_camera() -> void:
 	$Security.visible = false
 	$Security.enabled = false
 	disabled_elapsed = 0.0
+	
+	print("Changing scene!")
+	SceneCoordinator.change_scene.emit(SceneType.Name.MINIGAME, {})

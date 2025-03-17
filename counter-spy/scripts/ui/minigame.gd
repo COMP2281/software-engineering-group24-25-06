@@ -1,4 +1,4 @@
-extends Control
+class_name Minigame extends Control
 
 @onready var color_rect: ColorRect = $ColorRect;
 @export var speed: float = 2.0;
@@ -12,7 +12,15 @@ var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var current_dot_position: float = 0.5;
 var score: float = 0.0
 
+var entered_from: SceneType.Name = SceneType.Name.MISSION
+
 # TODO: store last point for smooth transition?
+
+func prepare_enter(entered_scene) -> void:
+	entered_from = entered_scene
+	score = 0.0
+	
+func prepare_exit() -> void: pass
 
 func _input(event):
 	# TODO: some way to check for "just pressed"
@@ -42,4 +50,5 @@ func _process(delta: float) -> void:
 	if cursor_position < 0.0:
 		direction = 1.0
 		
-	
+	if score >= 10.0:
+		SceneCoordinator.change_scene.emit(entered_from, {"deload_level": false, "level_name": "keep" })	

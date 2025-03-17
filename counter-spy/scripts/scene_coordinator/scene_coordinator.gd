@@ -15,6 +15,7 @@ func get_scene_name(scene: SceneType.Name) -> String:
 		SceneType.Name.MISSION: return "Mission"
 		SceneType.Name.BATTLE: return "Encounter"
 		SceneType.Name.HUB: return "Hub"
+		SceneType.Name.MINIGAME: return "Minigame"
 	
 	return "Unknown"
 	
@@ -23,6 +24,7 @@ func get_scene_enum(scene: String) -> SceneType.Name:
 		"Mission": return SceneType.Name.MISSION
 		"Encounter": return SceneType.Name.BATTLE
 		"Hub": return SceneType.Name.HUB
+		"Minigame": return SceneType.Name.MINIGAME
 		
 	# Default to mission scene
 	return SceneType.Name.MISSION
@@ -34,6 +36,6 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("change_battle"):
 		change_scene.emit(SceneType.Name.BATTLE, {})
 	if Input.is_action_just_pressed("change_mission"):
-		change_scene.emit(SceneType.Name.MISSION, {})
+		change_scene.emit(SceneType.Name.MISSION, { "deload_level": true, "level_name": "res://scenes/levels/mission1/level_1.tscn" })
 	if Input.is_action_just_pressed("change_hub"):
 		change_scene.emit(SceneType.Name.HUB, {})

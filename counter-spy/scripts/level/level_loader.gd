@@ -27,6 +27,9 @@ func deload_level() -> void:
 		loaded_level_name = ""
 	
 func load_level(level_name: String) -> void:
+	if level_name == "keep":
+		loaded_level_name = level_name
+		
 	if loaded_level_name == level_name: return
 	
 	var packed_scene := load(level_name)

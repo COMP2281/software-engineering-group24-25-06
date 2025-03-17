@@ -1,12 +1,10 @@
 extends Control
 
-# Level select in hub
-
 var is_in_area = false
 var menu_open = false  # Track menu state
-#var lvl1 = preload("res://Scenes/Levels/Mission1/level_1.tscn")
 
 @onready var tooltip = $"../../LevelSelectionArea/Tooltip" # Adjust this path if needed
+@onready var proto_controller: ProtoController = $"../../Player/ProtoController3P"
 
 func _ready():
 	$AnimationPlayer.play('RESET')
@@ -28,15 +26,13 @@ func close_levels():
 	$AnimationPlayer.play_backwards('load_select_level')
 	self.visible = false
 	menu_open = false
-	_enable_player_controls(true)  # Re-enable movement
-	_capture_mouse()  # Lock mouse back in
+	proto_controller.set_all_inputs(true)  # Re-enable movement
 
 func open_levels():
 	$AnimationPlayer.play('load_select_level')
 	self.visible = true
 	menu_open = true
-	_enable_player_controls(false)  # Disable movement
-	_release_mouse()  # Make cursor visible
+	proto_controller.set_all_inputs(false)  # Disable movement
 
 func on_interact():
 	if is_in_area and Input.is_action_just_pressed('interact'):
@@ -63,8 +59,7 @@ func _on_level_1_pressed() -> void:
 	# TODO: in future we pass scene to switch to
 	print("Emitting switch to mission!")
 	transition_screen.visible = false
-	
-	SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "level_name": "res://scenes/levels/mission1/level_1.tscn", "deload_level": true })
+	SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "deload_level": true, "level_name": "res://scenes/levels/mission1/level_1.tscn" })
 
 func _process(_delta):
 	on_interact()
@@ -84,29 +79,3 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 		is_in_area = false
 		if tooltip:
 			tooltip.hide()  # Hide tooltip
-
-## ---------------------------
-## Helper functions
-## ---------------------------
-
-# Makes cursor visible when menu is open
-func _release_mouse():
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-# Locks cursor back into game when menu is closed
-func _capture_mouse():
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-# Enable/Disable player movement
-func _enable_player_controls(enable: bool):
-	var player = $"../../Player/ProtoController3P"  # Adjust path if needed
-	if player:
-		player.can_move = enable
-		player.can_jump = enable
-		player.can_sprint = enable
-		player.can_freefly = enable
-		player.mouse_captured = enable  # Prevents mouse look
-		if enable:
-			player.capture_mouse()  # Re-locks cursor when closing menu
-		else:
-			player.release_mouse()  # Unlocks cursor when opening menu

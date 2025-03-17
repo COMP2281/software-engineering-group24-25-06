@@ -56,7 +56,8 @@ grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0.834614, 0.834614, 0.834614, 1)
 theme_override_font_sizes/font_size = 30
-text = "Press any button to hack"
+text = "Press any button on the red dot
+Get 10 score to pass"
 horizontal_alignment = 1
 vertical_alignment = 1
 
