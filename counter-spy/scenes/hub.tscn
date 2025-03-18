@@ -54,8 +54,6 @@ visible = false
 text = "[E] To play minigame
 "
 
-[node name="CSGBox3D" type="CSGBox3D" parent="MinigameArea"]
-
 [node name="LevelSelectionArea" type="Area3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.180662, -0.961563, 0.380303)
 collision_mask = 7
