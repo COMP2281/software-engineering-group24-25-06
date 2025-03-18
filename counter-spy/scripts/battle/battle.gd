@@ -36,6 +36,42 @@ var player_items = {
 	"Attack Boost": {"count": 2, "boost_amount": 1.5}
 }
 
+var attack_particles: CPUParticles3D
+var impact_sound: AudioStreamPlayer
+
+func setup_effects():
+	if not has_node("AttackParticles"):
+		attack_particles = CPUParticles3D.new()
+		attack_particles.name = "AttackParticles"
+		attack_particles.emitting = false
+		attack_particles.one_shot = true
+		attack_particles.explosiveness = 0.8
+		attack_particles.lifetime = 1.0
+		attack_particles.amount = 100
+		attack_particles.draw_order = CPUParticles3D.DRAW_ORDER_VIEW_DEPTH
+		attack_particles.spread = 45.0  # Wider spread
+		attack_particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+		attack_particles.emission_sphere_radius = 0.3
+		
+		attack_particles.scale = Vector3(0.3, 0.3, 0.3)
+		
+		# Create a small sphere mesh for particles
+		var sphere = SphereMesh.new()
+		sphere.radius = 0.1
+		sphere.height = 0.2
+		attack_particles.mesh = sphere
+		
+		add_child(attack_particles)
+		
+	else:
+		attack_particles = $AttackParticles
+
+	if not has_node("ImpactSound"):
+		impact_sound = AudioStreamPlayer.new()
+		impact_sound.name = "ImpactSound"
+		add_child(impact_sound)
+	else:
+		impact_sound = $ImpactSound
 
 func update_question_time(delta: float) -> void:
 	if question_time_left == INF: return
@@ -89,7 +125,8 @@ func prepare_exit() -> void:
 func _ready() -> void:
 	# Call it on the ready function, because we start on the mission scene
 	setup_battle()
-	setup_enhanced_health_bars() 
+	setup_enhanced_health_bars()
+	setup_effects() 
 	battle_menu.connect("option_selected", _on_option_selected)
 	question_panel.connect("answer_selected", _on_answer_selected)
 	start_turn()
@@ -249,7 +286,70 @@ func execute_attack(damage: float = 15.0) -> void:
 	lightning_tube.mesh.material.set_shader_parameter("tint", lightning_player_color)
 	lightning_tube.mesh.material.set_shader_parameter("direction", 1.0)
 	
-	# TODO: should read out value from move settings/list
+	var attack_type = "generic"
+	if current_attack is Object:
+		var check_type = current_attack.get("type")
+		print("Here is check_type ", check_type)
+		if check_type != null:
+			attack_type = check_type
+	
+	attack_particles.emitting = false
+	attack_particles.global_position = enemy.global_position
+	
+	match attack_type:
+		"fire":
+			# Fire effect
+			attack_particles.color = Color(1.0, 0.3, 0.0)
+			attack_particles.gravity = Vector3(0, 8, 0)
+			attack_particles.initial_velocity_min = 3.0
+			attack_particles.initial_velocity_max = 8.0
+			attack_particles.scale = Vector3(0.5, 0.5, 0.5)
+			
+		"water":
+			# Water effect
+			attack_particles.color = Color(0.0, 0.6, 1.0)
+			attack_particles.gravity = Vector3(0, -15, 0)
+			attack_particles.initial_velocity_min = 2.0
+			attack_particles.initial_velocity_max = 6.0
+			attack_particles.scale = Vector3(0.4, 0.4, 0.4)
+			
+		"plant":
+			# Plant effect
+			attack_particles.color = Color(0.1, 1.0, 0.1)
+			attack_particles.gravity = Vector3(0, -2, 0)
+			attack_particles.initial_velocity_min = 2.0
+			attack_particles.initial_velocity_max = 4.0
+			attack_particles.scale = Vector3(0.5, 0.5, 0.5)
+			
+		_:
+			# Generic effect
+			attack_particles.color = Color(1.0, 1.0, 1.0)
+			attack_particles.gravity = Vector3(0, 0, 0)
+			attack_particles.initial_velocity_min = 5.0
+			attack_particles.initial_velocity_max = 10.0
+			attack_particles.scale = Vector3(0.4, 0.4, 0.4)
+	
+	# Apply knockback effect
+	var original_position = enemy.global_position
+	var knockback_direction = (enemy.global_position - player.global_position).normalized()
+	knockback_direction.y = 0.2  # Add slight upward component
+	
+	var knockback_tween = create_tween()
+	knockback_tween.tween_property(enemy, "global_position", 
+		original_position + knockback_direction * 0.5, 0.1)  # Quick knockback
+	knockback_tween.tween_property(enemy, "global_position", 
+		original_position, 0.3)  # Return to position
+	
+	var impact_position = enemy.global_position - (enemy.global_position - player.global_position).normalized() * 0.5
+	attack_particles.global_position = impact_position
+	
+	# Start particle emission
+	attack_particles.emitting = true
+	
+	# Apply damage with slight delay for visual sync
+	await get_tree().create_timer(0.1).timeout
+
+	
 	var boosted_damage = damage * attack_multiplier
 	apply_damage_to_enemy(boosted_damage)
 	
@@ -375,7 +475,31 @@ func execute_enemy_attack() -> void:
 	
 	lightning_tube.mesh.material.set_shader_parameter("tint", lightning_enemy_color)
 	lightning_tube.mesh.material.set_shader_parameter("direction", -1.0)
-		
+	
+	attack_particles.emitting = false
+	attack_particles.global_position = player.global_position
+	attack_particles.color = Color(0.9, 0.2, 0.2)  # Red for enemy attacks
+	attack_particles.gravity = Vector3(0, 0, 0)
+	attack_particles.initial_velocity_min = 3.0
+	attack_particles.initial_velocity_max = 6.0
+	
+	# Apply knockback effect to player
+	var original_position = player.global_position
+	var knockback_direction = (player.global_position - enemy.global_position).normalized()
+	knockback_direction.y = 0.2
+	
+	var knockback_tween = create_tween()
+	knockback_tween.tween_property(player, "global_position", 
+		original_position + knockback_direction * 0.5, 0.1)
+	knockback_tween.tween_property(player, "global_position", 
+		original_position, 0.3)
+	
+	# Start particle emission
+	attack_particles.emitting = true
+	
+	# Apply damage with slight delay
+	await get_tree().create_timer(0.1).timeout
+	
 	apply_damage_to_player(enemy_damage)
 	await get_tree().create_timer(1.0).timeout
 	lightning_tube.hide()
