@@ -88,8 +88,6 @@ func _process(delta: float) -> void:
 	var security: Array[Security] = get_security()
 	if not security: return
 	
-	print("Num security units: ", len(security))
-	
 	# Get maximum suspicion level of all enemies
 	var max_sus_level: float = 0.0
 	observation_tracker = []
@@ -107,8 +105,6 @@ func _process(delta: float) -> void:
 		change_suspicion_level.emit(max_sus_level)
 		
 	if global_alertness_level > 0.6:
-		print("Spawning reinforcements!")
-		
 		for reinforcement in get_tree().get_nodes_in_group("reinforcement_group"):
 			var reinforcement_point: ReinforcementPoint = reinforcement as ReinforcementPoint
 			

@@ -36,6 +36,16 @@ var player_items = {
 	"Attack Boost": {"count": 2, "boost_amount": 1.5}
 }
 
+@onready var attack_particles: CPUParticles3D = $CPUParticles3D
+var impact_sound: AudioStreamPlayer
+
+func setup_effects():
+	if not has_node("ImpactSound"):
+		impact_sound = AudioStreamPlayer.new()
+		impact_sound.name = "ImpactSound"
+		add_child(impact_sound)
+	else:
+		impact_sound = $ImpactSound
 
 func update_question_time(delta: float) -> void:
 	if question_time_left == INF: return
@@ -89,6 +99,8 @@ func prepare_exit() -> void:
 func _ready() -> void:
 	# Call it on the ready function, because we start on the mission scene
 	setup_battle()
+	setup_enhanced_health_bars()
+	setup_effects() 
 	battle_menu.connect("option_selected", _on_option_selected)
 	question_panel.connect("answer_selected", _on_answer_selected)
 	start_turn()
@@ -144,12 +156,34 @@ func start_turn() -> void:
 	battle_menu.show_menu()
 
 func select_random_attack_options() -> void:
-	current_attack_option = MoveLoader.selectMove(3)
+	var types = ["fire","generic","water","plant"]
+	types.shuffle()
+	
+	current_attack_option = []
+	
+	for i in range(min(3, types.size())):
+		var type_moves = []
+		
+		for move in MoveLoader.loadedMoves:
+			if move.type == types[i]:
+				type_moves.append(move)
+				
+		if type_moves.size() > 0:
+			type_moves.shuffle()
+			current_attack_option.append(type_moves[0])
+			
+	while current_attack_option.size() < 3:
+		var all_moves = MoveLoader.loadedMoves.duplicate()
+		all_moves.shuffle()
+		
+		for move in all_moves:
+			if move not in current_attack_option:
+				current_attack_option.append(move)
+				break
 	
 	update_battle_menu_options()
 	
 func update_battle_menu_options() -> void:
-	
 	var options = []
 	
 	for i in range(3):
@@ -225,7 +259,75 @@ func execute_attack(damage: float = 15.0) -> void:
 	lightning_tube.mesh.material.set_shader_parameter("tint", lightning_player_color)
 	lightning_tube.mesh.material.set_shader_parameter("direction", 1.0)
 	
-	# TODO: should read out value from move settings/list
+	var attack_type = "generic"
+	if current_attack is Object:
+		var check_type = current_attack.get("type")
+		print("Here is check_type ", check_type)
+		if check_type != null:
+			attack_type = check_type
+	else:
+		print("Attack type is unknown?", current_attack)
+	
+	attack_particles.emitting = false
+	attack_particles.global_position = enemy.global_position
+	
+	match attack_type:
+		"fire":
+			print("Fire effect")
+			# Fire effect
+			attack_particles.mesh.get_material().albedo_color = Color(1.0, 0.3, 0.0)
+			attack_particles.gravity = Vector3(0, 8, 0)
+			attack_particles.initial_velocity_min = 3.0
+			attack_particles.initial_velocity_max = 8.0
+			attack_particles.scale = Vector3(0.5, 0.5, 0.5)
+			
+		"water":
+			print("Water effect")
+			# Water effect
+			attack_particles.mesh.get_material().albedo_color = Color(0.0, 0.6, 1.0)
+			attack_particles.gravity = Vector3(0, -15, 0)
+			attack_particles.initial_velocity_min = 2.0
+			attack_particles.initial_velocity_max = 6.0
+			attack_particles.scale = Vector3(0.4, 0.4, 0.4)
+			
+		"plant":
+			print("Plant effect")
+			# Plant effect
+			attack_particles.mesh.get_material().albedo_color = Color(0.1, 1.0, 0.1)
+			attack_particles.gravity = Vector3(0, -2, 0)
+			attack_particles.initial_velocity_min = 2.0
+			attack_particles.initial_velocity_max = 4.0
+			attack_particles.scale = Vector3(0.5, 0.5, 0.5)
+			
+		_:
+			# Generic effect
+			attack_particles.mesh.get_material().albedo_color = Color(1.0, 1.0, 1.0)
+			attack_particles.gravity = Vector3(0, 0, 0)
+			attack_particles.initial_velocity_min = 5.0
+			attack_particles.initial_velocity_max = 10.0
+			attack_particles.scale = Vector3(0.4, 0.4, 0.4)
+	
+	# Apply knockback effect
+	var original_position = enemy.global_position
+	var knockback_direction = (enemy.global_position - player.global_position).normalized()
+	knockback_direction.y = 0.2  # Add slight upward component
+	
+	var knockback_tween = create_tween()
+	knockback_tween.tween_property(enemy, "global_position", 
+		original_position + knockback_direction * 0.5, 0.1)  # Quick knockback
+	knockback_tween.tween_property(enemy, "global_position", 
+		original_position, 0.3)  # Return to position
+	
+	var impact_position = enemy.global_position - (enemy.global_position - player.global_position).normalized() * 0.5
+	attack_particles.global_position = impact_position
+	
+	# Start particle emission
+	attack_particles.emitting = true
+	
+	# Apply damage with slight delay for visual sync
+	await get_tree().create_timer(0.1).timeout
+
+	
 	var boosted_damage = damage * attack_multiplier
 	apply_damage_to_enemy(boosted_damage)
 	
@@ -244,6 +346,10 @@ func show_items() -> void:
 	for child in item_list.get_children():
 		child.queue_free()
 	
+	item_panel.position = Vector2(50, 100)
+	
+	item_list.add_theme_constant_override("separation", 15) 
+	
 	for item_name in player_items:
 		var item_data = player_items[item_name]
 		if item_data.count > 0:
@@ -256,23 +362,70 @@ func show_items() -> void:
 			btn_style.corner_radius_top_left = 10
 			btn_style.corner_radius_bottom_right = 10
 			
+			var hover_style = btn_style.duplicate()
+			hover_style.bg_color = Color(0.4, 0, 0, 0.9)
+			
 			button.add_theme_stylebox_override("normal", btn_style)
+			button.add_theme_stylebox_override("hover", hover_style)
 			button.custom_minimum_size = Vector2(200, 40)
 			button.connect("pressed", use_item.bind(item_name))
 			item_list.add_child(button)
+			
+			button.modulate.a = 0
+			item_list.add_child(button)
+			
+			var tween = create_tween()
+			tween.tween_property(button, "modulate:a", 1.0, 0.2).set_delay(item_list.get_child_count() * 0.1)
 	
 	var back_button = Button.new()
 	back_button.text = "Back"
 	back_button.custom_minimum_size = Vector2(200, 40)
+	
+	var back_style = StyleBoxFlat.new()
+	back_style.bg_color = Color(0, 0, 0, 0.8)
+	back_style.border_color = Color(1, 0, 0)
+	back_style.corner_radius_top_left = 10
+	back_style.corner_radius_bottom_right = 10
+	
+	var back_hover = back_style.duplicate()
+	back_hover.bg_color = Color(0.4, 0, 0, 0.9)
+	
+	back_button.add_theme_stylebox_override("normal", back_style)
+	back_button.add_theme_stylebox_override("hover", back_hover)
 	back_button.connect("pressed", _on_back_pressed)
 	item_list.add_child(back_button)
 	
+	back_button.modulate.a = 0
+	item_list.add_child(back_button)
+	
+	var back_tween = create_tween()
+	back_tween.tween_property(back_button, "modulate:a", 1.0, 0.2).set_delay(item_list.get_child_count() * 0.1)
+	
+	item_panel.modulate.a = 0
+	
 	battle_menu.hide_menu()
+	
+	var panel_tween = create_tween()
+	panel_tween.tween_property(item_panel, "modulate:a", 1.0, 0.3)
+	
 	item_panel.show()
 	
 func _on_back_pressed() -> void:
-	$CanvasLayer/UI/Itempanel.hide()
+	var item_panel = $CanvasLayer/UI/Itempanel
+	
+	var tween = create_tween()
+	tween.tween_property(item_panel, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(item_panel.hide)
+	
 	battle_menu.show_menu()
+	
+	for i in range(battle_menu.buttons.size()):
+		var button = battle_menu.buttons[i]
+		button.modulate.a = 0
+	   
+		var button_tween = create_tween()
+		button_tween.tween_property(button, "modulate:a", 1.0, 0.2).set_delay(i * 0.1)
+	
 
 func use_item(item_name: String) -> void:
 	var item = player_items[item_name]
@@ -296,11 +449,35 @@ func start_enemy_turn() -> void:
 	execute_enemy_attack()
 	
 func execute_enemy_attack() -> void:
-	var enemy_damage: float = 20.0
+	var enemy_damage: float = 10.0
 	
 	lightning_tube.mesh.material.set_shader_parameter("tint", lightning_enemy_color)
 	lightning_tube.mesh.material.set_shader_parameter("direction", -1.0)
-		
+	
+	attack_particles.emitting = false
+	attack_particles.global_position = player.global_position
+	attack_particles.color = Color(0.9, 0.2, 0.2)  # Red for enemy attacks
+	attack_particles.gravity = Vector3(0, 0, 0)
+	attack_particles.initial_velocity_min = 3.0
+	attack_particles.initial_velocity_max = 6.0
+	
+	# Apply knockback effect to player
+	var original_position = player.global_position
+	var knockback_direction = (player.global_position - enemy.global_position).normalized()
+	knockback_direction.y = 0.2
+	
+	var knockback_tween = create_tween()
+	knockback_tween.tween_property(player, "global_position", 
+		original_position + knockback_direction * 0.5, 0.1)
+	knockback_tween.tween_property(player, "global_position", 
+		original_position, 0.3)
+	
+	# Start particle emission
+	attack_particles.emitting = true
+	
+	# Apply damage with slight delay
+	await get_tree().create_timer(0.1).timeout
+	
 	apply_damage_to_player(enemy_damage)
 	await get_tree().create_timer(1.0).timeout
 	lightning_tube.hide()
@@ -349,11 +526,75 @@ func game_over(player_won: bool) -> void:
 		SceneCoordinator.change_scene.emit(SceneType.Name.HUB, { "deload_level": true })
 
 func _on_player_health_changed(new_health: float):
-	player_health.value = new_health
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_ELASTIC)
+	tween.tween_property(player_health, "value", new_health, 0.5)
+	
+	if new_health < player_health.value:
+		var style = player_health.get_theme_stylebox("fill").duplicate()
+		var original_color = style.bg_color
+		
+		var flash_tween = create_tween()
+		flash_tween.tween_method(
+			func(c): 
+				style.bg_color = c
+				player_health.add_theme_stylebox_override("fill", style),
+				Color(1, 1, 1, 1),  
+				original_color,     
+				0.3                 
+		)
 	if $CanvasLayer/UI/Playerhealth/Healthlabel:
 		$CanvasLayer/UI/Playerhealth/Healthlabel.text = str(new_health) + "/" + str(player.max_health)
 	
 func _on_enemy_health_changed(new_health: float):
-	enemy_health.value = new_health
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_ELASTIC)
+	tween.tween_property(enemy_health, "value", new_health, 0.5)
+	
+	if new_health < enemy_health.value:
+		var style = enemy_health.get_theme_stylebox("fill").duplicate()
+		var original_color = style.bg_color
+		
+		var flash_tween = create_tween()
+		flash_tween.tween_method(
+			func(c): 
+				style.bg_color = c
+				enemy_health.add_theme_stylebox_override("fill", style),
+				Color(1, 1, 1, 1),  
+				original_color,      
+				0.3                 
+		)
 	if $CanvasLayer/UI/Enemyhealth/Healthlabel:
 		$CanvasLayer/UI/Enemyhealth/Healthlabel.text = str(new_health) + "/" + str(enemy_max_health)
+
+func setup_enhanced_health_bars():
+	player_health.custom_minimum_size = Vector2(250, 40)  # Bigger bar
+	
+	var player_style = StyleBoxFlat.new()
+	player_style.bg_color = Color(0.2, 0.6, 1.0)  # Blue
+	player_style.border_color = Color(0.1, 0.3, 0.8)
+	player_style.shadow_color = Color(0, 0, 0, 0.3)
+	player_style.shadow_size = 5
+	
+	player_health.add_theme_stylebox_override("fill", player_style)
+	
+	var player_bg = StyleBoxFlat.new()
+	player_bg.bg_color = Color(0.1, 0.1, 0.1, 0.8)
+	player_bg.border_color = Color(0.3, 0.3, 0.3)
+	
+	player_health.add_theme_stylebox_override("background", player_bg)
+	
+	enemy_health.custom_minimum_size = Vector2(250, 40)
+	
+	var enemy_style = StyleBoxFlat.new()
+	enemy_style.bg_color = Color(1.0, 0.2, 0.2)  # Red
+	enemy_style.border_color = Color(0.8, 0.1, 0.1)
+	enemy_style.shadow_color = Color(0, 0, 0, 0.3)
+	enemy_style.shadow_size = 5
+	
+	enemy_health.add_theme_stylebox_override("fill", enemy_style)
+	
+	var enemy_bg = player_bg.duplicate()
+	enemy_health.add_theme_stylebox_override("background", enemy_bg)
