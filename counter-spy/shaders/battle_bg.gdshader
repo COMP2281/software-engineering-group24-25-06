@@ -7,21 +7,21 @@ uniform sampler2D depth_texture : hint_depth_texture;
 uniform sampler2D matrix_texture;
 uniform float cutoff_distance = 1000.0;
 uniform vec3 tint : source_color;
-uniform vec2 cell_size = vec2(64.0, 32.0);
-uniform float fall_count : hint_range(0.0, 30.0, 1.0) = 14.0;
-uniform float fall_density : hint_range(0.0, 30.0, 1.0) = 12.0;
-uniform float resolution : hint_range(0.0, 128.0, 16.0) = 16.0;
+uniform vec2 cell_size = vec2(128.0, 64.0);
+uniform float fall_count : hint_range(0.0, 30.0, 1.0) = 16.0;
+uniform float fall_density : hint_range(0.0, 30.0, 1.0) = 14.0;
+uniform float resolution : hint_range(0.0, 128.0, 16.0) = 32.0;
 // Baseline fall speed
-uniform float fall_speed_base : hint_range(0.0, 2.0) = 0.3;
+uniform float fall_speed_base : hint_range(0.0, 2.0) = 0.1;
 // Random modifier on fall speed (doesn't affect baseline)
-uniform float fall_speed_modifier : hint_range(0.0, 1.0) = 0.1;
+uniform float fall_speed_modifier : hint_range(0.0, 1.0) = 0.16;
 uniform float vertical_offset : hint_range(0.0, 10.0) = 1.0;
 uniform float faller_length : hint_range(1.0, 50.0) = 20.0;
 uniform float artefact_epsilon : hint_range(0.0, 1.0) = 0.1;
-uniform float gamma_correction : hint_range(0.5, 3.0) = 2.0;
+uniform float gamma_correction : hint_range(0.5, 3.0) = 1.4;
 
-uniform float vignette_radius : hint_range(0.0, 5.0) = 1.0;
-uniform float vignette_strength : hint_range(-2.0, 2.0) = 1.0;
+uniform float vignette_radius : hint_range(0.0, 5.0) = 1.1;
+uniform float vignette_strength : hint_range(-2.0, 2.0) = 0.03;
 
 // Gold Noise ©2015 dcerisano@standard3d.com
 // - based on the Golden Ratio

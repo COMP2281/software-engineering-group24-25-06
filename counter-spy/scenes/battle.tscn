@@ -31,7 +31,7 @@ shader_parameter/faller_length = 20.0
 shader_parameter/artefact_epsilon = 0.1
 shader_parameter/gamma_correction = 1.397
 shader_parameter/vignette_radius = 1.154
-shader_parameter/vignette_strength = -0.0439999
+shader_parameter/vignette_strength = 0.0350001
 
 [sub_resource type="QuadMesh" id="QuadMesh_iyqh5"]
 material = SubResource("ShaderMaterial_h20yi")
