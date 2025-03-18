@@ -72,12 +72,12 @@ tooltip = NodePath("../../WorldCompletionsArea/Label3D")
 [node name="CyberSecurity" parent="CanvasLayer" instance=ExtResource("7_uq2mt")]
 visible = false
 
+[node name="LevelSelect" parent="CanvasLayer" instance=ExtResource("8_441x5")]
+visible = false
+
 [node name="TransitionScreen" parent="CanvasLayer" instance=ExtResource("4_ahie3")]
 visible = false
 mouse_filter = 1
-
-[node name="LevelSelect" parent="CanvasLayer" instance=ExtResource("8_441x5")]
-visible = false
 
 [connection signal="body_entered" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_entered"]
 [connection signal="body_exited" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_exited"]
