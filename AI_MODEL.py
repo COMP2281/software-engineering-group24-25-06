@@ -100,13 +100,13 @@ def save_user_profile(profile: UserProfile):
 missions = {
     "Silent Strike": {
         "name": "Silent Strike",
-        "description": "Retrieve the security key from the back of the warehouse, and escape from the large hatch.",
+        "description": "Retrieve the security key from the back of the laboratory, and escape from the large hatch.",
         "objectives": [
             "Evade enemy detection",
             "Retrieve the security key",
             "Optionally neutralize the 3 enemy targets"
         ],
-        "setting": "An abandoned warehouse, full of advanced technology beyond your comprehension",
+        "setting": "An abandoned laboratory, full of advanced technology beyond your comprehension",
         "topic": "AI",
         "keywords": ["stealth", "security", "encryption", "covert ops"],
         "enemyList": [
@@ -521,7 +521,7 @@ def answer_checker(state: "State"):
     else:
         prompt = f"""
         The Users's answer is WRONG!!!!!!!!!!!!!!
-        The correct choice is {correct_answer}.
+        Let them know the user's answer is wrong (do not apologise) then state: The correct choice is {correct_answer}.
         Explanation: {choices[ord(correct_answer) - 65]}.
         Keep the response concise. Do **not** add examples or unrelated context.
         """
@@ -530,7 +530,12 @@ def answer_checker(state: "State"):
         state["messages"].append(AIMessage(feedback))
 
         # Keep the state for retry
-        return state
+        return {
+            "messages": state["messages"],
+            "current_question": "",
+            "current_choices": [],
+            "correct_answer": ""
+        }
 
 # Define router function
 def router(state: "State"):
