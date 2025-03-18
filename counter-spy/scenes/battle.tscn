@@ -113,6 +113,7 @@ visible = false
 mesh = SubResource("CapsuleMesh_ebnrg")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="UI" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -280,16 +281,6 @@ offset_left = -68.0
 offset_bottom = 23.0
 grow_horizontal = 0
 text = "Time left"
-
-[node name="Button" type="Button" parent="CanvasLayer"]
-visible = false
-offset_left = 342.0
-offset_top = 374.0
-offset_right = 459.0
-offset_bottom = 405.0
-disabled = true
-text = "player position button lol
-"
 
 [node name="enemy" parent="." instance=ExtResource("8_203gs")]
 
