@@ -89,6 +89,7 @@ func prepare_exit() -> void:
 func _ready() -> void:
 	# Call it on the ready function, because we start on the mission scene
 	setup_battle()
+	setup_enhanced_health_bars() 
 	battle_menu.connect("option_selected", _on_option_selected)
 	question_panel.connect("answer_selected", _on_answer_selected)
 	start_turn()
@@ -349,11 +350,75 @@ func game_over(player_won: bool) -> void:
 		SceneCoordinator.change_scene.emit(SceneType.Name.HUB, { "deload_level": true })
 
 func _on_player_health_changed(new_health: float):
-	player_health.value = new_health
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_ELASTIC)
+	tween.tween_property(player_health, "value", new_health, 0.5)
+	
+	if new_health < player_health.value:
+		var style = player_health.get_theme_stylebox("fill").duplicate()
+		var original_color = style.bg_color
+		
+		var flash_tween = create_tween()
+		flash_tween.tween_method(
+			func(c): 
+				style.bg_color = c
+				player_health.add_theme_stylebox_override("fill", style),
+				Color(1, 1, 1, 1),  
+				original_color,     
+				0.3                 
+		)
 	if $CanvasLayer/UI/Playerhealth/Healthlabel:
 		$CanvasLayer/UI/Playerhealth/Healthlabel.text = str(new_health) + "/" + str(player.max_health)
 	
 func _on_enemy_health_changed(new_health: float):
-	enemy_health.value = new_health
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_ELASTIC)
+	tween.tween_property(enemy_health, "value", new_health, 0.5)
+	
+	if new_health < enemy_health.value:
+		var style = enemy_health.get_theme_stylebox("fill").duplicate()
+		var original_color = style.bg_color
+		
+		var flash_tween = create_tween()
+		flash_tween.tween_method(
+			func(c): 
+				style.bg_color = c
+				enemy_health.add_theme_stylebox_override("fill", style),
+				Color(1, 1, 1, 1),  
+				original_color,      
+				0.3                 
+		)
 	if $CanvasLayer/UI/Enemyhealth/Healthlabel:
 		$CanvasLayer/UI/Enemyhealth/Healthlabel.text = str(new_health) + "/" + str(enemy_max_health)
+
+func setup_enhanced_health_bars():
+	player_health.custom_minimum_size = Vector2(250, 40)  # Bigger bar
+	
+	var player_style = StyleBoxFlat.new()
+	player_style.bg_color = Color(0.2, 0.6, 1.0)  # Blue
+	player_style.border_color = Color(0.1, 0.3, 0.8)
+	player_style.shadow_color = Color(0, 0, 0, 0.3)
+	player_style.shadow_size = 5
+	
+	player_health.add_theme_stylebox_override("fill", player_style)
+	
+	var player_bg = StyleBoxFlat.new()
+	player_bg.bg_color = Color(0.1, 0.1, 0.1, 0.8)
+	player_bg.border_color = Color(0.3, 0.3, 0.3)
+	
+	player_health.add_theme_stylebox_override("background", player_bg)
+	
+	enemy_health.custom_minimum_size = Vector2(250, 40)
+	
+	var enemy_style = StyleBoxFlat.new()
+	enemy_style.bg_color = Color(1.0, 0.2, 0.2)  # Red
+	enemy_style.border_color = Color(0.8, 0.1, 0.1)
+	enemy_style.shadow_color = Color(0, 0, 0, 0.3)
+	enemy_style.shadow_size = 5
+	
+	enemy_health.add_theme_stylebox_override("fill", enemy_style)
+	
+	var enemy_bg = player_bg.duplicate()
+	enemy_health.add_theme_stylebox_override("background", enemy_bg)

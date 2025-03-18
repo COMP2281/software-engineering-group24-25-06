@@ -45,69 +45,77 @@ func setup_menu():
 	for child in wheel.get_children():
 		child.queue_free()
 		
-	var player = get_tree().get_root().get_node("Battle/player")  # Adjust path as needed
-	var player_pos = Vector2(400, 400)  
-	
-	if player:
+	var player_center = Vector2(get_viewport().size.x / 2, get_viewport().size.y / 2 + 50)
+	var player_node = get_node_or_null("/root/Battle/player")
+	if player_node:
 		var viewport = get_viewport()
 		var camera = viewport.get_camera_3d()
 		if camera:
-			player_pos = camera.unproject_position(player.global_position)
-		
-	var initial_angle: float = PI / 4.0
-	var angle_change: float = (2.0* PI) / float(options.size())
-	var radius = 150
+			player_center = camera.unproject_position(player_node.global_position)
+	
+	var radius = 390
+	var initial_angle = 3.5 * PI / 4  
+	var angle_span =  5 * PI / 12
+	
 	
 	for i in range(options.size()):
+		var container = Control.new()
+		wheel.add_child(container)
+		
 		var button = Button.new()
-		var angle = (i * angle_change) + initial_angle
+		var angle = (i * angle_span / (options.size() - 1)) + initial_angle
 		
 		var pos = Vector2(
-			cos(angle) * radius + 200,
-			sin(angle) * radius + 200
+			cos(angle) * radius + player_center.x,
+			sin(angle) * radius + player_center.y
 		)
-		
-		button.text = options[i]
-		button.custom_minimum_size = Vector2(120, 40)
-		button.position = pos - button.custom_minimum_size/2
 		
 		var btn_style = StyleBoxFlat.new()
 		btn_style.bg_color = Color(0, 0, 0, 0.9)
 		btn_style.border_color = Color(1, 0, 0)
-		btn_style.corner_radius_top_left = 10
-		btn_style.corner_radius_bottom_right = 10
+		btn_style.corner_radius_top_left = 15
+		btn_style.corner_radius_bottom_right = 15
+		btn_style.skew = Vector2(0.2, 0)
+		
+		button.text = options[i]
+		button.custom_minimum_size = Vector2(150, 40)
+		button.position = pos - button.custom_minimum_size/2
 		button.add_theme_stylebox_override("normal", btn_style)
+		
+		var hover_style = btn_style.duplicate()
+		hover_style.bg_color = Color(0.4, 0, 0, 0.9)
+		hover_style.border_color = Color(1, 0.3, 0.3)
+		
+		var pressed_style = btn_style.duplicate()
+		pressed_style.bg_color = Color(0.6, 0, 0, 0.9)
+		
+		var label = Label.new()
+		label.text = options[i]
+		label.position = button.position + Vector2(10, 5)
+		
+		button.mouse_entered.connect(func(): _on_button_hover(button, true))
+		button.mouse_exited.connect(func(): _on_button_hover(button, false))
 		
 		button.connect("pressed", _on_option_pressed.bind(i))
 		
 		var control_label = Label.new()
-		control_label.text = "○ " if i == 0 else "□ " if i == 1 else "△ " if i == 2 else "× "
 		control_label.add_theme_color_override("font_color", Color(1, 0, 0))
 		button.add_child(control_label)
 		wheel.add_child(button)
 		buttons.append(button)
-	
-	if not is_connected("draw", _draw):
-		connect("draw", _draw)
 		
+		button.modulate.a = 0
+		var tween = create_tween()
+		tween.tween_property(button, "modulate:a", 1.0, 0.2).set_delay(i * 0.1)
 
-func _draw():
-	if not visible:
-		return
-		
-	var player = get_tree().get_root().get_node("Battle/player")
-	if not player:
-		return
-		
-	var player_pos = Vector2(400, 400)
-	var viewport = get_viewport()
-	var camera = viewport.get_camera_3d()
-	if camera:
-		player_pos = camera.unproject_position(player.global_position)
-   
-	for button in buttons:
-		var button_center = button.position + button.custom_minimum_size/2
-		draw_line(player_pos, button_center, Color(1, 0, 0), 2)
+func _on_button_hover(button, is_hovering):
+	var tween = create_tween()
+	if is_hovering:
+		tween.tween_property(button, "custom_minimum_size", Vector2(160, 45), 0.1)
+		tween.parallel().tween_property(button, "position", button.position - Vector2(5, 2.5), 0.1)
+	else:
+		tween.tween_property(button, "custom_minimum_size", Vector2(150, 40), 0.1)
+		tween.parallel().tween_property(button, "position", button.position + Vector2(5, 2.5), 0.1)
 
 func show_menu():
 	menu_visible = true

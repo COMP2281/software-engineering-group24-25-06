@@ -87,9 +87,7 @@ func _process(delta: float) -> void:
 	
 	var security: Array[Security] = get_security()
 	if not security: return
-	
-	print("Num security units: ", len(security))
-	
+		
 	# Get maximum suspicion level of all enemies
 	var max_sus_level: float = 0.0
 	observation_tracker = []

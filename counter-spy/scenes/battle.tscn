@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dnho0bf1218nx" path="res://scripts/battle/camera.gd" id="2_3jjtx"]
 [ext_resource type="Script" uid="uid://cju5xkco1ab0n" path="res://scripts/enemy/ui.gd" id="3_wuvo2"]
 [ext_resource type="Script" uid="uid://w62yi8sxlg5r" path="res://scripts/battle/questionpanel.gd" id="4_1c0xn"]
-[ext_resource type="Texture2D" uid="uid://bxvondkoi4cf5" path="res://images/matrix_image.png" id="4_qea6b"]
+[ext_resource type="Texture2D" uid="uid://bwxnillv7rqln" path="res://images/matrix_image.png" id="4_qea6b"]
 [ext_resource type="Script" uid="uid://jdhqbx5dynj5" path="res://scripts/battle/battlemenu.gd" id="4_s4v5x"]
 [ext_resource type="PackedScene" uid="uid://bdf84pes20lt4" path="res://scenes/prefabs/bons_ai.tscn" id="5_22uqi"]
 [ext_resource type="Shader" uid="uid://c5d5m42bt18e1" path="res://shaders/lightning.gdshader" id="5_p6kgc"]
