@@ -449,14 +449,14 @@ func start_enemy_turn() -> void:
 	execute_enemy_attack()
 	
 func execute_enemy_attack() -> void:
-	var enemy_damage: float = 10.0
+	var enemy_damage: float = 20.0
 	
 	lightning_tube.mesh.material.set_shader_parameter("tint", lightning_enemy_color)
 	lightning_tube.mesh.material.set_shader_parameter("direction", -1.0)
 	
 	attack_particles.emitting = false
 	attack_particles.global_position = player.global_position
-	attack_particles.color = Color(0.9, 0.2, 0.2)  # Red for enemy attacks
+	attack_particles.mesh.get_material().albedo_color = Color(0.9, 0.2, 0.2)  # Red for enemy attacks
 	attack_particles.gravity = Vector3(0, 0, 0)
 	attack_particles.initial_velocity_min = 3.0
 	attack_particles.initial_velocity_max = 6.0
