@@ -191,12 +191,13 @@ enemy_resource = SubResource("Resource_tkpqr")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.80167, 4.65756, 4.77678)
 
 [node name="Area3D" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.8425, 5.75256, -9.24847)
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -15.6932, 5.75256, -8.86484)
 collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 20.8951, 0, 0, 0)
 shape = SubResource("BoxShape3D_66x1r")
+debug_color = Color(0, 0.595, 0.7, 1)
 
 [node name="LevelCompleteLabel" type="Label3D" parent="Area3D"]
 transform = Transform3D(-6.55671e-08, 0, -1, 0, 1.6, 0, 1.5, 0, -4.37114e-08, 0.546785, 0.401357, 0.778271)

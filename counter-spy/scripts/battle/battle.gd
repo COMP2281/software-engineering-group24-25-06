@@ -523,6 +523,7 @@ func game_over(player_won: bool) -> void:
 	if player_won:	
 		SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought, "deload_level": false, "level_name": "keep" })
 	else:
+		# TODO: this never tells the level to actually delaod because it doesn't go through mission
 		SceneCoordinator.change_scene.emit(SceneType.Name.HUB, { "deload_level": true })
 
 func _on_player_health_changed(new_health: float):
