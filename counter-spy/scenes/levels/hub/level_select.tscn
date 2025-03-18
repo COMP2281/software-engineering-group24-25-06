@@ -210,3 +210,4 @@ libraries = {
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BackBtn" to="." method="_on_back_btn_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/Level1" to="." method="_on_level_1_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer2/Level1" to="." method="_on_level_1_ai_pressed"]

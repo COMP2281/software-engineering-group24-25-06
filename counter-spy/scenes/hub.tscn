@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://cwj82duxudtse"]
+[gd_scene load_steps=14 format=3 uid="uid://cwj82duxudtse"]
 
 [ext_resource type="Script" uid="uid://bwb7x5ietwgtd" path="res://scripts/hub.gd" id="1_tlc0s"]
 [ext_resource type="PackedScene" uid="uid://dsqfgpihqk5v4" path="res://scenes/levels/hub/hub_model_new_new.tscn" id="2_3wyi3"]
+[ext_resource type="Script" uid="uid://b0iiyc2eldsf3" path="res://scripts/hub/hub_minigame_area.gd" id="4_441x5"]
 [ext_resource type="PackedScene" uid="uid://b1ajpn8hqx5vh" path="res://scenes/transition_screen.tscn" id="4_ahie3"]
 [ext_resource type="PackedScene" uid="uid://h3k27ga3iolj" path="res://scenes/world_select.tscn" id="6_2rv1e"]
 [ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/prefabs/player.tscn" id="7_m10od"]
@@ -22,6 +23,7 @@ tonemap_mode = 2
 glow_enabled = true
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_npv4g"]
+radius = 2.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_dejmd"]
 size = Vector3(5, 2, 5)
@@ -37,8 +39,25 @@ environment = SubResource("Environment_77kxt")
 [node name="Player" parent="." instance=ExtResource("7_m10od")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.176978, -44.5677)
 
+[node name="MinigameArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.89249, -0.782293, -36.22)
+collision_mask = 7
+script = ExtResource("4_441x5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MinigameArea"]
+transform = Transform3D(2.33113, 0, 0, 0, 1.3845, 0, 0, 0, 2.33113, -0.344379, 0, 0)
+shape = SubResource("CylinderShape3D_npv4g")
+
+[node name="Tooltip" type="Label3D" parent="MinigameArea"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.6686, 0.384184, 0)
+visible = false
+text = "[E] To play minigame
+"
+
+[node name="CSGBox3D" type="CSGBox3D" parent="MinigameArea"]
+
 [node name="LevelSelectionArea" type="Area3D" parent="."]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.180662, -1.37194, 0.135419)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.180662, -0.961563, 0.380303)
 collision_mask = 7
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="LevelSelectionArea"]
@@ -72,12 +91,14 @@ tooltip = NodePath("../../WorldCompletionsArea/Label3D")
 [node name="CyberSecurity" parent="CanvasLayer" instance=ExtResource("7_uq2mt")]
 visible = false
 
+[node name="LevelSelect" parent="CanvasLayer" instance=ExtResource("8_441x5")]
+visible = false
+
 [node name="TransitionScreen" parent="CanvasLayer" instance=ExtResource("4_ahie3")]
 visible = false
 mouse_filter = 1
 
-[node name="LevelSelect" parent="CanvasLayer" instance=ExtResource("8_441x5")]
-visible = false
-
+[connection signal="body_entered" from="MinigameArea" to="MinigameArea" method="_on_body_entered"]
+[connection signal="body_exited" from="MinigameArea" to="MinigameArea" method="_on_body_exited"]
 [connection signal="body_entered" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_entered"]
 [connection signal="body_exited" from="WorldCompletionsArea" to="." method="_on_world_completions_area_body_exited"]

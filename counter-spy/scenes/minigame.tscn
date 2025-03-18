@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cqbfnupvwmq8v"]
+[gd_scene load_steps=5 format=3 uid="uid://cqbfnupvwmq8v"]
 
 [ext_resource type="Shader" uid="uid://cpvqu8al4f8k2" path="res://shaders/minigame.gdshader" id="1_5iev5"]
 [ext_resource type="Script" uid="uid://dc1wcqj21jgnj" path="res://scripts/ui/minigame.gd" id="1_hwsak"]
+[ext_resource type="Texture2D" uid="uid://bxvondkoi4cf5" path="res://images/matrix_image.png" id="3_22ed1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hwsak"]
 shader = ExtResource("1_5iev5")
@@ -25,6 +26,21 @@ shader_parameter/squircle_radius = 0.038
 shader_parameter/squircle_luminesence = 0.234
 shader_parameter/squircle_gamma = 5.281
 shader_parameter/squircle_stretch = 0.404
+shader_parameter/matrix_texture = ExtResource("3_22ed1")
+shader_parameter/matrix_tint = Color(6.257e-07, 0.424439, 0.630155, 1)
+shader_parameter/cell_size = Vector2(64, 32)
+shader_parameter/fall_count = 21.0
+shader_parameter/fall_density = 14.0
+shader_parameter/resolution = 32.0
+shader_parameter/fall_speed_base = 0.1
+shader_parameter/fall_speed_modifier = 0.16
+shader_parameter/vertical_offset = 0.53
+shader_parameter/faller_length = 20.0
+shader_parameter/artefact_epsilon = 0.1
+shader_parameter/gamma_correction = 1.484
+shader_parameter/background_brightness = 0.326
+shader_parameter/vignette_radius = 1.1
+shader_parameter/vignette_strength = 0.0300001
 
 [node name="Minigame" type="Control"]
 layout_mode = 3

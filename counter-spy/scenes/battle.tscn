@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c7f4ajlxoh1vx"]
+[gd_scene load_steps=22 format=3 uid="uid://c7f4ajlxoh1vx"]
 
 [ext_resource type="Script" uid="uid://cred43culgyvt" path="res://scripts/battle/battle.gd" id="1_w45sv"]
 [ext_resource type="Script" uid="uid://dnho0bf1218nx" path="res://scripts/battle/camera.gd" id="2_3jjtx"]
@@ -31,7 +31,7 @@ shader_parameter/faller_length = 20.0
 shader_parameter/artefact_epsilon = 0.1
 shader_parameter/gamma_correction = 1.397
 shader_parameter/vignette_radius = 1.154
-shader_parameter/vignette_strength = -0.0439999
+shader_parameter/vignette_strength = 0.0350001
 
 [sub_resource type="QuadMesh" id="QuadMesh_iyqh5"]
 material = SubResource("ShaderMaterial_h20yi")
@@ -72,6 +72,13 @@ corner_radius_top_left = 12
 corner_radius_top_right = 4
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_22uqi"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_6ni85"]
+material = SubResource("StandardMaterial3D_22uqi")
+radius = 0.1
+height = 0.2
 
 [node name="Battle" type="Node3D"]
 script = ExtResource("1_w45sv")
@@ -278,3 +285,15 @@ text = "Time left"
 [node name="enemy" parent="." instance=ExtResource("8_203gs")]
 
 [node name="player" parent="." instance=ExtResource("9_jmbyx")]
+
+[node name="CPUParticles3D" type="CPUParticles3D" parent="."]
+emitting = false
+amount = 100
+one_shot = true
+explosiveness = 0.8
+draw_order = 2
+mesh = SubResource("SphereMesh_6ni85")
+emission_shape = 1
+emission_sphere_radius = 0.3
+scale_amount_min = 0.3
+scale_amount_max = 0.4
