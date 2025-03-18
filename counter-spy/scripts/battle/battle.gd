@@ -145,7 +145,30 @@ func start_turn() -> void:
 	battle_menu.show_menu()
 
 func select_random_attack_options() -> void:
-	current_attack_option = MoveLoader.selectMove(3)
+	var types = ["fire","generic","water","plant"]
+	types.shuffle()
+	
+	current_attack_option = []
+	
+	for i in range(min(3, types.size())):
+		var type_moves = []
+		
+		for move in MoveLoader.loadedMoves:
+			if move.type == types[i]:
+				type_moves.append(move)
+				
+		if type_moves.size() > 0:
+			type_moves.shuffle()
+			current_attack_option.append(type_moves[0])
+			
+	while current_attack_option.size() < 3:
+		var all_moves = MoveLoader.loadedMoves.duplicate()
+		all_moves.shuffle()
+		
+		for move in all_moves:
+			if move not in current_attack_option:
+				current_attack_option.append(move)
+				break
 	
 	update_battle_menu_options()
 	
@@ -245,6 +268,10 @@ func show_items() -> void:
 	for child in item_list.get_children():
 		child.queue_free()
 	
+	item_panel.position = Vector2(50, 100)
+	
+	item_list.add_theme_constant_override("separation", 15) 
+	
 	for item_name in player_items:
 		var item_data = player_items[item_name]
 		if item_data.count > 0:
@@ -257,23 +284,70 @@ func show_items() -> void:
 			btn_style.corner_radius_top_left = 10
 			btn_style.corner_radius_bottom_right = 10
 			
+			var hover_style = btn_style.duplicate()
+			hover_style.bg_color = Color(0.4, 0, 0, 0.9)
+			
 			button.add_theme_stylebox_override("normal", btn_style)
+			button.add_theme_stylebox_override("hover", hover_style)
 			button.custom_minimum_size = Vector2(200, 40)
 			button.connect("pressed", use_item.bind(item_name))
 			item_list.add_child(button)
+			
+			button.modulate.a = 0
+			item_list.add_child(button)
+			
+			var tween = create_tween()
+			tween.tween_property(button, "modulate:a", 1.0, 0.2).set_delay(item_list.get_child_count() * 0.1)
 	
 	var back_button = Button.new()
 	back_button.text = "Back"
 	back_button.custom_minimum_size = Vector2(200, 40)
+	
+	var back_style = StyleBoxFlat.new()
+	back_style.bg_color = Color(0, 0, 0, 0.8)
+	back_style.border_color = Color(1, 0, 0)
+	back_style.corner_radius_top_left = 10
+	back_style.corner_radius_bottom_right = 10
+	
+	var back_hover = back_style.duplicate()
+	back_hover.bg_color = Color(0.4, 0, 0, 0.9)
+	
+	back_button.add_theme_stylebox_override("normal", back_style)
+	back_button.add_theme_stylebox_override("hover", back_hover)
 	back_button.connect("pressed", _on_back_pressed)
 	item_list.add_child(back_button)
 	
+	back_button.modulate.a = 0
+	item_list.add_child(back_button)
+	
+	var back_tween = create_tween()
+	back_tween.tween_property(back_button, "modulate:a", 1.0, 0.2).set_delay(item_list.get_child_count() * 0.1)
+	
+	item_panel.modulate.a = 0
+	
 	battle_menu.hide_menu()
+	
+	var panel_tween = create_tween()
+	panel_tween.tween_property(item_panel, "modulate:a", 1.0, 0.3)
+	
 	item_panel.show()
 	
 func _on_back_pressed() -> void:
-	$CanvasLayer/UI/Itempanel.hide()
+	var item_panel = $CanvasLayer/UI/Itempanel
+	
+	var tween = create_tween()
+	tween.tween_property(item_panel, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(item_panel.hide)
+	
 	battle_menu.show_menu()
+	
+	for i in range(battle_menu.buttons.size()):
+		var button = battle_menu.buttons[i]
+		button.modulate.a = 0
+	   
+		var button_tween = create_tween()
+		button_tween.tween_property(button, "modulate:a", 1.0, 0.2).set_delay(i * 0.1)
+	
 
 func use_item(item_name: String) -> void:
 	var item = player_items[item_name]
