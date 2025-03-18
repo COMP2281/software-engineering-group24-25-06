@@ -1,8 +1,8 @@
 [gd_scene load_steps=12 format=3 uid="uid://c8lj4bah1i8a0"]
 
 [ext_resource type="Script" uid="uid://ge576f1sihr3" path="res://scripts/cybersecurity.gd" id="1_vqflq"]
-[ext_resource type="Texture2D" uid="uid://b0nv6o1pg60nx" path="res://resources/tick.png" id="2_cwxqi"]
-[ext_resource type="Texture2D" uid="uid://c7lpo5p2ypk8b" path="res://resources/trophy.webp" id="3_1b5o4"]
+[ext_resource type="Texture2D" uid="uid://c328dbx8orsfc" path="res://resources/tick.png" id="2_cwxqi"]
+[ext_resource type="Texture2D" uid="uid://bdgrewqkh8fgj" path="res://resources/trophy.webp" id="3_1b5o4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_33p10"]
 
@@ -76,8 +76,9 @@ layout_mode = 2
 theme_override_constants/separation = 34
 
 [node name="BackBtn" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/TitleHContainer"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(100, 70)
 layout_mode = 2
+size_flags_vertical = 0
 text = "Back"
 
 [node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/TitleHContainer"]
@@ -108,8 +109,9 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_17w3g")
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_font_sizes/font_size = 32
-text = "Level 1
-"
+text = "Level 1"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Tick" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer"]
 z_index = 1
@@ -128,8 +130,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_17w3g")
 [node name="Level" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Level 2
-"
+text = "Level 2"
 
 [node name="Tick" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer2"]
 z_index = 1
@@ -149,8 +150,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_17w3g")
 [node name="Level" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer3"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Level 3
-"
+text = "Level 3"
 
 [node name="Tick" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer3"]
 visible = false
@@ -171,8 +171,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_17w3g")
 [node name="Level" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer4"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Level 4
-"
+text = "Level 4"
 
 [node name="Tick" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer4"]
 visible = false
@@ -193,8 +192,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_17w3g")
 [node name="Level" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer5"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Level 5
-"
+text = "Level 5"
 
 [node name="Tick" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/LevelsHBox/PanelContainer5"]
 visible = false
