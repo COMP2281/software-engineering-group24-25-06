@@ -1,5 +1,10 @@
 extends EnemyState
 
+# TODO: fix this brutalised code
+
+var time_spent_getting_to_location: float = 0.0
+var investigate_time_left: float = 0.0
+
 func enter(_previous_state_path: String, _data := {}) -> void:
 	# If there is no new investigation point, go to patrol
 	if enemy.new_investigation_point == Vector3.INF:
@@ -9,35 +14,29 @@ func enter(_previous_state_path: String, _data := {}) -> void:
 	# Otherwise, path to the investigation point
 	enemy.set_destination(enemy.new_investigation_point)
 	enemy.new_investigation_point = Vector3.INF
-	enemy.investigate_time_left = enemy.enemy_resource.investigation_time
+	investigate_time_left = 2.0
 
 func exit(_data := {}) -> void:
-	enemy.new_investigation_point = Vector3.INF
-	enemy.investigate_time_left = 0.0
+	investigate_time_left = 0.0
+	time_spent_getting_to_location = 0.0
 
 func physics_update(delta: float) -> void:
 	if enemy.suspicion_level > enemy.enemy_resource.hunting_begin_threshold:
 		finished.emit(HUNTING)
 		return
-	
-	if enemy.investigate_time_left <= 0.0:
+		
+	if investigate_time_left <= 0.0:
 		finished.emit(PATROL)
 		return
-		
-	if enemy.new_investigation_point != Vector3.INF:
-		enemy.set_destination(enemy.new_investigation_point)
-		enemy.new_investigation_point = Vector3.INF
-		enemy.investigate_time_left = enemy.enemy_resource.investigation_time
-	
-	# Immediately begin decreasing in case we can't get to the investigation point
-	# Begin decreasing the investigation time
-	enemy.investigate_time_left = clamp(enemy.investigate_time_left - delta, 0.0, enemy.enemy_resource.investigation_time)
 	
 	# Check if we've arrived at the location
 	if enemy.navigation_agent_3d.is_target_reached():
+		time_spent_getting_to_location = 0.0
 		# Reset velocity so we don't just glide in the same direction
 		enemy.velocity.x = 0.0
 		enemy.velocity.z = 0.0
+		
+		investigate_time_left = clamp(investigate_time_left - delta, 0.0, 2.0)
 		
 		# If we see player during investigation, try to follow them with the camera
 		if enemy.currently_seeing_player:
@@ -47,8 +46,8 @@ func physics_update(delta: float) -> void:
 		# Otherwise scan around the location to look for them
 		else:
 			# Scan around the place
-			var percent_time_spent: float = 1.0 - enemy.investigate_time_left / enemy.enemy_resource.investigation_time
-			var direction: float = sign(sin(percent_time_spent * 2.0 * PI * enemy.enemy_resource.scan_times))
-			var speed: float = (enemy.enemy_resource.fov_scan * enemy.enemy_resource.scan_times) / enemy.enemy_resource.investigation_time
+			var percent_time_spent: float = 1.0 - investigate_time_left / 2.0
+			var direction: float = sign(sin(percent_time_spent * 2.0 * PI * 2.0))
+			var speed: float = (0.5 * PI * 2.0) / 2.0
 			
 			enemy.set_heading(enemy.global_rotation.y + direction * speed * delta)

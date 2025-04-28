@@ -28,9 +28,9 @@ move_speed = 2.0
 hunt_speed = 7.5
 max_rotation_speed = 3.14159
 investigate_begin_threshold = 0.4
-investigation_time = 4.0
+investigation_time = 2.0
 fov_scan = 1.5708
-scan_times = 1.5
+scan_times = 2.0
 hunting_begin_threshold = 0.9
 hunting_end_threshold = 0.5
 

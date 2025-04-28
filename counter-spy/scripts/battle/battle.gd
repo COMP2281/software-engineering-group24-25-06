@@ -515,7 +515,6 @@ func game_over(player_won: bool) -> void:
 	else:
 		result_label.text = "DEFEAT!"
 		result_label.add_theme_color_override("font_color", Color(1, 0, 0))  # Red
-		# TODO: go back to hub
 	
 	# TODO: Timer after victory (probably should be some animation that plays that we await?)
 	await get_tree().create_timer(1.0).timeout
@@ -573,6 +572,7 @@ func _on_enemy_health_changed(new_health: float):
 func setup_enhanced_health_bars():
 	player_health.custom_minimum_size = Vector2(250, 40)  # Bigger bar
 	
+	# TODO: use themes/theme overrides
 	var player_style = StyleBoxFlat.new()
 	player_style.bg_color = Color(0.2, 0.6, 1.0)  # Blue
 	player_style.border_color = Color(0.1, 0.3, 0.8)

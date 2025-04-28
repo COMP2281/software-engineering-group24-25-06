@@ -94,7 +94,8 @@ func _physics_process(delta: float) -> void:
 		direction = local_destination.normalized()
 		heading = atan2(direction.x, direction.z) - PI
 	
-	set_heading(heading)
+		set_heading(heading)
+		
 	velocity.x = direction.x * current_speed
 	velocity.z = direction.z * current_speed
 	

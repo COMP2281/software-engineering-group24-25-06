@@ -100,7 +100,7 @@ def save_user_profile(profile: UserProfile):
 missions = {
     "Silent Strike": {
         "name": "Silent Strike",
-        "description": "Retrieve the security key from the back of the laboratory, and escape from the large hatch.",
+        "description": "Retrieve the security key from the back of the warehouse, and escape from the large hatch.",
         "objectives": [
             "Evade enemy detection",
             "Retrieve the security key",
@@ -521,7 +521,7 @@ def answer_checker(state: "State"):
     else:
         prompt = f"""
         The Users's answer is WRONG!!!!!!!!!!!!!!
-        Let them know the user's answer is wrong (do not apologise) then state: The correct choice is {correct_answer}.
+        The correct choice is {correct_answer}.
         Explanation: {choices[ord(correct_answer) - 65]}.
         Keep the response concise. Do **not** add examples or unrelated context.
         """
