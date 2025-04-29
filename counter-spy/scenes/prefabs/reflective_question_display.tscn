@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=3 uid="uid://p3ktrmrjgd8g"]
+
+[ext_resource type="Script" uid="uid://hs77xqkcfvxr" path="res://scenes/prefabs/reflective_question_display.gd" id="1_j6661"]
+[ext_resource type="Theme" uid="uid://c8dadbp2j345y" path="res://assets/question_theme.tres" id="2_1f8rl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cus30"]
+bg_color = Color(0.262932, 0.262932, 0.262932, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+
+[node name="ReflectiveQuestionDisplay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_j6661")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -204.0
+offset_right = 204.0
+offset_bottom = 120.0
+grow_horizontal = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_1f8rl")
+
+[node name="QuestionText" type="Label" parent="VBoxContainer/PanelContainer"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+text = "Example text"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_1f8rl")
+theme_override_styles/panel = SubResource("StyleBoxFlat_cus30")
+
+[node name="Answer" type="Label" parent="VBoxContainer/PanelContainer2"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+text = "Answer text"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3

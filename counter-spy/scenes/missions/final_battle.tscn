@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://daf731mtnf5js"]
+
+[ext_resource type="Script" uid="uid://bbf568p8j1lnt" path="res://scripts/final_battle.gd" id="1_10nmb"]
+[ext_resource type="PackedScene" uid="uid://c5rtlhrgoqjs0" path="res://models/finalbattle.glb" id="1_qityx"]
+[ext_resource type="PackedScene" uid="uid://bop7xm3jaxkp" path="res://scenes/prefabs/big_bonsai_with_red_eyes.tscn" id="3_b3sb4"]
+[ext_resource type="PackedScene" uid="uid://bhhyrcyu5vw0e" path="res://scenes/prefabs/player.tscn" id="4_jb8xd"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jb8xd"]
+size = Vector3(4, 10, 4)
+
+[node name="FinalBattle" type="Node3D"]
+script = ExtResource("1_10nmb")
+
+[node name="finalbattle" parent="." instance=ExtResource("1_qityx")]
+
+[node name="bigBonsaiWithRedEyes" parent="." instance=ExtResource("3_b3sb4")]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 6.5266, -0.635831)
+
+[node name="Player" parent="." instance=ExtResource("4_jb8xd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.41624, 15.0331)
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6774, 12.7603)
+visible = false
+use_collision = true
+collision_mask = 7
+size = Vector3(1.5, 0.1, 100)
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.51482, 0)
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_jb8xd")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

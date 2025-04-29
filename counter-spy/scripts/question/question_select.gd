@@ -33,6 +33,9 @@ var _playerSkill : float = 0.5;
 var _questionTable : Array[TableEntry];
 var _questions : Array[Question];
 var _maxQuestionID : int = 0;
+# Track the questions we got wrong
+#	for a reflective activity
+var _incorrectQuestions : Array[Question];
 
 var _rng : RandomNumberGenerator;
 
@@ -214,6 +217,9 @@ func markQuestion(question : Question, answer : Array[int], timeSpent : float = 
 	_answeredCorrectlyQuestionIDMap[question.id] = isCorrect;
 	_seenQuestionIDMap[question.id] = true;
 	
+	if not isCorrect:
+		_incorrectQuestions.append(question)
+	
 	return isCorrect;
 	
 # TODO: probably take question itself instead of question mask? to be more similar to _seenBefore
@@ -244,6 +250,10 @@ func _calculateAnsweringTime(_question : Question) -> float:
 	baselineTime *= (perceivedDifficulty + 0.5);
 	
 	return baselineTime;
+	
+# Return a list of questions to reflect on
+func getReflectiveQuestions() -> Array[Question]:
+	return _incorrectQuestions;
 	
 # Given a certain topic, and requesting a certain difficulty of question [0..1],
 #	try to find the most appropriate question

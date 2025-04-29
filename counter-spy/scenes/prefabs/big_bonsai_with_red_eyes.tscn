@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://bop7xm3jaxkp"]
+
+[ext_resource type="PackedScene" uid="uid://bm64ixjbg8ego" path="res://models/bigBonsaiWithRedEyes.glb" id="1_igeix"]
+
+[node name="bigBonsaiWithRedEyes" instance=ExtResource("1_igeix")]
+
+[node name="Cylinder" parent="." index="1"]
+visible = false
+
+[node name="Cylinder_001" parent="." index="3"]
+visible = false
+
+[node name="Plane_003" parent="." index="4"]
+visible = false
+
+[node name="Plane_004" parent="." index="5"]
+visible = false
+
+[node name="Plane_002" parent="." index="9"]
+visible = false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dipbvseepvdun"]
+[gd_scene load_steps=15 format=3 uid="uid://dipbvseepvdun"]
 
 [ext_resource type="Script" uid="uid://brplej0bytmc1" path="res://scripts/utility/state_machine.gd" id="3_1sp55"]
 [ext_resource type="PackedScene" uid="uid://c7f4ajlxoh1vx" path="res://scenes/battle.tscn" id="3_064rh"]
@@ -7,9 +7,13 @@
 [ext_resource type="PackedScene" uid="uid://difkpp3pf4fgx" path="res://scenes/prefabs/level/level_loader.tscn" id="5_h07l5"]
 [ext_resource type="Script" uid="uid://duls7yoe0n5d5" path="res://scripts/scene_coordinator/states/encounter_state.gd" id="5_oicvy"]
 [ext_resource type="PackedScene" uid="uid://cqbfnupvwmq8v" path="res://scenes/minigame.tscn" id="5_phsgc"]
+[ext_resource type="PackedScene" uid="uid://daf731mtnf5js" path="res://scenes/missions/final_battle.tscn" id="6_55fox"]
 [ext_resource type="Script" uid="uid://cby3u3jcnkjgl" path="res://scripts/scene_coordinator/states/hub_state.gd" id="6_dyaaw"]
 [ext_resource type="Script" uid="uid://daa1rbbj05cje" path="res://scripts/level/level_loader.gd" id="6_u2px0"]
+[ext_resource type="PackedScene" uid="uid://cidm7efk50ak2" path="res://scenes/prefabs/reflective_activity.tscn" id="7_cani8"]
 [ext_resource type="Script" uid="uid://bq1rj3prjq570" path="res://scripts/mingame.gd" id="10_tgamu"]
+[ext_resource type="Script" uid="uid://de44vntm4tt1s" path="res://scripts/scene_coordinator/states/final_battle_state.gd" id="12_cani8"]
+[ext_resource type="Script" uid="uid://djsvtp8dvkb5u" path="res://scripts/scene_coordinator/states/reflective_activity_state.gd" id="14_eg4qj"]
 
 [node name="MainSceneNode" type="Node3D"]
 
@@ -28,6 +32,14 @@ script = ExtResource("6_u2px0")
 process_mode = 4
 visible = false
 
+[node name="FinalBattle" parent="." groups=["final_battle_group"] instance=ExtResource("6_55fox")]
+process_mode = 4
+visible = false
+
+[node name="ReflectiveActivity" parent="." groups=["reflective_activity_group"] instance=ExtResource("7_cani8")]
+process_mode = 4
+visible = false
+
 [node name="SceneStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_1sp55")
 initial_state = NodePath("Hub")
@@ -43,3 +55,9 @@ script = ExtResource("5_oicvy")
 
 [node name="Minigame" type="Node" parent="SceneStateMachine"]
 script = ExtResource("10_tgamu")
+
+[node name="FinalBattle" type="Node" parent="SceneStateMachine"]
+script = ExtResource("12_cani8")
+
+[node name="ReflectiveActivity" type="Node" parent="SceneStateMachine"]
+script = ExtResource("14_eg4qj")

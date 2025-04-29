@@ -10,6 +10,8 @@ func _ready() -> void:
 func enter(previous_state_path: String, data := {}) -> void:
 	if SceneCoordinator.get_scene_enum(previous_state_path) == SceneType.Name.MISSION:
 		child_scene.entered_from_mission(data)
+	if SceneCoordinator.get_scene_enum(previous_state_path) == SceneType.Name.FINAL_BATTLE:
+		child_scene.entered_from_final_battle()
 	
 	child_scene.prepare_enter()
 	_enable_processing(child_scene)

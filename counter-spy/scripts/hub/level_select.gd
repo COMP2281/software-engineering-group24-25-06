@@ -96,3 +96,8 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 		is_in_area = false
 		if tooltip:
 			tooltip.hide()  # Hide tooltip
+
+
+func _on_final_boss_pressed() -> void:
+	print("Going to final boss!")
+	SceneCoordinator.change_scene.emit(SceneType.Name.FINAL_BATTLE, {})

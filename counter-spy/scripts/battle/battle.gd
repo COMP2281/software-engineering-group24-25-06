@@ -24,6 +24,7 @@ var current_attack = null
 var enemy_being_fought: Enemy = null
 var current_question: Question = null
 var question_time_left: float = INF
+var enemy_is_boss: bool = false
 
 var attack_multiplier: float = 1.0
 var attack_boost_turns_remaining: int = 0
@@ -77,7 +78,21 @@ func entered_from_mission(data: Dictionary) -> void:
 	enemy_health_value = enemy_max_health
 	player_health_value = player.max_health
 	
+	$bigBonsaiWithRedEyes.hide()
+	$enemy.show()
+	
 	ui.set_enemy(enemy.enemy_resource)
+	
+func entered_from_final_battle() -> void:
+	enemy_max_health = 200
+	enemy_health_value = enemy_max_health
+	player_health_value = player.max_health
+	enemy_is_boss = true
+	
+	$bigBonsaiWithRedEyes.show()
+	$enemy.hide()
+	
+	# TODO: UI set enemy?
 
 func prepare_enter() -> void:
 	$CanvasLayer.show()
@@ -273,7 +288,6 @@ func execute_attack(damage: float = 15.0) -> void:
 	
 	match attack_type:
 		"fire":
-			print("Fire effect")
 			# Fire effect
 			attack_particles.mesh.get_material().albedo_color = Color(1.0, 0.3, 0.0)
 			attack_particles.gravity = Vector3(0, 8, 0)
@@ -282,7 +296,6 @@ func execute_attack(damage: float = 15.0) -> void:
 			attack_particles.scale = Vector3(0.5, 0.5, 0.5)
 			
 		"water":
-			print("Water effect")
 			# Water effect
 			attack_particles.mesh.get_material().albedo_color = Color(0.0, 0.6, 1.0)
 			attack_particles.gravity = Vector3(0, -15, 0)
@@ -291,7 +304,6 @@ func execute_attack(damage: float = 15.0) -> void:
 			attack_particles.scale = Vector3(0.4, 0.4, 0.4)
 			
 		"plant":
-			print("Plant effect")
 			# Plant effect
 			attack_particles.mesh.get_material().albedo_color = Color(0.1, 1.0, 0.1)
 			attack_particles.gravity = Vector3(0, -2, 0)
@@ -518,6 +530,10 @@ func game_over(player_won: bool) -> void:
 	
 	# TODO: Timer after victory (probably should be some animation that plays that we await?)
 	await get_tree().create_timer(1.0).timeout
+	
+	if enemy_is_boss:
+		SceneCoordinator.change_scene.emit(SceneType.Name.REFLECTIVE_ACTIVITY, {})
+		return
 
 	if player_won:	
 		SceneCoordinator.change_scene.emit(SceneType.Name.MISSION, { "enemy_defeated": enemy_being_fought, "deload_level": false, "level_name": "keep" })

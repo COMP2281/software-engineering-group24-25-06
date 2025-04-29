@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://c7f4ajlxoh1vx"]
+[gd_scene load_steps=23 format=3 uid="uid://c7f4ajlxoh1vx"]
 
 [ext_resource type="Script" uid="uid://cred43culgyvt" path="res://scripts/battle/battle.gd" id="1_w45sv"]
 [ext_resource type="Script" uid="uid://dnho0bf1218nx" path="res://scripts/battle/camera.gd" id="2_3jjtx"]
@@ -13,6 +13,7 @@
 [ext_resource type="Theme" uid="uid://c8dadbp2j345y" path="res://assets/question_theme.tres" id="8_03edq"]
 [ext_resource type="PackedScene" uid="uid://dt6vqsik07l1m" path="res://scenes/enemy.tscn" id="8_203gs"]
 [ext_resource type="PackedScene" uid="uid://djve8htdyo25c" path="res://scenes/player.tscn" id="9_jmbyx"]
+[ext_resource type="PackedScene" uid="uid://bm64ixjbg8ego" path="res://models/bigBonsaiWithRedEyes.glb" id="14_6ni85"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_h20yi"]
 render_priority = 0
@@ -297,3 +298,7 @@ emission_shape = 1
 emission_sphere_radius = 0.3
 scale_amount_min = 0.3
 scale_amount_max = 0.4
+
+[node name="bigBonsaiWithRedEyes" parent="." instance=ExtResource("14_6ni85")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 3, 0, 0)
+visible = false

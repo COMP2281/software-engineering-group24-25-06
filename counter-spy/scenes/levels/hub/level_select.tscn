@@ -203,6 +203,10 @@ theme_override_font_sizes/font_size = 30
 text = "Level 3
 "
 
+[node name="FinalBoss" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Final boss"
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_aw20y")
@@ -211,3 +215,4 @@ libraries = {
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BackBtn" to="." method="_on_back_btn_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/Level1" to="." method="_on_level_1_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer2/Level1" to="." method="_on_level_1_ai_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/FinalBoss" to="." method="_on_final_boss_pressed"]

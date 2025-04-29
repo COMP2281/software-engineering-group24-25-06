@@ -16,6 +16,8 @@ func get_scene_name(scene: SceneType.Name) -> String:
 		SceneType.Name.BATTLE: return "Encounter"
 		SceneType.Name.HUB: return "Hub"
 		SceneType.Name.MINIGAME: return "Minigame"
+		SceneType.Name.FINAL_BATTLE: return "FinalBattle"
+		SceneType.Name.REFLECTIVE_ACTIVITY: return "ReflectiveActivity"
 	
 	return "Unknown"
 	
@@ -25,6 +27,8 @@ func get_scene_enum(scene: String) -> SceneType.Name:
 		"Encounter": return SceneType.Name.BATTLE
 		"Hub": return SceneType.Name.HUB
 		"Minigame": return SceneType.Name.MINIGAME
+		"FinalBattle": return SceneType.Name.FINAL_BATTLE
+		"ReflectiveActivity": return SceneType.Name.REFLECTIVE_ACTIVITY
 		
 	# Default to mission scene
 	return SceneType.Name.MISSION
