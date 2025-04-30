@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=2 format=3 uid="uid://be6u2ntgx7mxr"]
+
+[ext_resource type="Script" uid="uid://5ah2sdokwiec" path="res://scripts/utility/enemy_resource.gd" id="1_1bmjr"]
+
+[resource]
+script = ExtResource("1_1bmjr")
+enemy_name = "Boss"
+health = 150
+weakness = "plant"
+battle_begin_proximity = 3.0
+move_speed = 2.0
+hunt_speed = 7.5
+max_rotation_speed = 3.14159
+investigate_begin_threshold = 0.4
+investigation_time = 2.0
+fov_scan = 1.5708
+scan_times = 2.0
+hunting_begin_threshold = 0.9
+hunting_end_threshold = 0.5

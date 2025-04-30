@@ -11,23 +11,20 @@ border_width_right = 4
 border_width_bottom = 4
 
 [node name="ReflectiveQuestionDisplay" type="Control"]
+custom_minimum_size = Vector2(200, 250)
 layout_mode = 3
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 250.0
+script = ExtResource("1_j6661")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_j6661")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -204.0
-offset_right = 204.0
-offset_bottom = 120.0
-grow_horizontal = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -36,7 +33,11 @@ theme = ExtResource("2_1f8rl")
 [node name="QuestionText" type="Label" parent="VBoxContainer/PanelContainer"]
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
-text = "Example text"
+text = "Example text
+on
+multiple
+lines
+hello"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3

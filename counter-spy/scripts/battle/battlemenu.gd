@@ -17,26 +17,10 @@ func _input(event):
 		
 	if event.is_action_pressed("ui_right"):
 		selected_index = (selected_index + 1) % 4
-		update_selection()
 	elif event.is_action_pressed("ui_left"):
 		selected_index = (selected_index - 1) % 4
-		if selected_index < 0:
-			selected_index = 3
-		update_selection()
 	elif event.is_action_pressed("ui_accept"):
 		_on_option_pressed(selected_index)
-
-func update_selection():
-	for i in range(buttons.size()):
-		var button = buttons[i]
-		var style = button.get_theme_stylebox("normal").duplicate()
-		if i == selected_index:
-			style.bg_color = Color(1, 0, 0, 0.3)
-			style.border_color = Color(1, 0, 0)
-		else:
-			style.bg_color = Color(0, 0, 0, 0.9)
-			style.border_color = Color(0.5, 0, 0)
-		button.add_theme_stylebox_override("normal", style)
 
 func setup_menu():
 	var wheel = $Wheelcontainer
@@ -116,7 +100,6 @@ func show_menu():
 	menu_visible = true
 	show()
 	selected_index = 0
-	update_selection()
 
 func hide_menu():
 	menu_visible = false

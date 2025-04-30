@@ -31,6 +31,8 @@ var attack_boost_turns_remaining: int = 0
 
 var current_attack_option: Array[Move] = []
 
+var boss_enemy_resource: EnemyResource = load("res://settings/enemy/boss_enemy.tres")
+
 #ADDING TEMP ITEM
 var player_items = {
 	"Health Potion": {"count": 3, "heal_amount": 30},
@@ -84,7 +86,7 @@ func entered_from_mission(data: Dictionary) -> void:
 	ui.set_enemy(enemy.enemy_resource)
 	
 func entered_from_final_battle() -> void:
-	enemy_max_health = 200
+	enemy_max_health = boss_enemy_resource.health
 	enemy_health_value = enemy_max_health
 	player_health_value = player.max_health
 	enemy_is_boss = true
@@ -92,7 +94,7 @@ func entered_from_final_battle() -> void:
 	$bigBonsaiWithRedEyes.show()
 	$enemy.hide()
 	
-	# TODO: UI set enemy?
+	ui.set_enemy(boss_enemy_resource)
 
 func prepare_enter() -> void:
 	$CanvasLayer.show()
