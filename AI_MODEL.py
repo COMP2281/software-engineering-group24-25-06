@@ -431,18 +431,19 @@ def answer_checker(state: "State"):
         """
 
 #-------------------------------------------------------------------------------------------------------
+   # Handle feedback when user's answer is correct
         feedback = model.invoke(prompt)
-
         state["messages"].append(AIMessage(feedback))
 
-        #Clears the state when we reset the question
+        # Clear stored question data after a successful answer
         return {
             "messages": state["messages"],
             "current_question": "",
             "current_choices": [],
             "correct_answer": ""
         }
-    
+
+    # Handle case where user gives an incorrect answer, but no correct answer is available (likely mismatch)
     elif is_correct == False and correct_answer == "":
         prompt = f"""
         You are unsure which question the agent answered. 
@@ -454,16 +455,17 @@ def answer_checker(state: "State"):
         DO NOT INCLUDE "" around your response as it will be considered as part of the response.
         """
         feedback = model.invoke(prompt)
-
         state["messages"].append(AIMessage(feedback))
 
+        # Clear question state due to uncertainty
         return {
             "messages": state["messages"],
             "current_question": "",
             "current_choices": [],
             "correct_answer": ""
         }
-    
+
+    # Handle incorrect answers when the correct answer is known
     else:
         prompt = f"""
         The Users's answer is WRONG!!!!!!!!!!!!!!
@@ -472,22 +474,19 @@ def answer_checker(state: "State"):
         Keep the response concise. Do **not** add examples or unrelated context.
         """
         feedback = model.invoke(prompt)
-
         state["messages"].append(AIMessage(feedback))
 
-        # Keep the state for retry
+        # Keep the state so user can retry or ask follow-up
         return state
 
-# Define router function
+# Router function to decide what kind of node the input should be sent to
 def router(state: "State"):
-    """Routes the input to the chatbot, database or answer_checker node based on intent."""
-
     if not state["messages"]:  
-        return {"decision": "chatbot"}  # Default to chatbot if no messages exist
+        return {"decision": "chatbot"}  # Default decision
 
-    user_input = state["messages"][-1].content  
+    user_input = state["messages"][-1].content
 
-    # WE NEED TO FIX WHEN THE USER SIMPLY SAYS A B C D THEN IT SHOULD GO ANSWER CHECKER
+    # Prompt to classify user intent
     routing_prompt = f"""
     Your task is to classify the following user input as either 'chatbot', 'database' or 'answerchecker'.
     Return only one word: either 'chatbot', 'database' or 'answerchecker' and nothing else.
@@ -514,12 +513,10 @@ def router(state: "State"):
 
     User Input: {user_input}
     """
-
     response = model.invoke(routing_prompt).strip().lower()
+    print("\nDEBUG: Routing response:", response)
 
-    print("\nDEBUG: Routing response:", response)  # Debugging Line
-
-    # Ensure valid decision
+    # Determine routing decision
     if "database" in response:
         decision = "database"
     elif "answerchecker" in response and state["current_question"] and state["current_choices"]:
@@ -529,21 +526,21 @@ def router(state: "State"):
 
     return {"decision": decision}
 
-# Define state structure
+# Define full state structure used in the graph
 class State(TypedDict):
     messages: Annotated[list, add_messages]
     decision: str
     current_question: Annotated[str, "current_question"]
-    current_choices: Annotated[list, "current_choices"]  
+    current_choices: Annotated[list, "current_choices"]
     correct_answer: Annotated[str, "correct_answer"]
     conversation_summary: Annotated[list, "conversation_summary"]
-    in_mission: Annotated[bool, "in_mission"] #NEW: Added in_mission to keep track of whether the user is in a mission or not
-    mission_name: Annotated[str, "mission_name"] #NEW: Added mission_name to keep track of the current mission
+    in_mission: Annotated[bool, "in_mission"]
+    mission_name: Annotated[str, "mission_name"]
 
-# Create the graph
+# Build LangGraph using node system
 graph_builder = StateGraph(State)
 
-# Add nodes
+# Add processing nodes
 graph_builder.add_node("router", router)
 graph_builder.add_node("chatbot", chatbot)
 graph_builder.add_node("database", database_node)
@@ -551,7 +548,7 @@ graph_builder.add_node("answer_checker", answer_checker)
 graph_builder.add_node("should_summarize", should_summarize)
 graph_builder.add_node("summarize_conversation", summarize_conversation)
 
-# Define conditional edges
+# Define flow between nodes
 graph_builder.add_edge(START, "router")
 graph_builder.add_conditional_edges(
     "router",
@@ -565,92 +562,4 @@ graph_builder.add_conditional_edges(
 
 graph_builder.add_edge("chatbot", "should_summarize")
 graph_builder.add_edge("database", "should_summarize")
-graph_builder.add_edge("answer_checker", "should_summarize")
-
-graph_builder.add_conditional_edges(
-    "should_summarize",
-    lambda state: state["decision"],
-    {
-        "summarize": "summarize_conversation",
-        "end": END
-    }
-)
-
-graph_builder.add_edge("summarize_conversation", END)
-
-# Compile the graph
-memory = MemorySaver()
-graph = graph_builder.compile(checkpointer=checkpointer) #REMOVE =memory WHEN DONE TESTING
-
-# Define answering function
-def answering(user_input):
-    """Handles user queries and processes responses from the AI."""
-    config = {"configurable": {"thread_id": "1"}}
-
-    user_message = {"role": "user", "content": user_input}
-    selected_mission = "Silent Strike"  # Default mission
-
-    # Ensure State is always initialized properly
-    try:
-        current_state = graph.get_state(config)
-        state = {
-            "messages": current_state.values.get("messages", []) + [user_message],
-            "decision": "",
-            "current_question": current_state.values.get("current_question", ""),
-            "current_choices": current_state.values.get("current_choices", []),
-            "correct_answer": current_state.values.get("correct_answer", ""),
-            "conversation_summary": current_state.values.get("conversation_summary", ""),
-            "in_mission": True,
-            "mission_name": selected_mission
-        }
-    except:
-        state = {
-            "messages": [user_message],
-            "decision": "",
-            "current_question": "",
-            "current_choices": [],
-            "correct_answer": "",
-            "conversation_summary": ""
-        }
-
-    events = graph.stream(state, config)
-
-    assistant_response = "No response received."  # Default fallback response
-
-    for event in events:
-        for val in event.values():
-            if isinstance(val, dict) and "messages" in val:
-                if isinstance(val["messages"], list) and val["messages"]:
-                    for msg in reversed(val["messages"]):
-                        if isinstance(msg, AIMessage):
-                            assistant_response = msg.content
-                            break
-                elif isinstance(val["messages"], AIMessage):
-                    assistant_response = val["messages"].content
-    
-    final_state = graph.get_state(config)
-
-    print('DEBUG : Current Messages: ', final_state.values["messages"])  # Debugging Line
-    print('DEBUG : Current Question: ', final_state.values["current_question"])
-    print('DEBUG : Current Choices: ', final_state.values["current_choices"])
-    print('DEBUG : Correct Answer: ', final_state.values["correct_answer"])
-    print('DEBUG : Conversation Summary: ', final_state.values["conversation_summary"])
-    
-    print('AI:', assistant_response)
-    return assistant_response
-
-# png_data = graph.get_graph().draw_mermaid_png()
-
-# png_path = "langgraph.png"
-# with open(png_path, "wb") as f:
-#     f.write(png_data)
-
-# Start chatbot loop
-if __name__ == "__main__":
-    print("Start chatting with the AI! Type '!exit' to quit.")
-    while True:
-        query = input("You: ")
-        if query.lower() == "!exit":
-            print("Byebye")
-            break
-        answering(query)
+graph_builder._
