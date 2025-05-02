@@ -61,7 +61,7 @@ def mongodb_saver(client):
     """Return MongoDBSaver or fallback to MemorySaver."""
     if client:
         return MongoDBSaver(client)
-    print("⚠️ Using in-memory saver (MongoDB not available)")
+    print(" Using in-memory saver (MongoDB not available)")
     return MemorySaver()
 
 mongo_client = get_mongodb_connection()
@@ -120,10 +120,13 @@ missions = {
     # Additional missions follow similar structure...
 }
 
+# --- Default Mission ---
 # Select a mission for current session
 selected_mission = "Silent Strike"
 mission_data = missions[selected_mission]
 
+
+# --- Initialize Model & Embeddings ---
 # Initialize the LLM using Ollama
 model = OllamaLLM(model=model_id)
 
@@ -138,13 +141,18 @@ embeddings = WatsonxEmbeddings(
     project_id=project_id,
 )
 
+# --- Setup Chroma Vectorstore ---
 # Set up Chroma vector store for retrieval with Watsonx embeddings
-vectorstore = Chroma(persist_directory=persistant_directory, embedding_function=embeddings)
-search_kwargs = {"k": 4}  # Retrieve top 4 results
-retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
+vectorstore = Chroma(
+    persist_directory=persistant_directory,
+    embedding_function=embeddings
+)
+retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
 
+# --- Summarization Threshold ---
 max_msgs = 0  # Threshold for when to summarize conversation
 
+# --- Tool Registration ---
 # Tool for document retrieval based on a question
 @tool
 def get_relevant_documents(question):
@@ -152,6 +160,7 @@ def get_relevant_documents(question):
     context = retriever.invoke(question)
     return context
 
+# --- Tool to get mission-specific question from vector DB based on keywords and topic
 # Tool to get mission-specific question from vector DB based on keywords and topic
 @tool 
 def get_relevant_question_from_database(data: dict):
@@ -161,14 +170,14 @@ def get_relevant_question_from_database(data: dict):
     in_mission = data.get("in_mission", True)
     mission_name = data.get("mission_name") if in_mission else None
 
-    print(f"\n🔥 DEBUG: Mission Status: {in_mission}, Mission Name: {mission_name}, Topic: {topic}") 
+    print(f"\n DEBUG: Mission Status: {in_mission}, Mission Name: {mission_name}, Topic: {topic}") 
 
     if in_mission and mission_name:
         mission_data = missions[mission_name]
         mission_keywords = mission_data.get("keywords", [])
         selected_keyword = random.choice(mission_keywords)  # Random keyword selection
         query = f"{selected_keyword} {topic}" if topic else selected_keyword
-        print(f"\n🔥 DEBUG: Query using Keyword '{selected_keyword}': {query}")  
+        print(f"\n DEBUG: Query using Keyword '{selected_keyword}': {query}")  
         results = retriever.invoke(query)
 
         if not results:
@@ -177,7 +186,7 @@ def get_relevant_question_from_database(data: dict):
 
     else:
         query = topic
-        print(f"\n🔥 DEBUG: General Query: {query}")
+        print(f"\n DEBUG: General Query: {query}")
         results = retriever.invoke(query)
         doc = random.choice(results)
 
