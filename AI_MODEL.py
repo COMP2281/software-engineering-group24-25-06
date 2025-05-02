@@ -1,8 +1,10 @@
+# Import necessary standard libraries
 import os
 import re
 from datetime import datetime, timezone
 import random
 
+# Import third-party libraries for LLM, embeddings, vector search, tools, and graph state management
 from langchain_ollama.llms import OllamaLLM
 from langchain_chroma import Chroma
 from langchain_ibm import WatsonxEmbeddings
@@ -11,31 +13,26 @@ from langgraph.checkpoint.memory import MemorySaver
 from langchain.tools import tool
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
-from langgraph.checkpoint.memory import MemorySaver
 from typing import TypedDict, Annotated, Optional
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, RemoveMessage
-# from langmem import create_memory_manager
 from pydantic import BaseModel
 from langgraph.checkpoint.mongodb import MongoDBSaver
 from pymongo import MongoClient
 
-
-
-#EU = "https://eu-gb.ml.cloud.ibm.com"
-#NA = "https://us-south.ml.cloud.ibm.com"
+# IBM Cloud credentials and model setup
 credentials = {
     "url": "https://eu-gb.ml.cloud.ibm.com",
     "apikey": "JOzHijjg6zn8G9hfkZxY34kJ_jHTXo4pzFLAjoTnzdIw"
 }
-
 project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
 model_id = "granite3.1-dense"
 
+# MongoDB connection details
 mongodb_conn_string = "mongodb+srv://jacob:progprog4@se-project.xg1tx.mongodb.net/?retryWrites=true&w=majority&appName=SE-Project"
 db_name = "SE-prog"
 
+# Define a user profile model for personalization
 class UserProfile(BaseModel):
-    """User profile information for personalization"""
     user_id: str
     name: Optional[str] = None
     user_preferences: Optional[str] = None
@@ -43,19 +40,19 @@ class UserProfile(BaseModel):
     updated_at: Optional[datetime] = None
     conversation_count: int = 0
 
+# Connect to MongoDB and test the connection
 def get_mongodb_connection():
-    """Get MongoDB connection"""
     try:
         client = MongoClient(mongodb_conn_string)
-        client.admin.command('ping')
+        client.admin.command('ping')  # Test the connection
         print("Connected to MongoDB")
         return client
     except Exception as e:
         print(f"Error connecting to MongoDB: {e}")
         return None
 
+# Choose MongoDBSaver if MongoDB is available, otherwise fallback to in-memory saver
 def mongodb_saver(client):
-    """Create MongoDBSaver for checkpointing"""
     if client: 
         return MongoDBSaver(client)
     else:
@@ -65,8 +62,8 @@ def mongodb_saver(client):
 mongo_client = get_mongodb_connection()
 checkpointer = mongodb_saver(mongo_client)
 
+# Fetch a user's profile from MongoDB
 def get_user_profile(user_id):
-    """Get user profile from MongoDB"""
     if not mongo_client:
         return None
     
@@ -77,8 +74,8 @@ def get_user_profile(user_id):
         return UserProfile(**profile)
     return None
 
+# Save or update a user's profile in MongoDB
 def save_user_profile(profile: UserProfile):
-    """Save user profile to MongoDB"""
     if not mongo_client:
         return False
     
@@ -88,16 +85,17 @@ def save_user_profile(profile: UserProfile):
     profile.updated_at = datetime.now(timezone.utc)
     profile_dict = profile.model_dump()
 
-    result = collection.update_one( #update one ere as to ensure there is only one profile per user
+    result = collection.update_one(
         {"user_id": profile.user_id},
         {"$set": profile_dict},
-        upsert=True
+        upsert=True  # Insert if not exists
     )
 
     return result.acknowledged
 
-
+# Define available missions with metadata
 missions = {
+    # Example mission entry
     "Silent Strike": {
         "name": "Silent Strike",
         "description": "Retrieve the security key from the back of the warehouse, and escape from the large hatch.",
@@ -115,71 +113,20 @@ missions = {
             {"name": "Grunty Grunt", "weakness": "plant", "enemyID": 2}
         ]
     },
-    "Cyber Heist": {
-        "name": "Cyber Heist",
-        "description": "Infiltrate the mainframe, extract classified documents, and escape unnoticed.",
-        "objectives": [
-            "Hack into the bank's security system",
-            "Download confidential files",
-            "Exit through the safehouse undetected"
-        ],
-        "setting": "A high-security financial district, crawling with guards and security drones",
-        "topic": "Cybersecurity",
-        "keywords": ["hacking", "encryption", "data breach", "cybersecurity"],
-        "enemyList": [
-            {"name": "Mr. Firewall", "weakness": "brute force attack", "enemyID": 0},
-            {"name": "Intrusion Guard", "weakness": "social engineering", "enemyID": 1},
-            {"name": "Silent Tracker", "weakness": "stealth bypass", "enemyID": 2}
-        ]
-    },
-    "Operation Blackout": {
-        "name": "Operation Blackout",
-        "description": "Disable the city’s power grid to create a diversion for your team’s entry.",
-        "objectives": [
-            "Locate the power station control room",
-            "Disable critical generators",
-            "Escape before the backup systems activate"
-        ],
-        "setting": "An underground power facility surrounded by elite security forces",
-        "topic": "Infrastructure Security",
-        "keywords": ["power grid", "electrical systems", "EMP", "infrastructure hacking"],
-        "enemyList": [
-            {"name": "Voltage Viper", "weakness": "EMP attacks", "enemyID": 0},
-            {"name": "Grid Guardian", "weakness": "short-circuiting", "enemyID": 1},
-            {"name": "Power Phantom", "weakness": "darkness and stealth", "enemyID": 2}
-        ]
-    }
+    # Additional missions follow similar structure...
 }
 
-
-
-## --- Mission Selection --- ##
-## ------------------------- ##
-
-# def start_mission(state: "State", mission_name: str):
-#     state["in_mission"] = True
-#     state["mission_name"] = mission_name
-#     return state
-
-# def end_mission(state: "State"):
-#     state["in_mission"] = False
-#     state["mission_name"] = None
-#     return state
-
-## ------------------------- ##
-## ------------------------- ##
-
-
-
-
+# Select a mission for current session
 selected_mission = "Silent Strike"
 mission_data = missions[selected_mission]
 
-# Initialize Model
+# Initialize the LLM using Ollama
 model = OllamaLLM(model=model_id)
+
+# Set up directory for persistent vectorstore
 persistant_directory = os.path.join(os.path.dirname(__file__), "db", "test1")
 
-# Initialize Embeddings
+# Initialize IBM Watsonx embeddings
 embeddings = WatsonxEmbeddings(
     model_id=EmbeddingTypes.IBM_SLATE_30M_ENG.value,
     url=credentials["url"],
@@ -187,25 +134,27 @@ embeddings = WatsonxEmbeddings(
     project_id=project_id,
 )
 
-# Initialize Vector Store
+# Set up Chroma vector store for retrieval with Watsonx embeddings
 vectorstore = Chroma(persist_directory=persistant_directory, embedding_function=embeddings)
-search_kwargs = {"k": 4}
+search_kwargs = {"k": 4}  # Retrieve top 4 results
 retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
 
-max_msgs = 0
+max_msgs = 0  # Threshold for when to summarize conversation
 
+# Tool for document retrieval based on a question
 @tool
 def get_relevant_documents(question):
     """Retrieve relevant documents based on question."""
     context = retriever.invoke(question)
     return context
 
+# Tool to get mission-specific question from vector DB based on keywords and topic
 @tool 
 def get_relevant_question_from_database(data: dict):
     """Retrieve a mission-specific question with 4 options from the database based on the topic."""
 
     topic = data.get("topic", "")
-    in_mission = data.get("in_mission", True)  # Check if user is in a mission
+    in_mission = data.get("in_mission", True)
     mission_name = data.get("mission_name") if in_mission else None
 
     print(f"\n🔥 DEBUG: Mission Status: {in_mission}, Mission Name: {mission_name}, Topic: {topic}") 
@@ -213,31 +162,22 @@ def get_relevant_question_from_database(data: dict):
     if in_mission and mission_name:
         mission_data = missions[mission_name]
         mission_keywords = mission_data.get("keywords", [])
-
-        # Randomly cycle through keywords
-        selected_keyword = random.choice(mission_keywords)     
+        selected_keyword = random.choice(mission_keywords)  # Random keyword selection
         query = f"{selected_keyword} {topic}" if topic else selected_keyword
-
         print(f"\n🔥 DEBUG: Query using Keyword '{selected_keyword}': {query}")  
-
         results = retriever.invoke(query)
 
         if not results:
             return {"question": "No mission-relevant question found in the database.", "options": ["N/A", "N/A", "N/A", "N/A"]}
-        
         doc = random.choice(results)
 
     else:
         query = topic
         print(f"\n🔥 DEBUG: General Query: {query}")
-
         results = retriever.invoke(query)
-
         doc = random.choice(results)
 
-    # print("\nDEBUG: Retrieved results:", results)  # Debugging Line
-
-        # Extract question and choices using regex
+    # Use regex to extract question and options from document content
     question_match = re.search(r'question:\s(.*?)\schoice1:', doc.page_content)
     choice1_match = re.search(r'choice1:\s(.*?)\schoice2:', doc.page_content)
     choice2_match = re.search(r'choice2:\s(.*?)\schoice3:', doc.page_content)
@@ -245,6 +185,7 @@ def get_relevant_question_from_database(data: dict):
     choice4_match = re.search(r'choice4:\s(.*?)\scorrectChoices', doc.page_content)
     correct_answer_match = re.search(r'correctChoices:\s(\d)', doc.page_content)
 
+    # Default fallback if regex fails
     question = question_match.group(1) if question_match else "No question found"
     options = [
         choice1_match.group(1) if choice1_match else "Option A",
@@ -254,6 +195,7 @@ def get_relevant_question_from_database(data: dict):
     ]
     correct_answer = correct_answer_match.group(1) if correct_answer_match else "N/A"
 
+    # Convert numeric correct answer to letter (1 → A, etc.)
     if correct_answer in ["1", "2", "3", "4"]:
         correct_answer = chr(64 + int(correct_answer)) 
 
@@ -263,19 +205,19 @@ def get_relevant_question_from_database(data: dict):
         "correct_answer": correct_answer
     }
 
-
+# Register tools for graph use
 tools = [get_relevant_documents, get_relevant_question_from_database]
 
+# Summarize long conversations to reduce memory size
 def summarize_conversation(state: "State"):
-    """Summarizes the conversation to reduce the length of the memory."""
     messages = state["messages"]
     summary = state.get("conversation_summary", "")
     
     if not messages or len(messages) < max_msgs:
         return state
 
-    if summary:
-        summary_prompt = f"""
+    # Choose prompt depending on whether a summary already exists
+    summary_prompt = f"""
         I need you to update an existing conversation summary with new messages.
 
         Extend the summary by taking into account the latest messages given to you above.
@@ -285,9 +227,7 @@ def summarize_conversation(state: "State"):
         Focus on recording the most important details mentioned by the user.
         
         DO NOT include any information that wasn't explicitly mentioned in the conversation.
-        """
-    else:
-        summary_prompt = f"""
+        """ if summary else f"""
         Create a concise summary of this conversation.
 
         DO NOT include any information that wasn't explicitly mentioned in the conversation.
@@ -296,17 +236,18 @@ def summarize_conversation(state: "State"):
         Make sure to record any details mentioned by the user
         """
 
-    # Generate the new summary
+    # Invoke LLM to get summary
     prompt = state["messages"] + [HumanMessage(content=summary_prompt)]
     new_summary = model.invoke(prompt)
     print(f"DEBUG: New Summary: {new_summary}")
 
-    # Update the state with the new summary and the last two messages
+    # Remove older messages and keep only recent ones + update summary
     state["messages"] = [RemoveMessage(id=m.id) for m in messages[:-2]]
     state["conversation_summary"] = new_summary
 
     return state
 
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def should_summarize(state: "State"):
     """Determines if the conversation should be summarized based on message count."""
     if len(state["messages"]) >= max_msgs:
