@@ -48,7 +48,7 @@ func _ready() -> void:
 	loadQuestions();
 	
 func loadQuestions() -> void:
-	var questionsFile := FileAccess.open("res://SkillsBuildQs.txt", FileAccess.READ);
+	var questionsFile := FileAccess.open("res://SkillsBuildQs.csv", FileAccess.READ);
 	
 	print("Attempted to load question: ", questionsFile)
 	
