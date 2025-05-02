@@ -283,14 +283,14 @@ def chatbot(state: "State"):
     mission_enemies = missions[mission_name].get("enemyList", [])
 
     # Format enemy data for output
-    enemy_info = "\n".join([f"💀 {enemy['name']} (Weakness: {enemy['weakness']})" for enemy in mission_enemies])
+    enemy_info = "\n".join([f" {enemy['name']} (Weakness: {enemy['weakness']})" for enemy in mission_enemies])
 
     # Prepare structured mission info
     mission_context = {
         "name": mission_name,
         "description": mission_description,
         "setting": mission_setting,
-        "objectives": "\n".join([f"🎯 {objective}" for objective in mission_objectives]),
+        "objectives": "\n".join([f" {objective}" for objective in mission_objectives]),
         "enemies": enemy_info
     }
 
