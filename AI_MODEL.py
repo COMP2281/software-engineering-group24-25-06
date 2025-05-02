@@ -18,8 +18,7 @@ from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, Remo
 from pydantic import BaseModel
 from langgraph.checkpoint.mongodb import MongoDBSaver
 from pymongo import MongoClient
-
-# IBM Cloud credentials and model setup
+# --- IBM Watsonx Configuration ---
 credentials = {
     "url": "https://eu-gb.ml.cloud.ibm.com",
     "apikey": "JOzHijjg6zn8G9hfkZxY34kJ_jHTXo4pzFLAjoTnzdIw"
@@ -27,12 +26,17 @@ credentials = {
 project_id = "78d0c8aa-48f7-440b-8a4e-84c87f9e2c49"
 model_id = "granite3.1-dense"
 
-# MongoDB connection details
-mongodb_conn_string = "mongodb+srv://jacob:progprog4@se-project.xg1tx.mongodb.net/?retryWrites=true&w=majority&appName=SE-Project"
+# --- MongoDB Configuration ---
+mongodb_conn_string = (
+    "mongodb+srv://jacob:progprog4@se-project.xg1tx.mongodb.net/"
+    "?retryWrites=true&w=majority&appName=SE-Project"
+)
 db_name = "SE-prog"
+collection_name = "User-Profiles"
 
-# Define a user profile model for personalization
+# --- User Profile Model ---
 class UserProfile(BaseModel):
+    """Schema for user profile data used in personalization."""
     user_id: str
     name: Optional[str] = None
     user_preferences: Optional[str] = None
@@ -40,55 +44,55 @@ class UserProfile(BaseModel):
     updated_at: Optional[datetime] = None
     conversation_count: int = 0
 
-# Connect to MongoDB and test the connection
+# --- MongoDB Connection ---
 def get_mongodb_connection():
+    """Establish and return a MongoDB client."""
     try:
         client = MongoClient(mongodb_conn_string)
-        client.admin.command('ping')  # Test the connection
-        print("Connected to MongoDB")
+        client.admin.command("ping")  # Test connection
+        print(" Connected to MongoDB")
         return client
     except Exception as e:
-        print(f"Error connecting to MongoDB: {e}")
+        print(f" MongoDB connection error: {e}")
         return None
 
-# Choose MongoDBSaver if MongoDB is available, otherwise fallback to in-memory saver
+# --- Checkpoint Saver Selection ---
 def mongodb_saver(client):
-    if client: 
+    """Return MongoDBSaver or fallback to MemorySaver."""
+    if client:
         return MongoDBSaver(client)
-    else:
-        print("Using in memory saver as fallback")
-        return MemorySaver()
-    
+    print("⚠️ Using in-memory saver (MongoDB not available)")
+    return MemorySaver()
+
 mongo_client = get_mongodb_connection()
 checkpointer = mongodb_saver(mongo_client)
 
-# Fetch a user's profile from MongoDB
-def get_user_profile(user_id):
+# --- MongoDB Profile Operations ---
+def get_user_profile(user_id: str) -> Optional[UserProfile]:
+    """Retrieve a user profile from MongoDB."""
     if not mongo_client:
         return None
-    
-    db = mongo_client[db_name]
-    collection = db["User-Profiles"]
-    profile = collection.find_one({"user_id": user_id})
-    if profile:
-        return UserProfile(**profile)
-    return None
 
-# Save or update a user's profile in MongoDB
-def save_user_profile(profile: UserProfile):
+    db = mongo_client[db_name]
+    profile = db[collection_name].find_one({"user_id": user_id})
+
+    return UserProfile(**profile) if profile else None
+
+def save_user_profile(profile: UserProfile) -> bool:
+    """Insert or update a user profile in MongoDB."""
     if not mongo_client:
         return False
-    
+
     db = mongo_client[db_name]
-    collection = db["User-Profiles"]
-    
+    collection = db[collection_name]
+
     profile.updated_at = datetime.now(timezone.utc)
     profile_dict = profile.model_dump()
 
     result = collection.update_one(
         {"user_id": profile.user_id},
         {"$set": profile_dict},
-        upsert=True  # Insert if not exists
+        upsert=True
     )
 
     return result.acknowledged
