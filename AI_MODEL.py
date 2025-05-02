@@ -248,28 +248,31 @@ def summarize_conversation(state: "State"):
     return state
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Determines whether the conversation should be summarized based on message count
 def should_summarize(state: "State"):
-    """Determines if the conversation should be summarized based on message count."""
     if len(state["messages"]) >= max_msgs:
         return {"decision": "summarize"}
     return {"decision": "end"}
 
-# Define chatbot node
+# Handles the main chatbot logic (BONSAI personality)
 def chatbot(state: "State"):
-    """Handles normal chatbot responses."""
     if not state["messages"]:
         response = "I didn't receive a message."
         return {"messages": AIMessage(response)}
 
-    user_input = state["messages"][-1].content
+    user_input = state["messages"][-1].content  # Get latest user input
 
-    mission_name = state.get("mission_name", "Silent Strike")  # Retrieve mission name
+    # Retrieve mission-specific context
+    mission_name = state.get("mission_name", "Silent Strike")
     mission_description = missions[mission_name].get("description", "No description found")
     mission_setting = missions[mission_name].get("setting", "No setting found")
     mission_objectives = missions[mission_name].get("objectives", ["No objectives found"])
     mission_enemies = missions[mission_name].get("enemyList", [])
 
+    # Format enemy data for output
     enemy_info = "\n".join([f"💀 {enemy['name']} (Weakness: {enemy['weakness']})" for enemy in mission_enemies])
+
+    # Prepare structured mission info
     mission_context = {
         "name": mission_name,
         "description": mission_description,
@@ -278,15 +281,14 @@ def chatbot(state: "State"):
         "enemies": enemy_info
     }
 
+    # Add existing conversation summary if available
     conversation_summary = state.get("conversation_summary", "")
-    summary_prefix = ""
-
-    if conversation_summary:
-        summary_prefix = f"""
+    summary_prefix = f"""
         Previous Conversation Summary:
         {conversation_summary}
-        """
+        """ if conversation_summary else ""
 
+    # Prepare prompt for BONSAI LLM persona
     system_message = f"""
     {summary_prefix}
     {mission_context}
@@ -313,63 +315,62 @@ def chatbot(state: "State"):
     DO NOT INCLUDE "" around your response as it will be considered as part of the response.
     """
 
-
+    # Query the model with system instructions + user message
     response = model.invoke(
         [
             SystemMessage(content=system_message),
             *state["messages"],
-            HumanMessage(
-                content= f"Here is the user input {user_input}"
-            ),
+            HumanMessage(content= f"Here is the user input {user_input}"),
         ]
     ).strip()
 
-    # Ensure clean output without extra formatting
+    # Clean up unwanted characters (like Markdown asterisks)
     response = response.replace('*', '').replace('**', '')
 
+    # Append the model's response to the message history
     state["messages"].append(AIMessage(response))
     return state
 
-# Define database node
+# Retrieves a relevant mission-related question from the database
 def database_node(state: "State"):
-    """Retrieves a relevant question from the database."""
-    
     if not state["messages"]:
         return {"messages": [{"role": "assistant", "content": "I didn't receive a valid request."}]}
 
-
-    mission_name = state.get("mission_name", selected_mission)  # Retrieve mission name
-    print("\nDEBUG: Mission Context:", mission_name)  # Debugging Line
+    # Determine which mission the user is currently in
+    mission_name = state.get("mission_name", selected_mission)
+    print("\nDEBUG: Mission Context:", mission_name)
     user_input = state["messages"][-1].content
 
+    # Call the retrieval tool with mission and topic info
     result = get_relevant_question_from_database.invoke({"data": {"topic": user_input, "mission_name": mission_name}})
 
+    # Extract question components
     question = result.get("question", "No question found")
     options = result.get("options", ["Option A", "Option B", "Option C", "Option D"])
     correct_answer = result.get("correct_answer", "N/A")
     formatted_options = "\n".join([f"{chr(65+i)}. {option}" for i, option in enumerate(options)])
 
+    # Store question state for later validation
     state["current_question"] = question
     state["current_choices"] = options
     state["correct_answer"] = correct_answer
 
+    print("\nDEBUG: Retrieved question:", question)
 
-    print("\nDEBUG: Retrieved question:", question)  # Debugging Line
-
+    # Respond with formatted question and options
     response = f"Agent, here’s a question from the database:\n\n{question}\n\n{formatted_options}"
     state["messages"].append(AIMessage(response))
-
     return state
 
-# Define answer_checker node
+# Checks if the user's answer matches the correct choice
 def answer_checker(state: "State"):
-    """Checks the user's answer against the correct answer."""
     if not state["messages"]:
         content = "I didn't receive a valid request."
         return {"messages": AIMessage(response)}
 
     user_input = state["messages"][-1].content
-    
+
+    # Create prompt to extract a clean answer choice (A/B/C/D)
     extraction_prompt = f"""
     Extract the answer choice A,B,C,D from the user input.
     If the user input is a word like 'first' or number like '1', convert it to the corresponding letter.
@@ -385,20 +386,22 @@ def answer_checker(state: "State"):
     User Input: {user_input}
     """
 
-    # clear summary so it can answer properly
-
+    # Temporarily clear the conversation summary to avoid interference
     stored_summary = state.get("conversation_summary", "")
     state["conversation_summary"] = ""
 
+    # Run model to extract answer choice
     response = model.invoke(extraction_prompt).strip()
 
+    # Restore summary after extraction
     state["conversation_summary"] = stored_summary
 
-    print("\nDEBUG: Extracted answer:", response)  # Debugging Line
-        
+    print("\nDEBUG: Extracted answer:", response)
+
+    # Load previously stored question data
     question = state.get("current_question")
     choices = state.get("current_choices", [])
-    correct_answer = state.get("correct_answer", "")  # Convert to uppercase
+    correct_answer = state.get("correct_answer", "")
 
     if not question or not choices or not correct_answer:
         return {
@@ -408,11 +411,12 @@ def answer_checker(state: "State"):
             "correct_answer": ""
         }
 
+    # Re-extract the answer in case it was lost
     extracted_ans = model.invoke(extraction_prompt).strip().upper()
     is_correct = extracted_ans.upper() == correct_answer.upper()
 
-    print("\nDEBUG: Correct Answer :", correct_answer)  # Debugging Line
-    print("\nDEBUG: is_correct :", is_correct)  # Debugging Line
+    print("\nDEBUG: Correct Answer :", correct_answer)
+    print("\nDEBUG: is_correct :", is_correct)
 
     if is_correct:
         prompt = """
@@ -426,6 +430,7 @@ def answer_checker(state: "State"):
         DO NOT PROVIDE EXTRA EXPLANATION!!!!!!!!!
         """
 
+#-------------------------------------------------------------------------------------------------------
         feedback = model.invoke(prompt)
 
         state["messages"].append(AIMessage(feedback))
