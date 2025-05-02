@@ -44,8 +44,13 @@ const DEFAULT_QUESTION_ANSWER_TIME : float = 10.0;
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	_rng = RandomNumberGenerator.new();
+
+	loadQuestions();
 	
-	var questionsFile := FileAccess.open("res://questions/SkillsBuildQs.csv", FileAccess.READ);
+func loadQuestions() -> void:
+	var questionsFile := FileAccess.open("res://SkillsBuildQs.txt", FileAccess.READ);
+	
+	print("Attempted to load question: ", questionsFile)
 	
 	# Ignore headers
 	var _headers := questionsFile.get_csv_line(",");
